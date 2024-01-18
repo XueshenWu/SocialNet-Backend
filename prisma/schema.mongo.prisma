@@ -2,44 +2,104 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "mongodb"
-  url      = env("Mongo_URL")
+    provider = "mongodb"
+    url      = env("Mongo_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output = "../src/generated/mongo"
-}
-
-model Post {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  slug     String    @unique
-  title    String
-  body     String
-  author   User      @relation(fields: [authorId], references: [id])
-  authorId String    @db.ObjectId
-  comments Comment[]
+    provider = "prisma-client-js"
+    output   = "../src/generated/mongo"
 }
 
 model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  email   String   @unique
-  name    String?
-  address Address?
-  posts   Post[]
+    id String @id @map("_id") @db.String
+
+    posts         Post[] @relation("posts")
+    originalPosts Post[] @relation("originalPosts")
+
+    repliesFrom Reply[] @relation("repliesFrom")
+    repliesTo   Reply[] @relation("repliesTo")
+
+   
+    LikeTable LikeTable[]
 }
 
-model Comment {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  comment String
-  post    Post   @relation(fields: [postId], references: [id])
-  postId  String @db.ObjectId
+model Post {
+    id    String @id @default(auto()) @map("_id") @db.ObjectId
+    title String
+    content  String
+    media String?
+
+    owner   User   @relation(name: "originalPosts", fields: [ownerId], references: [id])
+    ownerId String @db.String
+
+    author   User   @relation(name: "posts", fields: [authorId], references: [id])
+    authorId String @db.String
+
+
+    replies   Reply[]
+    LikeTable LikeTable[]
 }
 
-// Address is an embedded document
-type Address {
-  street String
-  city   String
-  state  String
-  zip    String
+model LikeTable {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String @db.ObjectId
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @db.String
+
+    @@unique([postId, userId])
+    
 }
+
+model Reply {
+    
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+
+    text String
+
+
+    from   User   @relation(name: "repliesFrom", fields: [fromId], references: [id])
+    fromId String @db.String
+
+    to   User   @relation(name: "repliesTo", fields: [toId], references: [id])
+    toId String @db.String
+
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String @db.ObjectId
+}
+
+// model Post {
+//   id       String    @id @default(auto()) @map("_id") @db.ObjectId
+//   slug     String    @unique
+//   title    String
+//   body     String
+//   author   User      @relation(fields: [authorId], references: [id])
+//   authorId String    @db.ObjectId
+//   comments Comment[]
+// }
+
+// model User {
+//   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+//   email   String   @unique
+//   name    String?
+//   address Address?
+//   posts   Post[]
+// }
+
+// model Comment {
+//   id      String @id @default(auto()) @map("_id") @db.ObjectId
+//   comment String
+//   post    Post   @relation(fields: [postId], references: [id])
+//   postId  String @db.ObjectId
+// }
+
+// // Address is an embedded document
+// type Address {
+//   street String
+//   city   String
+//   state  String
+//   zip    String
+// }

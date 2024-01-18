@@ -100,23 +100,30 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id'
+};
+
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
-  slug: 'slug',
   title: 'title',
-  body: 'body',
+  content: 'content',
+  media: 'media',
+  ownerId: 'ownerId',
   authorId: 'authorId'
 };
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.LikeTableScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  name: 'name'
+  postId: 'postId',
+  userId: 'userId'
 };
 
-exports.Prisma.CommentScalarFieldEnum = {
+exports.Prisma.ReplyScalarFieldEnum = {
   id: 'id',
-  comment: 'comment',
+  text: 'text',
+  fromId: 'fromId',
+  toId: 'toId',
   postId: 'postId'
 };
 
@@ -132,9 +139,10 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  Post: 'Post',
   User: 'User',
-  Comment: 'Comment'
+  Post: 'Post',
+  LikeTable: 'LikeTable',
+  Reply: 'Reply'
 };
 
 /**

@@ -1,78 +1,142 @@
 generator client {
     provider = "prisma-client-js"
-    output = "../src/generated/pg"
+    output   = "../src/generated/pg"
 }
 
 datasource db {
     provider = "postgresql"
     url      = env("PG_URL")
-   
 }
 
-model Course {
-    id   String @id @default(uuid())
-    name String
+model User {
+    id         String   @id @default(uuid())
+    name       String
+    email      String   @unique
+    password   String
+    role       Role
+    createTime DateTime @default(now())
 
-    instructor Instructor @relation(fields: [instId], references: [id])
-    instId     String
+    profile   Profile?
+    friendsOf Friend[] @relation("FriendOfUser")
+    friends   Friend[] @relation("UserFriends")
 
-    assignments Assignment[]
+    follows  Follow[] @relation("UserFollows")
+    followed Follow[] @relation("UserFollowed")
 
-    courseHours  Int
-    courseIntro String?
-
-    students Student[]
-
-    timeline Timeline?
+    // originPosts    Post[] @relation("originPosts")
+    // forwardedPosts Post[] @relation("forwardedPosts")
 }
 
-model Instructor {
-    id   String @id @default(uuid())
-    name String
-
-    courses Course[]
+model Profile {
+    user       User     @relation(fields: [userId], references: [id])
+    userId     String   @id
+    avatar     String
+    bio        String
+    interests   String[]
+    createTime DateTime @default(now())
+    updateTime DateTime @updatedAt
 }
 
-model Assignment {
-    number   Int
-    title    String
-    deadline DateTime
+model Friend {
+    id_from String
+    id_to   String
+    user1   User   @relation(name: "FriendOfUser", fields: [id_from], references: [id])
+    user2   User   @relation(name: "UserFriends", fields: [id_to], references: [id])
 
-    courseId String
-    course   Course @relation(fields: [courseId], references: [id])
-    mark     Mark[]
-
-    @@id([number, courseId])
+    @@id([id_from, id_to])
+    @@unique([id_from, id_to])
 }
 
-model Student {
-    id       String   @id @default(uuid())
-    name     String
-    password String
-    email    String?
-    courses  Course[]
-    marks    Mark[]
+model Follow {
+    
+    id_from String
+    id_to   String
+    user1   User   @relation(name: "UserFollows", fields: [id_from], references: [id])
+    user2   User   @relation(name: "UserFollowed", fields: [id_to], references: [id])
+
+    @@id([id_from, id_to])
+    @@unique([id_from, id_to])
 }
 
-model Mark {
-    assignment       Assignment @relation(fields: [assignmentNumber, courseId], references: [number, courseId])
-    assignmentNumber Int
-    courseId         String
+// model Post {
+//     id       String @id @default(uuid())
+//     title    String
+//     author   User   @relation(name: "originPosts", fields: [authorId], references: [id])
+//     authorId String
 
-    student   Student @relation(fields: [studentId], references: [id])
-    studentId String
+//     poster   User   @relation(name: "forwardedPosts", fields: [posterId], references: [id])
+//     posterId String
+// }
 
-    content String
-    score   Int?
-
-    @@id([courseId, assignmentNumber, studentId])
+enum Role {
+    COMMON
+    ADMIN
 }
 
-model Timeline {
-    course   Course @relation(fields: [courseId], references: [id])
-    courseId String @id
+// model Course {
+//     id   String @id @default(uuid())
+//     name String
 
-    createTime DateTime  @default(now())
-    endTime    DateTime
-    examTime   DateTime?
-}
+//     instructor Instructor @relation(fields: [instId], references: [id])
+//     instId     String
+
+//     assignments Assignment[]
+
+//     courseHours  Int
+//     courseIntro String?
+
+//     students Student[]
+
+//     timeline Timeline?
+// }
+
+// model Instructor {
+//     id   String @id @default(uuid())
+//     name String
+
+//     courses Course[]
+// }
+
+// model Assignment {
+//     number   Int
+//     title    String
+//     deadline DateTime
+
+//     courseId String
+//     course   Course @relation(fields: [courseId], references: [id])
+//     mark     Mark[]
+
+//     @@id([number, courseId])
+// }
+
+// model Student {
+//     id       String   @id @default(uuid())
+//     name     String
+//     password String
+//     email    String?
+//     courses  Course[]
+//     marks    Mark[]
+// }
+
+// model Mark {
+//     assignment       Assignment @relation(fields: [assignmentNumber, courseId], references: [number, courseId])
+//     assignmentNumber Int
+//     courseId         String
+
+//     student   Student @relation(fields: [studentId], references: [id])
+//     studentId String
+
+//     content String
+//     score   Int?
+
+//     @@id([courseId, assignmentNumber, studentId])
+// }
+
+// model Timeline {
+//     course   Course @relation(fields: [courseId], references: [id])
+//     courseId String @id
+
+//     createTime DateTime  @default(now())
+//     endTime    DateTime
+//     examTime   DateTime?
+// }

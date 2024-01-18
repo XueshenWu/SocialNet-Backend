@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient as PgClient }  from '../generated/pg/index'
-import { PrismaClient as MongoClient} from 'src/generated/mongo';
+import { PrismaClient as MongoClient} from '../generated/mongo';
 
 @Injectable()
 export class DbService {

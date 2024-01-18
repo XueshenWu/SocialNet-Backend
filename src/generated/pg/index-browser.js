@@ -107,46 +107,32 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.CourseScalarFieldEnum = {
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  instId: 'instId',
-  courseHours: 'courseHours',
-  courseIntro: 'courseIntro'
-};
-
-exports.Prisma.InstructorScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
-};
-
-exports.Prisma.AssignmentScalarFieldEnum = {
-  number: 'number',
-  title: 'title',
-  deadline: 'deadline',
-  courseId: 'courseId'
-};
-
-exports.Prisma.StudentScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
+  email: 'email',
   password: 'password',
-  email: 'email'
+  role: 'role',
+  createTime: 'createTime'
 };
 
-exports.Prisma.MarkScalarFieldEnum = {
-  assignmentNumber: 'assignmentNumber',
-  courseId: 'courseId',
-  studentId: 'studentId',
-  content: 'content',
-  score: 'score'
-};
-
-exports.Prisma.TimelineScalarFieldEnum = {
-  courseId: 'courseId',
+exports.Prisma.ProfileScalarFieldEnum = {
+  userId: 'userId',
+  avatar: 'avatar',
+  bio: 'bio',
+  interests: 'interests',
   createTime: 'createTime',
-  endTime: 'endTime',
-  examTime: 'examTime'
+  updateTime: 'updateTime'
+};
+
+exports.Prisma.FriendScalarFieldEnum = {
+  id_from: 'id_from',
+  id_to: 'id_to'
+};
+
+exports.Prisma.FollowScalarFieldEnum = {
+  id_from: 'id_from',
+  id_to: 'id_to'
 };
 
 exports.Prisma.SortOrder = {
@@ -158,20 +144,16 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
+exports.Role = exports.$Enums.Role = {
+  COMMON: 'COMMON',
+  ADMIN: 'ADMIN'
 };
 
-
 exports.Prisma.ModelName = {
-  Course: 'Course',
-  Instructor: 'Instructor',
-  Assignment: 'Assignment',
-  Student: 'Student',
-  Mark: 'Mark',
-  Timeline: 'Timeline'
+  User: 'User',
+  Profile: 'Profile',
+  Friend: 'Friend',
+  Follow: 'Follow'
 };
 
 /**
