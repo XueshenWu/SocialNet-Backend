@@ -1,0 +1,78 @@
+generator client {
+    provider = "prisma-client-js"
+    output = "../src/generated/pg"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("PG_URL")
+   
+}
+
+model Course {
+    id   String @id @default(uuid())
+    name String
+
+    instructor Instructor @relation(fields: [instId], references: [id])
+    instId     String
+
+    assignments Assignment[]
+
+    courseHours  Int
+    courseIntro String?
+
+    students Student[]
+
+    timeline Timeline?
+}
+
+model Instructor {
+    id   String @id @default(uuid())
+    name String
+
+    courses Course[]
+}
+
+model Assignment {
+    number   Int
+    title    String
+    deadline DateTime
+
+    courseId String
+    course   Course @relation(fields: [courseId], references: [id])
+    mark     Mark[]
+
+    @@id([number, courseId])
+}
+
+model Student {
+    id       String   @id @default(uuid())
+    name     String
+    password String
+    email    String?
+    courses  Course[]
+    marks    Mark[]
+}
+
+model Mark {
+    assignment       Assignment @relation(fields: [assignmentNumber, courseId], references: [number, courseId])
+    assignmentNumber Int
+    courseId         String
+
+    student   Student @relation(fields: [studentId], references: [id])
+    studentId String
+
+    content String
+    score   Int?
+
+    @@id([courseId, assignmentNumber, studentId])
+}
+
+model Timeline {
+    course   Course @relation(fields: [courseId], references: [id])
+    courseId String @id
+
+    createTime DateTime  @default(now())
+    endTime    DateTime
+    examTime   DateTime?
+}
