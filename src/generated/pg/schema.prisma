@@ -16,7 +16,8 @@ model User {
     role       Role
     createTime DateTime @default(now())
 
-    profile   Profile?
+    profile Profile?
+
     friendsOf Friend[] @relation("FriendOfUser")
     friends   Friend[] @relation("UserFriends")
 
@@ -28,13 +29,13 @@ model User {
 }
 
 model Profile {
-    user       User     @relation(fields: [userId], references: [id])
-    userId     String   @id
+    user       User       @relation(fields: [userId], references: [id])
+    userId     String     @id
     avatar     String
     bio        String
-    interests   String[]
-    createTime DateTime @default(now())
-    updateTime DateTime @updatedAt
+    interests  Interest[]
+    createTime DateTime   @default(now())
+    updateTime DateTime   @updatedAt
 }
 
 model Friend {
@@ -48,7 +49,6 @@ model Friend {
 }
 
 model Follow {
-    
     id_from String
     id_to   String
     user1   User   @relation(name: "UserFollows", fields: [id_from], references: [id])
@@ -73,70 +73,16 @@ enum Role {
     ADMIN
 }
 
-// model Course {
-//     id   String @id @default(uuid())
-//     name String
-
-//     instructor Instructor @relation(fields: [instId], references: [id])
-//     instId     String
-
-//     assignments Assignment[]
-
-//     courseHours  Int
-//     courseIntro String?
-
-//     students Student[]
-
-//     timeline Timeline?
-// }
-
-// model Instructor {
-//     id   String @id @default(uuid())
-//     name String
-
-//     courses Course[]
-// }
-
-// model Assignment {
-//     number   Int
-//     title    String
-//     deadline DateTime
-
-//     courseId String
-//     course   Course @relation(fields: [courseId], references: [id])
-//     mark     Mark[]
-
-//     @@id([number, courseId])
-// }
-
-// model Student {
-//     id       String   @id @default(uuid())
-//     name     String
-//     password String
-//     email    String?
-//     courses  Course[]
-//     marks    Mark[]
-// }
-
-// model Mark {
-//     assignment       Assignment @relation(fields: [assignmentNumber, courseId], references: [number, courseId])
-//     assignmentNumber Int
-//     courseId         String
-
-//     student   Student @relation(fields: [studentId], references: [id])
-//     studentId String
-
-//     content String
-//     score   Int?
-
-//     @@id([courseId, assignmentNumber, studentId])
-// }
-
-// model Timeline {
-//     course   Course @relation(fields: [courseId], references: [id])
-//     courseId String @id
-
-//     createTime DateTime  @default(now())
-//     endTime    DateTime
-//     examTime   DateTime?
-// }
+enum Interest {
+    SPORT
+    MUSIC
+    MOVIE
+    TRAVEL
+    FOOD
+    GAME
+    TECH
+    ART
+    SCIENCE
+    LITERATURE
+    OTHER
+}

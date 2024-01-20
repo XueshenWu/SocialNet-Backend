@@ -45,11 +45,32 @@ export namespace $Enums {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const Interest: {
+  SPORT: 'SPORT',
+  MUSIC: 'MUSIC',
+  MOVIE: 'MOVIE',
+  TRAVEL: 'TRAVEL',
+  FOOD: 'FOOD',
+  GAME: 'GAME',
+  TECH: 'TECH',
+  ART: 'ART',
+  SCIENCE: 'SCIENCE',
+  LITERATURE: 'LITERATURE',
+  OTHER: 'OTHER'
+};
+
+export type Interest = (typeof Interest)[keyof typeof Interest]
+
 }
 
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type Interest = $Enums.Interest
+
+export const Interest: typeof $Enums.Interest
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2372,7 +2393,7 @@ export namespace Prisma {
     userId: string
     avatar: string
     bio: string
-    interests: string[]
+    interests: $Enums.Interest[]
     createTime: Date
     updateTime: Date
     _count: ProfileCountAggregateOutputType | null
@@ -2427,7 +2448,7 @@ export namespace Prisma {
       userId: string
       avatar: string
       bio: string
-      interests: string[]
+      interests: $Enums.Interest[]
       createTime: Date
       updateTime: Date
     }, ExtArgs["result"]["profile"]>
@@ -2828,7 +2849,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"Profile", 'String'>
     readonly avatar: FieldRef<"Profile", 'String'>
     readonly bio: FieldRef<"Profile", 'String'>
-    readonly interests: FieldRef<"Profile", 'String[]'>
+    readonly interests: FieldRef<"Profile", 'Interest[]'>
     readonly createTime: FieldRef<"Profile", 'DateTime'>
     readonly updateTime: FieldRef<"Profile", 'DateTime'>
   }
@@ -5056,6 +5077,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Interest[]'
+   */
+  export type ListEnumInterestFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Interest[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Interest'
+   */
+  export type EnumInterestFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Interest'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -5151,7 +5186,7 @@ export namespace Prisma {
     userId?: StringFilter<"Profile"> | string
     avatar?: StringFilter<"Profile"> | string
     bio?: StringFilter<"Profile"> | string
-    interests?: StringNullableListFilter<"Profile">
+    interests?: EnumInterestNullableListFilter<"Profile">
     createTime?: DateTimeFilter<"Profile"> | Date | string
     updateTime?: DateTimeFilter<"Profile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -5174,7 +5209,7 @@ export namespace Prisma {
     NOT?: ProfileWhereInput | ProfileWhereInput[]
     avatar?: StringFilter<"Profile"> | string
     bio?: StringFilter<"Profile"> | string
-    interests?: StringNullableListFilter<"Profile">
+    interests?: EnumInterestNullableListFilter<"Profile">
     createTime?: DateTimeFilter<"Profile"> | Date | string
     updateTime?: DateTimeFilter<"Profile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -5199,7 +5234,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Profile"> | string
     avatar?: StringWithAggregatesFilter<"Profile"> | string
     bio?: StringWithAggregatesFilter<"Profile"> | string
-    interests?: StringNullableListFilter<"Profile">
+    interests?: EnumInterestNullableListFilter<"Profile">
     createTime?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     updateTime?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
   }
@@ -5378,7 +5413,7 @@ export namespace Prisma {
   export type ProfileCreateInput = {
     avatar: string
     bio: string
-    interests?: ProfileCreateinterestsInput | string[]
+    interests?: ProfileCreateinterestsInput | $Enums.Interest[]
     createTime?: Date | string
     updateTime?: Date | string
     user: UserCreateNestedOneWithoutProfileInput
@@ -5388,7 +5423,7 @@ export namespace Prisma {
     userId: string
     avatar: string
     bio: string
-    interests?: ProfileCreateinterestsInput | string[]
+    interests?: ProfileCreateinterestsInput | $Enums.Interest[]
     createTime?: Date | string
     updateTime?: Date | string
   }
@@ -5396,7 +5431,7 @@ export namespace Prisma {
   export type ProfileUpdateInput = {
     avatar?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
-    interests?: ProfileUpdateinterestsInput | string[]
+    interests?: ProfileUpdateinterestsInput | $Enums.Interest[]
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     updateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProfileNestedInput
@@ -5406,7 +5441,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
-    interests?: ProfileUpdateinterestsInput | string[]
+    interests?: ProfileUpdateinterestsInput | $Enums.Interest[]
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     updateTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5415,7 +5450,7 @@ export namespace Prisma {
     userId: string
     avatar: string
     bio: string
-    interests?: ProfileCreateinterestsInput | string[]
+    interests?: ProfileCreateinterestsInput | $Enums.Interest[]
     createTime?: Date | string
     updateTime?: Date | string
   }
@@ -5423,7 +5458,7 @@ export namespace Prisma {
   export type ProfileUpdateManyMutationInput = {
     avatar?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
-    interests?: ProfileUpdateinterestsInput | string[]
+    interests?: ProfileUpdateinterestsInput | $Enums.Interest[]
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     updateTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5432,7 +5467,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
-    interests?: ProfileUpdateinterestsInput | string[]
+    interests?: ProfileUpdateinterestsInput | $Enums.Interest[]
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     updateTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5632,11 +5667,11 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+  export type EnumInterestNullableListFilter<$PrismaModel = never> = {
+    equals?: $Enums.Interest[] | ListEnumInterestFieldRefInput<$PrismaModel> | null
+    has?: $Enums.Interest | EnumInterestFieldRefInput<$PrismaModel> | null
+    hasEvery?: $Enums.Interest[] | ListEnumInterestFieldRefInput<$PrismaModel>
+    hasSome?: $Enums.Interest[] | ListEnumInterestFieldRefInput<$PrismaModel>
     isEmpty?: boolean
   }
 
@@ -5923,7 +5958,7 @@ export namespace Prisma {
   }
 
   export type ProfileCreateinterestsInput = {
-    set: string[]
+    set: $Enums.Interest[]
   }
 
   export type UserCreateNestedOneWithoutProfileInput = {
@@ -5933,8 +5968,8 @@ export namespace Prisma {
   }
 
   export type ProfileUpdateinterestsInput = {
-    set?: string[]
-    push?: string | string[]
+    set?: $Enums.Interest[]
+    push?: $Enums.Interest | $Enums.Interest[]
   }
 
   export type UserUpdateOneRequiredWithoutProfileNestedInput = {
@@ -6088,7 +6123,7 @@ export namespace Prisma {
   export type ProfileCreateWithoutUserInput = {
     avatar: string
     bio: string
-    interests?: ProfileCreateinterestsInput | string[]
+    interests?: ProfileCreateinterestsInput | $Enums.Interest[]
     createTime?: Date | string
     updateTime?: Date | string
   }
@@ -6096,7 +6131,7 @@ export namespace Prisma {
   export type ProfileUncheckedCreateWithoutUserInput = {
     avatar: string
     bio: string
-    interests?: ProfileCreateinterestsInput | string[]
+    interests?: ProfileCreateinterestsInput | $Enums.Interest[]
     createTime?: Date | string
     updateTime?: Date | string
   }
@@ -6192,7 +6227,7 @@ export namespace Prisma {
   export type ProfileUpdateWithoutUserInput = {
     avatar?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
-    interests?: ProfileUpdateinterestsInput | string[]
+    interests?: ProfileUpdateinterestsInput | $Enums.Interest[]
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     updateTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6200,7 +6235,7 @@ export namespace Prisma {
   export type ProfileUncheckedUpdateWithoutUserInput = {
     avatar?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
-    interests?: ProfileUpdateinterestsInput | string[]
+    interests?: ProfileUpdateinterestsInput | $Enums.Interest[]
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     updateTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }

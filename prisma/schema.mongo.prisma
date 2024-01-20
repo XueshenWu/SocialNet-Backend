@@ -14,32 +14,32 @@ generator client {
 model User {
     id String @id @map("_id") @db.String
 
-    posts         Post[] @relation("posts")
-    originalPosts Post[] @relation("originalPosts")
+    posts Post[] @relation("posts")
 
     repliesFrom Reply[] @relation("repliesFrom")
     repliesTo   Reply[] @relation("repliesTo")
 
-   
     LikeTable LikeTable[]
 }
 
 model Post {
-    id    String @id @default(auto()) @map("_id") @db.ObjectId
-    title String
-    content  String
-    media String?
-
-    owner   User   @relation(name: "originalPosts", fields: [ownerId], references: [id])
-    ownerId String @db.String
+    id      String  @id @default(auto()) @map("_id") @db.ObjectId
+    title   String
+    content String
+    media   String?
 
     author   User   @relation(name: "posts", fields: [authorId], references: [id])
     authorId String @db.String
 
-
     replies   Reply[]
     LikeTable LikeTable[]
+
+    originPost String? @db.String // not care about consistency
+
+    
 }
+
+
 
 model LikeTable {
     id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -51,15 +51,12 @@ model LikeTable {
     userId String @db.String
 
     @@unique([postId, userId])
-    
 }
 
 model Reply {
-    
     id String @id @default(auto()) @map("_id") @db.ObjectId
 
     text String
-
 
     from   User   @relation(name: "repliesFrom", fields: [fromId], references: [id])
     fromId String @db.String
@@ -70,4 +67,3 @@ model Reply {
     post   Post   @relation(fields: [postId], references: [id])
     postId String @db.ObjectId
 }
-

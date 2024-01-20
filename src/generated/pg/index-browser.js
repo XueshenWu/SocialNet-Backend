@@ -149,6 +149,20 @@ exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN'
 };
 
+exports.Interest = exports.$Enums.Interest = {
+  SPORT: 'SPORT',
+  MUSIC: 'MUSIC',
+  MOVIE: 'MOVIE',
+  TRAVEL: 'TRAVEL',
+  FOOD: 'FOOD',
+  GAME: 'GAME',
+  TECH: 'TECH',
+  ART: 'ART',
+  SCIENCE: 'SCIENCE',
+  LITERATURE: 'LITERATURE',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Profile: 'Profile',

@@ -109,8 +109,8 @@ exports.Prisma.PostScalarFieldEnum = {
   title: 'title',
   content: 'content',
   media: 'media',
-  ownerId: 'ownerId',
-  authorId: 'authorId'
+  authorId: 'authorId',
+  originPost: 'originPost'
 };
 
 exports.Prisma.LikeTableScalarFieldEnum = {

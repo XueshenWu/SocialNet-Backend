@@ -1091,7 +1091,6 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     posts: number
-    originalPosts: number
     repliesFrom: number
     repliesTo: number
     LikeTable: number
@@ -1099,7 +1098,6 @@ export namespace Prisma {
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     posts?: boolean | UserCountOutputTypeCountPostsArgs
-    originalPosts?: boolean | UserCountOutputTypeCountOriginalPostsArgs
     repliesFrom?: boolean | UserCountOutputTypeCountRepliesFromArgs
     repliesTo?: boolean | UserCountOutputTypeCountRepliesToArgs
     LikeTable?: boolean | UserCountOutputTypeCountLikeTableArgs
@@ -1122,14 +1120,6 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PostWhereInput
-  }
-
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountOriginalPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PostWhereInput
   }
 
@@ -1340,7 +1330,6 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     posts?: boolean | User$postsArgs<ExtArgs>
-    originalPosts?: boolean | User$originalPostsArgs<ExtArgs>
     repliesFrom?: boolean | User$repliesFromArgs<ExtArgs>
     repliesTo?: boolean | User$repliesToArgs<ExtArgs>
     LikeTable?: boolean | User$LikeTableArgs<ExtArgs>
@@ -1353,7 +1342,6 @@ export namespace Prisma {
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     posts?: boolean | User$postsArgs<ExtArgs>
-    originalPosts?: boolean | User$originalPostsArgs<ExtArgs>
     repliesFrom?: boolean | User$repliesFromArgs<ExtArgs>
     repliesTo?: boolean | User$repliesToArgs<ExtArgs>
     LikeTable?: boolean | User$LikeTableArgs<ExtArgs>
@@ -1365,7 +1353,6 @@ export namespace Prisma {
     name: "User"
     objects: {
       posts: Prisma.$PostPayload<ExtArgs>[]
-      originalPosts: Prisma.$PostPayload<ExtArgs>[]
       repliesFrom: Prisma.$ReplyPayload<ExtArgs>[]
       repliesTo: Prisma.$ReplyPayload<ExtArgs>[]
       LikeTable: Prisma.$LikeTablePayload<ExtArgs>[]
@@ -1766,8 +1753,6 @@ export namespace Prisma {
 
     posts<T extends User$postsArgs<ExtArgs> = {}>(args?: Subset<T, User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, 'findMany'> | Null>;
 
-    originalPosts<T extends User$originalPostsArgs<ExtArgs> = {}>(args?: Subset<T, User$originalPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, 'findMany'> | Null>;
-
     repliesFrom<T extends User$repliesFromArgs<ExtArgs> = {}>(args?: Subset<T, User$repliesFromArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReplyPayload<ExtArgs>, T, 'findMany'> | Null>;
 
     repliesTo<T extends User$repliesToArgs<ExtArgs> = {}>(args?: Subset<T, User$repliesToArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReplyPayload<ExtArgs>, T, 'findMany'> | Null>;
@@ -2165,27 +2150,6 @@ export namespace Prisma {
 
 
   /**
-   * User.originalPosts
-   */
-  export type User$originalPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Post
-     */
-    select?: PostSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     */
-    include?: PostInclude<ExtArgs> | null
-    where?: PostWhereInput
-    orderBy?: PostOrderByWithRelationInput | PostOrderByWithRelationInput[]
-    cursor?: PostWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PostScalarFieldEnum | PostScalarFieldEnum[]
-  }
-
-
-  /**
    * User.repliesFrom
    */
   export type User$repliesFromArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2279,8 +2243,8 @@ export namespace Prisma {
     title: string | null
     content: string | null
     media: string | null
-    ownerId: string | null
     authorId: string | null
+    originPost: string | null
   }
 
   export type PostMaxAggregateOutputType = {
@@ -2288,8 +2252,8 @@ export namespace Prisma {
     title: string | null
     content: string | null
     media: string | null
-    ownerId: string | null
     authorId: string | null
+    originPost: string | null
   }
 
   export type PostCountAggregateOutputType = {
@@ -2297,8 +2261,8 @@ export namespace Prisma {
     title: number
     content: number
     media: number
-    ownerId: number
     authorId: number
+    originPost: number
     _all: number
   }
 
@@ -2308,8 +2272,8 @@ export namespace Prisma {
     title?: true
     content?: true
     media?: true
-    ownerId?: true
     authorId?: true
+    originPost?: true
   }
 
   export type PostMaxAggregateInputType = {
@@ -2317,8 +2281,8 @@ export namespace Prisma {
     title?: true
     content?: true
     media?: true
-    ownerId?: true
     authorId?: true
+    originPost?: true
   }
 
   export type PostCountAggregateInputType = {
@@ -2326,8 +2290,8 @@ export namespace Prisma {
     title?: true
     content?: true
     media?: true
-    ownerId?: true
     authorId?: true
+    originPost?: true
     _all?: true
   }
 
@@ -2408,8 +2372,8 @@ export namespace Prisma {
     title: string
     content: string
     media: string | null
-    ownerId: string
     authorId: string
+    originPost: string | null
     _count: PostCountAggregateOutputType | null
     _min: PostMinAggregateOutputType | null
     _max: PostMaxAggregateOutputType | null
@@ -2434,9 +2398,8 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     media?: boolean
-    ownerId?: boolean
     authorId?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    originPost?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     replies?: boolean | Post$repliesArgs<ExtArgs>
     LikeTable?: boolean | Post$LikeTableArgs<ExtArgs>
@@ -2448,12 +2411,11 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     media?: boolean
-    ownerId?: boolean
     authorId?: boolean
+    originPost?: boolean
   }
 
   export type PostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
     author?: boolean | UserDefaultArgs<ExtArgs>
     replies?: boolean | Post$repliesArgs<ExtArgs>
     LikeTable?: boolean | Post$LikeTableArgs<ExtArgs>
@@ -2464,7 +2426,6 @@ export namespace Prisma {
   export type $PostPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Post"
     objects: {
-      owner: Prisma.$UserPayload<ExtArgs>
       author: Prisma.$UserPayload<ExtArgs>
       replies: Prisma.$ReplyPayload<ExtArgs>[]
       LikeTable: Prisma.$LikeTablePayload<ExtArgs>[]
@@ -2474,8 +2435,8 @@ export namespace Prisma {
       title: string
       content: string
       media: string | null
-      ownerId: string
       authorId: string
+      originPost: string | null
     }, ExtArgs["result"]["post"]>
     composites: {}
   }
@@ -2868,8 +2829,6 @@ export namespace Prisma {
   export interface Prisma__PostClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: 'PrismaPromise';
 
-    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
-
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
 
     replies<T extends Post$repliesArgs<ExtArgs> = {}>(args?: Subset<T, Post$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReplyPayload<ExtArgs>, T, 'findMany'> | Null>;
@@ -2908,8 +2867,8 @@ export namespace Prisma {
     readonly title: FieldRef<"Post", 'String'>
     readonly content: FieldRef<"Post", 'String'>
     readonly media: FieldRef<"Post", 'String'>
-    readonly ownerId: FieldRef<"Post", 'String'>
     readonly authorId: FieldRef<"Post", 'String'>
+    readonly originPost: FieldRef<"Post", 'String'>
   }
     
 
@@ -5265,8 +5224,8 @@ export namespace Prisma {
     title: 'title',
     content: 'content',
     media: 'media',
-    ownerId: 'ownerId',
-    authorId: 'authorId'
+    authorId: 'authorId',
+    originPost: 'originPost'
   };
 
   export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
@@ -5350,7 +5309,6 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
     posts?: PostListRelationFilter
-    originalPosts?: PostListRelationFilter
     repliesFrom?: ReplyListRelationFilter
     repliesTo?: ReplyListRelationFilter
     LikeTable?: LikeTableListRelationFilter
@@ -5359,7 +5317,6 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     posts?: PostOrderByRelationAggregateInput
-    originalPosts?: PostOrderByRelationAggregateInput
     repliesFrom?: ReplyOrderByRelationAggregateInput
     repliesTo?: ReplyOrderByRelationAggregateInput
     LikeTable?: LikeTableOrderByRelationAggregateInput
@@ -5371,7 +5328,6 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     posts?: PostListRelationFilter
-    originalPosts?: PostListRelationFilter
     repliesFrom?: ReplyListRelationFilter
     repliesTo?: ReplyListRelationFilter
     LikeTable?: LikeTableListRelationFilter
@@ -5399,9 +5355,8 @@ export namespace Prisma {
     title?: StringFilter<"Post"> | string
     content?: StringFilter<"Post"> | string
     media?: StringNullableFilter<"Post"> | string | null
-    ownerId?: StringFilter<"Post"> | string
     authorId?: StringFilter<"Post"> | string
-    owner?: XOR<UserRelationFilter, UserWhereInput>
+    originPost?: StringNullableFilter<"Post"> | string | null
     author?: XOR<UserRelationFilter, UserWhereInput>
     replies?: ReplyListRelationFilter
     LikeTable?: LikeTableListRelationFilter
@@ -5412,9 +5367,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     media?: SortOrder
-    ownerId?: SortOrder
     authorId?: SortOrder
-    owner?: UserOrderByWithRelationInput
+    originPost?: SortOrder
     author?: UserOrderByWithRelationInput
     replies?: ReplyOrderByRelationAggregateInput
     LikeTable?: LikeTableOrderByRelationAggregateInput
@@ -5428,9 +5382,8 @@ export namespace Prisma {
     title?: StringFilter<"Post"> | string
     content?: StringFilter<"Post"> | string
     media?: StringNullableFilter<"Post"> | string | null
-    ownerId?: StringFilter<"Post"> | string
     authorId?: StringFilter<"Post"> | string
-    owner?: XOR<UserRelationFilter, UserWhereInput>
+    originPost?: StringNullableFilter<"Post"> | string | null
     author?: XOR<UserRelationFilter, UserWhereInput>
     replies?: ReplyListRelationFilter
     LikeTable?: LikeTableListRelationFilter
@@ -5441,8 +5394,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     media?: SortOrder
-    ownerId?: SortOrder
     authorId?: SortOrder
+    originPost?: SortOrder
     _count?: PostCountOrderByAggregateInput
     _max?: PostMaxOrderByAggregateInput
     _min?: PostMinOrderByAggregateInput
@@ -5456,8 +5409,8 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Post"> | string
     content?: StringWithAggregatesFilter<"Post"> | string
     media?: StringNullableWithAggregatesFilter<"Post"> | string | null
-    ownerId?: StringWithAggregatesFilter<"Post"> | string
     authorId?: StringWithAggregatesFilter<"Post"> | string
+    originPost?: StringNullableWithAggregatesFilter<"Post"> | string | null
   }
 
   export type LikeTableWhereInput = {
@@ -5573,7 +5526,6 @@ export namespace Prisma {
   export type UserCreateInput = {
     id: string
     posts?: PostCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyCreateNestedManyWithoutFromInput
     repliesTo?: ReplyCreateNestedManyWithoutToInput
     LikeTable?: LikeTableCreateNestedManyWithoutUserInput
@@ -5582,7 +5534,6 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     id: string
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostUncheckedCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyUncheckedCreateNestedManyWithoutFromInput
     repliesTo?: ReplyUncheckedCreateNestedManyWithoutToInput
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutUserInput
@@ -5590,7 +5541,6 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     posts?: PostUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUpdateManyWithoutFromNestedInput
     repliesTo?: ReplyUpdateManyWithoutToNestedInput
     LikeTable?: LikeTableUpdateManyWithoutUserNestedInput
@@ -5598,7 +5548,6 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateInput = {
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUncheckedUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUncheckedUpdateManyWithoutFromNestedInput
     repliesTo?: ReplyUncheckedUpdateManyWithoutToNestedInput
     LikeTable?: LikeTableUncheckedUpdateManyWithoutUserNestedInput
@@ -5621,7 +5570,7 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    owner: UserCreateNestedOneWithoutOriginalPostsInput
+    originPost?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     replies?: ReplyCreateNestedManyWithoutPostInput
     LikeTable?: LikeTableCreateNestedManyWithoutPostInput
@@ -5632,8 +5581,8 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    ownerId: string
     authorId: string
+    originPost?: string | null
     replies?: ReplyUncheckedCreateNestedManyWithoutPostInput
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutPostInput
   }
@@ -5642,7 +5591,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutOriginalPostsNestedInput
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     replies?: ReplyUpdateManyWithoutPostNestedInput
     LikeTable?: LikeTableUpdateManyWithoutPostNestedInput
@@ -5652,8 +5601,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     replies?: ReplyUncheckedUpdateManyWithoutPostNestedInput
     LikeTable?: LikeTableUncheckedUpdateManyWithoutPostNestedInput
   }
@@ -5663,22 +5612,23 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    ownerId: string
     authorId: string
+    originPost?: string | null
   }
 
   export type PostUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PostUncheckedUpdateManyInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LikeTableCreateInput = {
@@ -5868,8 +5818,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     media?: SortOrder
-    ownerId?: SortOrder
     authorId?: SortOrder
+    originPost?: SortOrder
   }
 
   export type PostMaxOrderByAggregateInput = {
@@ -5877,8 +5827,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     media?: SortOrder
-    ownerId?: SortOrder
     authorId?: SortOrder
+    originPost?: SortOrder
   }
 
   export type PostMinOrderByAggregateInput = {
@@ -5886,8 +5836,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     media?: SortOrder
-    ownerId?: SortOrder
     authorId?: SortOrder
+    originPost?: SortOrder
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5968,13 +5918,6 @@ export namespace Prisma {
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
   }
 
-  export type PostCreateNestedManyWithoutOwnerInput = {
-    create?: XOR<PostCreateWithoutOwnerInput, PostUncheckedCreateWithoutOwnerInput> | PostCreateWithoutOwnerInput[] | PostUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: PostCreateOrConnectWithoutOwnerInput | PostCreateOrConnectWithoutOwnerInput[]
-    createMany?: PostCreateManyOwnerInputEnvelope
-    connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
-  }
-
   export type ReplyCreateNestedManyWithoutFromInput = {
     create?: XOR<ReplyCreateWithoutFromInput, ReplyUncheckedCreateWithoutFromInput> | ReplyCreateWithoutFromInput[] | ReplyUncheckedCreateWithoutFromInput[]
     connectOrCreate?: ReplyCreateOrConnectWithoutFromInput | ReplyCreateOrConnectWithoutFromInput[]
@@ -6000,13 +5943,6 @@ export namespace Prisma {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
     createMany?: PostCreateManyAuthorInputEnvelope
-    connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
-  }
-
-  export type PostUncheckedCreateNestedManyWithoutOwnerInput = {
-    create?: XOR<PostCreateWithoutOwnerInput, PostUncheckedCreateWithoutOwnerInput> | PostCreateWithoutOwnerInput[] | PostUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: PostCreateOrConnectWithoutOwnerInput | PostCreateOrConnectWithoutOwnerInput[]
-    createMany?: PostCreateManyOwnerInputEnvelope
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
   }
 
@@ -6042,20 +5978,6 @@ export namespace Prisma {
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
     update?: PostUpdateWithWhereUniqueWithoutAuthorInput | PostUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: PostUpdateManyWithWhereWithoutAuthorInput | PostUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
-  }
-
-  export type PostUpdateManyWithoutOwnerNestedInput = {
-    create?: XOR<PostCreateWithoutOwnerInput, PostUncheckedCreateWithoutOwnerInput> | PostCreateWithoutOwnerInput[] | PostUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: PostCreateOrConnectWithoutOwnerInput | PostCreateOrConnectWithoutOwnerInput[]
-    upsert?: PostUpsertWithWhereUniqueWithoutOwnerInput | PostUpsertWithWhereUniqueWithoutOwnerInput[]
-    createMany?: PostCreateManyOwnerInputEnvelope
-    set?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    disconnect?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    delete?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    update?: PostUpdateWithWhereUniqueWithoutOwnerInput | PostUpdateWithWhereUniqueWithoutOwnerInput[]
-    updateMany?: PostUpdateManyWithWhereWithoutOwnerInput | PostUpdateManyWithWhereWithoutOwnerInput[]
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
   }
 
@@ -6115,20 +6037,6 @@ export namespace Prisma {
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
   }
 
-  export type PostUncheckedUpdateManyWithoutOwnerNestedInput = {
-    create?: XOR<PostCreateWithoutOwnerInput, PostUncheckedCreateWithoutOwnerInput> | PostCreateWithoutOwnerInput[] | PostUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: PostCreateOrConnectWithoutOwnerInput | PostCreateOrConnectWithoutOwnerInput[]
-    upsert?: PostUpsertWithWhereUniqueWithoutOwnerInput | PostUpsertWithWhereUniqueWithoutOwnerInput[]
-    createMany?: PostCreateManyOwnerInputEnvelope
-    set?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    disconnect?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    delete?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
-    update?: PostUpdateWithWhereUniqueWithoutOwnerInput | PostUpdateWithWhereUniqueWithoutOwnerInput[]
-    updateMany?: PostUpdateManyWithWhereWithoutOwnerInput | PostUpdateManyWithWhereWithoutOwnerInput[]
-    deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
-  }
-
   export type ReplyUncheckedUpdateManyWithoutFromNestedInput = {
     create?: XOR<ReplyCreateWithoutFromInput, ReplyUncheckedCreateWithoutFromInput> | ReplyCreateWithoutFromInput[] | ReplyUncheckedCreateWithoutFromInput[]
     connectOrCreate?: ReplyCreateOrConnectWithoutFromInput | ReplyCreateOrConnectWithoutFromInput[]
@@ -6169,12 +6077,6 @@ export namespace Prisma {
     update?: LikeTableUpdateWithWhereUniqueWithoutUserInput | LikeTableUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: LikeTableUpdateManyWithWhereWithoutUserInput | LikeTableUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: LikeTableScalarWhereInput | LikeTableScalarWhereInput[]
-  }
-
-  export type UserCreateNestedOneWithoutOriginalPostsInput = {
-    create?: XOR<UserCreateWithoutOriginalPostsInput, UserUncheckedCreateWithoutOriginalPostsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOriginalPostsInput
-    connect?: UserWhereUniqueInput
   }
 
   export type UserCreateNestedOneWithoutPostsInput = {
@@ -6218,14 +6120,6 @@ export namespace Prisma {
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
     unset?: boolean
-  }
-
-  export type UserUpdateOneRequiredWithoutOriginalPostsNestedInput = {
-    create?: XOR<UserCreateWithoutOriginalPostsInput, UserUncheckedCreateWithoutOriginalPostsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOriginalPostsInput
-    upsert?: UserUpsertWithoutOriginalPostsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOriginalPostsInput, UserUpdateWithoutOriginalPostsInput>, UserUncheckedUpdateWithoutOriginalPostsInput>
   }
 
   export type UserUpdateOneRequiredWithoutPostsNestedInput = {
@@ -6454,7 +6348,7 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    owner: UserCreateNestedOneWithoutOriginalPostsInput
+    originPost?: string | null
     replies?: ReplyCreateNestedManyWithoutPostInput
     LikeTable?: LikeTableCreateNestedManyWithoutPostInput
   }
@@ -6464,7 +6358,7 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    ownerId: string
+    originPost?: string | null
     replies?: ReplyUncheckedCreateNestedManyWithoutPostInput
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutPostInput
   }
@@ -6476,35 +6370,6 @@ export namespace Prisma {
 
   export type PostCreateManyAuthorInputEnvelope = {
     data: PostCreateManyAuthorInput | PostCreateManyAuthorInput[]
-  }
-
-  export type PostCreateWithoutOwnerInput = {
-    id?: string
-    title: string
-    content: string
-    media?: string | null
-    author: UserCreateNestedOneWithoutPostsInput
-    replies?: ReplyCreateNestedManyWithoutPostInput
-    LikeTable?: LikeTableCreateNestedManyWithoutPostInput
-  }
-
-  export type PostUncheckedCreateWithoutOwnerInput = {
-    id?: string
-    title: string
-    content: string
-    media?: string | null
-    authorId: string
-    replies?: ReplyUncheckedCreateNestedManyWithoutPostInput
-    LikeTable?: LikeTableUncheckedCreateNestedManyWithoutPostInput
-  }
-
-  export type PostCreateOrConnectWithoutOwnerInput = {
-    where: PostWhereUniqueInput
-    create: XOR<PostCreateWithoutOwnerInput, PostUncheckedCreateWithoutOwnerInput>
-  }
-
-  export type PostCreateManyOwnerInputEnvelope = {
-    data: PostCreateManyOwnerInput | PostCreateManyOwnerInput[]
   }
 
   export type ReplyCreateWithoutFromInput = {
@@ -6596,24 +6461,8 @@ export namespace Prisma {
     title?: StringFilter<"Post"> | string
     content?: StringFilter<"Post"> | string
     media?: StringNullableFilter<"Post"> | string | null
-    ownerId?: StringFilter<"Post"> | string
     authorId?: StringFilter<"Post"> | string
-  }
-
-  export type PostUpsertWithWhereUniqueWithoutOwnerInput = {
-    where: PostWhereUniqueInput
-    update: XOR<PostUpdateWithoutOwnerInput, PostUncheckedUpdateWithoutOwnerInput>
-    create: XOR<PostCreateWithoutOwnerInput, PostUncheckedCreateWithoutOwnerInput>
-  }
-
-  export type PostUpdateWithWhereUniqueWithoutOwnerInput = {
-    where: PostWhereUniqueInput
-    data: XOR<PostUpdateWithoutOwnerInput, PostUncheckedUpdateWithoutOwnerInput>
-  }
-
-  export type PostUpdateManyWithWhereWithoutOwnerInput = {
-    where: PostScalarWhereInput
-    data: XOR<PostUpdateManyMutationInput, PostUncheckedUpdateManyWithoutOwnerInput>
+    originPost?: StringNullableFilter<"Post"> | string | null
   }
 
   export type ReplyUpsertWithWhereUniqueWithoutFromInput = {
@@ -6684,30 +6533,8 @@ export namespace Prisma {
     userId?: StringFilter<"LikeTable"> | string
   }
 
-  export type UserCreateWithoutOriginalPostsInput = {
-    id: string
-    posts?: PostCreateNestedManyWithoutAuthorInput
-    repliesFrom?: ReplyCreateNestedManyWithoutFromInput
-    repliesTo?: ReplyCreateNestedManyWithoutToInput
-    LikeTable?: LikeTableCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutOriginalPostsInput = {
-    id: string
-    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
-    repliesFrom?: ReplyUncheckedCreateNestedManyWithoutFromInput
-    repliesTo?: ReplyUncheckedCreateNestedManyWithoutToInput
-    LikeTable?: LikeTableUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutOriginalPostsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutOriginalPostsInput, UserUncheckedCreateWithoutOriginalPostsInput>
-  }
-
   export type UserCreateWithoutPostsInput = {
     id: string
-    originalPosts?: PostCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyCreateNestedManyWithoutFromInput
     repliesTo?: ReplyCreateNestedManyWithoutToInput
     LikeTable?: LikeTableCreateNestedManyWithoutUserInput
@@ -6715,7 +6542,6 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutPostsInput = {
     id: string
-    originalPosts?: PostUncheckedCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyUncheckedCreateNestedManyWithoutFromInput
     repliesTo?: ReplyUncheckedCreateNestedManyWithoutToInput
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutUserInput
@@ -6768,31 +6594,6 @@ export namespace Prisma {
     data: LikeTableCreateManyPostInput | LikeTableCreateManyPostInput[]
   }
 
-  export type UserUpsertWithoutOriginalPostsInput = {
-    update: XOR<UserUpdateWithoutOriginalPostsInput, UserUncheckedUpdateWithoutOriginalPostsInput>
-    create: XOR<UserCreateWithoutOriginalPostsInput, UserUncheckedCreateWithoutOriginalPostsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutOriginalPostsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutOriginalPostsInput, UserUncheckedUpdateWithoutOriginalPostsInput>
-  }
-
-  export type UserUpdateWithoutOriginalPostsInput = {
-    posts?: PostUpdateManyWithoutAuthorNestedInput
-    repliesFrom?: ReplyUpdateManyWithoutFromNestedInput
-    repliesTo?: ReplyUpdateManyWithoutToNestedInput
-    LikeTable?: LikeTableUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutOriginalPostsInput = {
-    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
-    repliesFrom?: ReplyUncheckedUpdateManyWithoutFromNestedInput
-    repliesTo?: ReplyUncheckedUpdateManyWithoutToNestedInput
-    LikeTable?: LikeTableUncheckedUpdateManyWithoutUserNestedInput
-  }
-
   export type UserUpsertWithoutPostsInput = {
     update: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
     create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
@@ -6805,14 +6606,12 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutPostsInput = {
-    originalPosts?: PostUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUpdateManyWithoutFromNestedInput
     repliesTo?: ReplyUpdateManyWithoutToNestedInput
     LikeTable?: LikeTableUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
-    originalPosts?: PostUncheckedUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUncheckedUpdateManyWithoutFromNestedInput
     repliesTo?: ReplyUncheckedUpdateManyWithoutToNestedInput
     LikeTable?: LikeTableUncheckedUpdateManyWithoutUserNestedInput
@@ -6855,7 +6654,7 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    owner: UserCreateNestedOneWithoutOriginalPostsInput
+    originPost?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     replies?: ReplyCreateNestedManyWithoutPostInput
   }
@@ -6865,8 +6664,8 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    ownerId: string
     authorId: string
+    originPost?: string | null
     replies?: ReplyUncheckedCreateNestedManyWithoutPostInput
   }
 
@@ -6878,7 +6677,6 @@ export namespace Prisma {
   export type UserCreateWithoutLikeTableInput = {
     id: string
     posts?: PostCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyCreateNestedManyWithoutFromInput
     repliesTo?: ReplyCreateNestedManyWithoutToInput
   }
@@ -6886,7 +6684,6 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutLikeTableInput = {
     id: string
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostUncheckedCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyUncheckedCreateNestedManyWithoutFromInput
     repliesTo?: ReplyUncheckedCreateNestedManyWithoutToInput
   }
@@ -6911,7 +6708,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutOriginalPostsNestedInput
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     replies?: ReplyUpdateManyWithoutPostNestedInput
   }
@@ -6920,8 +6717,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     replies?: ReplyUncheckedUpdateManyWithoutPostNestedInput
   }
 
@@ -6938,14 +6735,12 @@ export namespace Prisma {
 
   export type UserUpdateWithoutLikeTableInput = {
     posts?: PostUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUpdateManyWithoutFromNestedInput
     repliesTo?: ReplyUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLikeTableInput = {
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUncheckedUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUncheckedUpdateManyWithoutFromNestedInput
     repliesTo?: ReplyUncheckedUpdateManyWithoutToNestedInput
   }
@@ -6953,7 +6748,6 @@ export namespace Prisma {
   export type UserCreateWithoutRepliesFromInput = {
     id: string
     posts?: PostCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostCreateNestedManyWithoutOwnerInput
     repliesTo?: ReplyCreateNestedManyWithoutToInput
     LikeTable?: LikeTableCreateNestedManyWithoutUserInput
   }
@@ -6961,7 +6755,6 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutRepliesFromInput = {
     id: string
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostUncheckedCreateNestedManyWithoutOwnerInput
     repliesTo?: ReplyUncheckedCreateNestedManyWithoutToInput
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutUserInput
   }
@@ -6974,7 +6767,6 @@ export namespace Prisma {
   export type UserCreateWithoutRepliesToInput = {
     id: string
     posts?: PostCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyCreateNestedManyWithoutFromInput
     LikeTable?: LikeTableCreateNestedManyWithoutUserInput
   }
@@ -6982,7 +6774,6 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutRepliesToInput = {
     id: string
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
-    originalPosts?: PostUncheckedCreateNestedManyWithoutOwnerInput
     repliesFrom?: ReplyUncheckedCreateNestedManyWithoutFromInput
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutUserInput
   }
@@ -6997,7 +6788,7 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    owner: UserCreateNestedOneWithoutOriginalPostsInput
+    originPost?: string | null
     author: UserCreateNestedOneWithoutPostsInput
     LikeTable?: LikeTableCreateNestedManyWithoutPostInput
   }
@@ -7007,8 +6798,8 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    ownerId: string
     authorId: string
+    originPost?: string | null
     LikeTable?: LikeTableUncheckedCreateNestedManyWithoutPostInput
   }
 
@@ -7030,14 +6821,12 @@ export namespace Prisma {
 
   export type UserUpdateWithoutRepliesFromInput = {
     posts?: PostUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUpdateManyWithoutOwnerNestedInput
     repliesTo?: ReplyUpdateManyWithoutToNestedInput
     LikeTable?: LikeTableUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRepliesFromInput = {
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUncheckedUpdateManyWithoutOwnerNestedInput
     repliesTo?: ReplyUncheckedUpdateManyWithoutToNestedInput
     LikeTable?: LikeTableUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -7055,14 +6844,12 @@ export namespace Prisma {
 
   export type UserUpdateWithoutRepliesToInput = {
     posts?: PostUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUpdateManyWithoutFromNestedInput
     LikeTable?: LikeTableUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRepliesToInput = {
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
-    originalPosts?: PostUncheckedUpdateManyWithoutOwnerNestedInput
     repliesFrom?: ReplyUncheckedUpdateManyWithoutFromNestedInput
     LikeTable?: LikeTableUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -7082,7 +6869,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutOriginalPostsNestedInput
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     LikeTable?: LikeTableUpdateManyWithoutPostNestedInput
   }
@@ -7091,8 +6878,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     LikeTable?: LikeTableUncheckedUpdateManyWithoutPostNestedInput
   }
 
@@ -7101,15 +6888,7 @@ export namespace Prisma {
     title: string
     content: string
     media?: string | null
-    ownerId: string
-  }
-
-  export type PostCreateManyOwnerInput = {
-    id?: string
-    title: string
-    content: string
-    media?: string | null
-    authorId: string
+    originPost?: string | null
   }
 
   export type ReplyCreateManyFromInput = {
@@ -7135,7 +6914,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutOriginalPostsNestedInput
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     replies?: ReplyUpdateManyWithoutPostNestedInput
     LikeTable?: LikeTableUpdateManyWithoutPostNestedInput
   }
@@ -7144,7 +6923,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
     replies?: ReplyUncheckedUpdateManyWithoutPostNestedInput
     LikeTable?: LikeTableUncheckedUpdateManyWithoutPostNestedInput
   }
@@ -7153,32 +6932,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     media?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PostUpdateWithoutOwnerInput = {
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    media?: NullableStringFieldUpdateOperationsInput | string | null
-    author?: UserUpdateOneRequiredWithoutPostsNestedInput
-    replies?: ReplyUpdateManyWithoutPostNestedInput
-    LikeTable?: LikeTableUpdateManyWithoutPostNestedInput
-  }
-
-  export type PostUncheckedUpdateWithoutOwnerInput = {
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    media?: NullableStringFieldUpdateOperationsInput | string | null
-    authorId?: StringFieldUpdateOperationsInput | string
-    replies?: ReplyUncheckedUpdateManyWithoutPostNestedInput
-    LikeTable?: LikeTableUncheckedUpdateManyWithoutPostNestedInput
-  }
-
-  export type PostUncheckedUpdateManyWithoutOwnerInput = {
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    media?: NullableStringFieldUpdateOperationsInput | string | null
-    authorId?: StringFieldUpdateOperationsInput | string
+    originPost?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ReplyUpdateWithoutFromInput = {
