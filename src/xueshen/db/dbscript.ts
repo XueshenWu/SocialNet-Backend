@@ -1,5 +1,5 @@
-import { PrismaClient as PgClient } from 'generated/pg'
-import { PrismaClient as MongoClient } from 'generated/mongo';
+import { PrismaClient as PgClient } from '@prisma/pg'
+import { PrismaClient as MongoClient } from '@prisma/mongo';
 
 
 const pgClient = new PgClient();
