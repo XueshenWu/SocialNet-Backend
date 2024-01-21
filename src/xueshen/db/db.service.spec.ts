@@ -4,7 +4,7 @@ import { DbService } from './db.service';
 describe('DbService', () => {
     let service: DbService;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [DbService],
         }).compile();
@@ -33,73 +33,89 @@ describe('DbService', () => {
         })
 
         afterAll(async () => {
-            await service.deleteUser_notsafe_cascade("123123@gmail.com")
-            await service.deleteUser_notsafe_cascade("abc@gmail.com")
+            await service.resetDatabse_DANGEROUS()
         })
 
-        it("should create a user and return true", async () => {
-            
+        it("should create a user and return id", async () => {
+
             const res = await service.createUser({
                 "email": "123123@gmail.com",
                 "password": "123",
                 "role": "COMMON"
             })
-            expect(res).toBe(true);
+
+            const user = await service.getPgClient_DANGEROUS().user.findUnique({
+                where: {
+                    email: "123123@gmail.com"
+                }
+            })
+            expect(res).toBe(user.id);
 
         })
 
-        it("should not create a user and return false", async () => {
+        it("should not create a user and return undefined", async () => {
 
             const res = await service.createUser({
                 "email": "abcdefg@ms.com",
                 "password": "123",
                 "role": "COMMON"
             })
-            expect(res).toBe(false);
+            expect(res).toBeUndefined();
         })
 
 
     })
 
+    describe("addFriend", () => {
 
-    describe("deleteUser",()=>{
-        beforeEach(async ()=>{
-
-
-            const pgClient = service.getPgClient_DANGEROUS();
-            const mongoClient = service.getMongoClient_DANGEROUS();
-
-            const user1 = await service.createUser({
-                "email": "123123@gmail.com",
-                "password": "123",
-                "role": "COMMON"
+        let user1Id: string;
+        let user2Id: string;
+        let user3Id: string;
+        beforeAll(async () => {
+            user1Id = await service.createUser({
+                email: "user1@u1.com",
+                password: "123",
+                role: "COMMON"
             })
 
-            const user2 = await service.createUser({
-                "email": "abcabc@gmail.com",
-                "password": "123",
-                "role": "COMMON"
+            user2Id = await service.createUser({
+                email: "user2@u2.com",
+                password: "123",
+                role: "COMMON"
             })
 
-            
-          
-            
-        })
-        afterEach(async ()=>{
-            await service.deleteUser_notsafe_cascade("123123@gmail.com")
+            user3Id = await service.createUser({
+                email: "user3@u3.com",
+                password: "123",
+                role: "COMMON"
+            })
+
+            await service.getPgClient_DANGEROUS().friend.create({
+                data:{
+                   id_from: user1Id,
+                   id_to: user2Id
+                }
+            })
         })
 
-        it("should delete a user and return true", async () => {
-            const res = await service.deleteUser_notsafe_cascade("123123@gmail.com")
-            expect(res).toBe(true);
-            const user = await service.query_user_by_email("123123@gmail.com")
-            expect(user).toBeUndefined();
+        afterAll(async () => {
+            await service.resetDatabse_DANGEROUS()
+
         })
 
-        it("should nullify a user and return true", async () => {
-            
+        it("should add friend and return true", async () => {
+            const res = await service.addFriend(user1Id, user3Id)
+            expect(res).toBe(true)
         })
 
-       
+        it("should not add friend and return false", async () => {
+            const res = await service.addFriend(user1Id, user2Id)
+            expect(res).toBe(false)
+        })
     })
+
+
+
+
+
 });

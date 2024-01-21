@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaClient as PgClient, Prisma as PgPrisma, User } from '../../generated/pg/index'
 import { PrismaClient as MongoClient, Prisma as MongoPrisma } from '../../generated/mongo';
 import { PTX } from '../types/prisma_tx';
+import * as assert from 'assert';
 
 
 
@@ -42,12 +43,35 @@ export class DbService {
 
     // DO NOT USE THIS METHOD EXCEPT FOR TESTING
     getPgClient_DANGEROUS(): PgClient {
+        assert(process.env.ALLOW_DANGEROUS === "TRUE")
         return this.pgClient;
     }
 
     // DO NOT USE THIS METHOD EXCEPT FOR TESTING
     getMongoClient_DANGEROUS(): MongoClient {
+
+        assert(process.env.ALLOW_DANGEROUS === "TRUE")
         return this.mongoClient;
+    }
+
+
+    // NEVER USE THIS METHOD IN PRODUCTION
+    async resetDatabse_DANGEROUS(){
+
+        assert(process.env.ALLOW_DANGEROUS === "TRUE")
+        const pgClient = this.getPgClient_DANGEROUS()
+            
+        await pgClient.friend.deleteMany()
+        await pgClient.follow.deleteMany()
+        await pgClient.profile.deleteMany()
+        await pgClient.user.deleteMany()
+
+        const mongoClient = this.getMongoClient_DANGEROUS()
+        await mongoClient.likeTable.deleteMany()
+        await mongoClient.post.deleteMany()
+        await mongoClient.reply.deleteMany()
+        await mongoClient.notificationCenter.deleteMany()
+        await mongoClient.user.deleteMany()
     }
 
 
