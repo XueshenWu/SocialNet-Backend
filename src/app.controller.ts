@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 @Controller()
 export class AppController {
 
-    @Inject('CONFIG_OPTIONS')
-    private readonly configContent: string;
+
+    private readonly configContent: string = "123"
 
 
   constructor(private readonly appService: AppService) {}
