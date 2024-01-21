@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient as PgClient, Prisma as PgPrisma, User } from 'generated/pg'
-import { PrismaClient as MongoClient, Prisma as MongoPrisma } from 'generated/mongo';
+import { PrismaClient as PgClient, Prisma as PgPrisma, User } from '@prisma/pg'
+import { PrismaClient as MongoClient, Prisma as MongoPrisma } from '@prisma/mongo';
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
 

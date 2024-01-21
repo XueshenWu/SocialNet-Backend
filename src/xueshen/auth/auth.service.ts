@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import LoginDto from '../dto/loginDto';
 import { DbService } from '../db/db.service';
-import { User } from 'generated/pg';
+import { User } from '@prisma/pg';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import createUserDto from '../dto/createUserDto';

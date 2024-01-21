@@ -1,5 +1,5 @@
-import type { PrismaClient as PgClient } from "generated/pg";
-import type { PrismaClient as MongoClient } from "generated/mongo";
+import type { PrismaClient as PgClient } from "@prisma/pg";
+import type { PrismaClient as MongoClient } from "@prisma/mongo";
 
 
 type PrismaTransactionClient_pg = Omit<PgClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use">
