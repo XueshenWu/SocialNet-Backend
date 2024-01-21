@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import LoginDto from '../dto/loginDto';
 import { DbService } from '../db/db.service';
 import { User } from 'src/generated/pg';
-import * as jwt from 'jsonwebtoken'
-import * as bcrypt from 'bcrypt'
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
 import createUserDto from '../dto/createUserDto';
 
 @Injectable()
@@ -14,6 +14,7 @@ export class AuthService {
 
 
     async login(longinDto: LoginDto): Promise<string | undefined> {
+
         this.logger.verbose("Enter login")
         this.logger.log(`login: ${longinDto.email}`);
 
@@ -54,7 +55,7 @@ export class AuthService {
             this.logger.log(`user created: ${createUserDto.email}`);
             this.logger.verbose("Exit register")
 
-            return res;
+            return res? true: false;
 
         }
     }

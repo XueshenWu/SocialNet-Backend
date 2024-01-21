@@ -9,8 +9,8 @@ datasource db {
 }
 
 model User {
-    id         String   @id @default(uuid())
-    name       String
+    id String @id @default(uuid())
+
     email      String   @unique
     password   String
     role       Role
@@ -24,16 +24,18 @@ model User {
     follows  Follow[] @relation("UserFollows")
     followed Follow[] @relation("UserFollowed")
 
-    // originPosts    Post[] @relation("originPosts")
-    // forwardedPosts Post[] @relation("forwardedPosts")
+   
 }
 
 model Profile {
-    user       User       @relation(fields: [userId], references: [id])
+    user       User       @relation(fields: [userId], references: [id], onUpdate: Cascade)
     userId     String     @id
-    avatar     String
-    bio        String
+    name       String
+    customId   String     @unique
+    avatar     String?
+    bio        String?
     interests  Interest[]
+    gender     String
     createTime DateTime   @default(now())
     updateTime DateTime   @updatedAt
 }
@@ -41,8 +43,8 @@ model Profile {
 model Friend {
     id_from String
     id_to   String
-    user1   User   @relation(name: "FriendOfUser", fields: [id_from], references: [id])
-    user2   User   @relation(name: "UserFriends", fields: [id_to], references: [id])
+    user1   User   @relation(name: "FriendOfUser", fields: [id_from], references: [id], onUpdate: Cascade)
+    user2   User   @relation(name: "UserFriends", fields: [id_to], references: [id], onUpdate: Cascade)
 
     @@id([id_from, id_to])
     @@unique([id_from, id_to])
@@ -51,8 +53,8 @@ model Friend {
 model Follow {
     id_from String
     id_to   String
-    user1   User   @relation(name: "UserFollows", fields: [id_from], references: [id])
-    user2   User   @relation(name: "UserFollowed", fields: [id_to], references: [id])
+    user1   User   @relation(name: "UserFollows", fields: [id_from], references: [id], onUpdate: Cascade)
+    user2   User   @relation(name: "UserFollowed", fields: [id_to], references: [id], onUpdate: Cascade)
 
     @@id([id_from, id_to])
     @@unique([id_from, id_to])
@@ -71,6 +73,7 @@ model Follow {
 enum Role {
     COMMON
     ADMIN
+    DISABLED
 }
 
 enum Interest {
@@ -86,3 +89,5 @@ enum Interest {
     LITERATURE
     OTHER
 }
+
+

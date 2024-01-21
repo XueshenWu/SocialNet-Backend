@@ -19,7 +19,9 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
         "dbpush": "prisma db push --schema=./prisma/schema.mongo.prisma&&prisma db push --schema=./prisma/schema.pg.prisma",
-        "dbgen": "prisma generate --schema=./prisma/schema.mongo.prisma&&prisma generate --schema=./prisma/schema.pg.prisma"
+        "dbgen": "prisma generate --schema=./prisma/schema.mongo.prisma&&prisma generate --schema=./prisma/schema.pg.prisma",
+        "dbscript": "npx ts-node ./src/xueshen/db/dbscript.ts",
+        "dbreset_DANGER": "prisma migrate reset --schema=./prisma/schema.mongo.prisma&&prisma migrate reset --schema=./prisma/schema.pg.prisma"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",

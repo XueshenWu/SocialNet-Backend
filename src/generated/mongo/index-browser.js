@@ -109,6 +109,7 @@ exports.Prisma.PostScalarFieldEnum = {
   title: 'title',
   content: 'content',
   media: 'media',
+  status: 'status',
   authorId: 'authorId',
   originPost: 'originPost'
 };
@@ -127,6 +128,10 @@ exports.Prisma.ReplyScalarFieldEnum = {
   postId: 'postId'
 };
 
+exports.Prisma.NotificationCenterScalarFieldEnum = {
+  userId: 'userId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -136,13 +141,25 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.PostStatus = exports.$Enums.PostStatus = {
+  DRAFT: 'DRAFT',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  PUBLISHED: 'PUBLISHED',
+  HIDDEN: 'HIDDEN'
+};
 
+exports.NotificationType = exports.$Enums.NotificationType = {
+  LIKE: 'LIKE',
+  REPLY: 'REPLY',
+  FOLLOW: 'FOLLOW'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
   Post: 'Post',
   LikeTable: 'LikeTable',
-  Reply: 'Reply'
+  Reply: 'Reply',
+  NotificationCenter: 'NotificationCenter'
 };
 
 /**
