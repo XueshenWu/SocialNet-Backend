@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaClient as PgClient, Prisma as PgPrisma, User } from '@prisma/pg'
-import { PrismaClient as MongoClient, Prisma as MongoPrisma } from '@prisma/mongo';
+import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from '@prisma/mongo';
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
 
@@ -23,9 +23,19 @@ export class DbService {
     }
 
 
+    async query_post_by_id(id: string): Promise<Post | undefined> {
+        const res =  await this.mongoClient.post.findUnique({
+            where: {
+                id: id
+            }
+        })
+        return res??undefined;
+    }
+
+    // Tested
     async sendNotification(userId: string, notification: MongoPrisma.NotificationCreateInput): Promise<string | undefined> {
         try {
-            this.mongoClient.notificationCenter.update({
+            await this.mongoClient.notificationCenter.update({
                 where: {
                     userId: userId
                 },
@@ -56,25 +66,46 @@ export class DbService {
 
 
     // NEVER USE THIS METHOD IN PRODUCTION
-    async resetDatabse_DANGEROUS(){
+    async resetDatabse_DANGEROUS(log = false) {
 
         assert(process.env.ALLOW_DANGEROUS === "TRUE")
         const pgClient = this.getPgClient_DANGEROUS()
-            
-        await pgClient.friend.deleteMany()
-        await pgClient.follow.deleteMany()
-        await pgClient.profile.deleteMany()
-        await pgClient.user.deleteMany()
+
+
+
+        await pgClient.$transaction(async (tx) => {
+            await tx.follow.deleteMany()
+            await tx.friend.deleteMany()
+            await tx.profile.deleteMany()
+            await tx.user.deleteMany()
+        })
 
         const mongoClient = this.getMongoClient_DANGEROUS()
-        await mongoClient.likeTable.deleteMany()
-        await mongoClient.post.deleteMany()
-        await mongoClient.reply.deleteMany()
-        await mongoClient.notificationCenter.deleteMany()
-        await mongoClient.user.deleteMany()
+
+
+
+        await mongoClient.$transaction(async (tx) => {
+            await tx.likeTable.deleteMany()
+            await tx.likeTable.deleteMany()
+
+            await tx.reply.deleteMany()
+            await tx.reply.deleteMany()
+
+            await tx.post.deleteMany()
+            await tx.post.deleteMany()
+            
+            await tx.notificationCenter.deleteMany()
+            await tx.notificationCenter.deleteMany()
+
+            await tx.user.deleteMany()
+            await tx.user.deleteMany()
+        })
+
+
+
     }
 
-
+    // Tested
     // return true if success, false if failed(e.g. already friend)
     async addFriend(id_from: string, id_to: string): Promise<boolean> {
         try {
@@ -100,7 +131,7 @@ export class DbService {
 
     }
 
-
+    // Tested
     // return true if success, false if failed(e.g. not friend yet)
     async deleteFriend(id_from: string, id_to: string): Promise<boolean> {
 
@@ -128,7 +159,7 @@ export class DbService {
             }
 
             catch (e) {
-              
+
                 this.logger.warn(e);
                 return false;
             }
@@ -137,7 +168,7 @@ export class DbService {
 
     }
 
-
+    // Tested
     // return true if success, false if failed(e.g. already followed)
     async followUser(id_from: string, id_to: string): Promise<boolean> {
         try {
@@ -148,6 +179,7 @@ export class DbService {
                 }
             })
 
+
             return true;
         } catch (e) {
             this.logger.verbose(e);
@@ -155,7 +187,7 @@ export class DbService {
         }
     }
 
-
+    // Tested
     // return true if success, false if failed(e.g. already unfollowed)
     async unfollowUser(id_from: string, id_to: string): Promise<boolean> {
         try {
@@ -174,7 +206,7 @@ export class DbService {
         }
     }
 
-
+    // Tested
     // return userId if success, undefined if failed(e.g. violation of unique constraint)
     async createUser(createUserInput: PgPrisma.UserCreateInput): Promise<string | undefined> {
         const res = await this.pgClient.$transaction(async (tx_pg) => {
@@ -186,7 +218,12 @@ export class DbService {
 
                 await this.mongoClient.user.create({
                     data: {
-                        id: user.id
+                        id: user.id,
+                        notificationCenter: {
+                            create: {
+                                notifications: []
+                            }
+                        }
                     }
                 })
                 return user.id;
@@ -201,6 +238,8 @@ export class DbService {
         return res;
     }
 
+
+    //Tested
     // return postId if success, undefined if failed
     async addPost(post: MongoPrisma.PostCreateInput): Promise<string | undefined> {
         try {
@@ -215,6 +254,28 @@ export class DbService {
     }
 
 
+    //Tested
+    // return true if success, false if failed
+    async updatePostStatus(postId: string, status: "DRAFT" | "UNDER_REVIEW" | "PUBLISHED" | "HIDDEN"): Promise<boolean> {
+        try {
+            await this.mongoClient.post.update({
+                where: {
+                    id: postId
+                },
+                data: {
+                    status: status
+                }
+            })
+            return true;
+        } catch (e) {
+            this.logger.verbose(e);
+            return false;
+        }
+    }
+
+
+
+    // Tested
     // return like-Table Id if success, undefined if failed
     async likePost(userId: string, postId: string): Promise<string | undefined> {
         try {
@@ -224,6 +285,8 @@ export class DbService {
                     postId: postId
                 }
             })
+
+
             return likeRecord.id;
         } catch (e) {
             this.logger.verbose(e);
@@ -232,6 +295,26 @@ export class DbService {
     }
 
 
+    // Tested
+    // return true if success, false if failed
+    async unlikePost(userId: string, postId: string): Promise<boolean> {
+        try {
+            await this.mongoClient.likeTable.delete({
+                where: {
+                    postId_userId: {
+                        postId: postId,
+                        userId: userId
+                    }
+                }
+            })
+            return true;
+        } catch (e) {
+            this.logger.verbose(e);
+            return false;
+        }
+    }
+
+    // Tested
     // return replyId if success, undefined if failed
     async addReply(reply: MongoPrisma.ReplyCreateInput): Promise<string | undefined> {
         try {
@@ -242,6 +325,21 @@ export class DbService {
         } catch (e) {
             this.logger.verbose(e);
             return undefined;
+        }
+    }
+
+    // Tested
+    async removeReply(replyId: string): Promise<boolean> {
+        try {
+            await this.mongoClient.reply.delete({
+                where: {
+                    id: replyId
+                }
+            })
+            return true;
+        } catch (e) {
+            this.logger.verbose(e);
+            return false;
         }
     }
 
