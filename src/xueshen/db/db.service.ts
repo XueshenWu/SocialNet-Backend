@@ -128,6 +128,7 @@ export class DbService {
             }
 
             catch (e) {
+              
                 this.logger.warn(e);
                 return false;
             }

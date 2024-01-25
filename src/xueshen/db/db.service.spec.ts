@@ -10,6 +10,7 @@ describe('DbService', () => {
         }).compile();
 
         service = module.get<DbService>(DbService);
+        service.resetDatabse_DANGEROUS()
     });
 
 
@@ -91,9 +92,9 @@ describe('DbService', () => {
             })
 
             await service.getPgClient_DANGEROUS().friend.create({
-                data:{
-                   id_from: user1Id,
-                   id_to: user2Id
+                data: {
+                    id_from: user1Id,
+                    id_to: user2Id
                 }
             })
         })
@@ -114,8 +115,62 @@ describe('DbService', () => {
         })
     })
 
-    
 
+    describe("deleteFriend", () => {
+        let user1Id: string;
+        let user2Id: string;
+        let user3Id: string;
+        beforeAll(async () => {
+            user1Id = await service.createUser({
+                email: "abc@abc.com",
+                password: "123",
+                role: "COMMON"
+            })
+
+            user2Id = await service.createUser({
+                email: "qwe@qwe.com",
+                password: "123",
+                role: "COMMON"
+            })
+
+            user3Id = await service.createUser({
+                email: "poi@poi.com",
+                password: "123",
+                role: "COMMON"
+            })
+
+            await service.getPgClient_DANGEROUS().friend.create({
+                data: {
+                    id_from: user1Id,
+                    id_to: user2Id
+                }
+            })
+
+            await service.getPgClient_DANGEROUS().friend.create({
+                data: {
+                    id_from: user2Id,
+                    id_to: user1Id
+                }
+            })
+        })
+
+        afterAll(async () => {
+            await service.resetDatabse_DANGEROUS()
+        })
+
+
+        it("should delete friend and return true", async () => {
+            const res = await service.deleteFriend(user1Id, user2Id)
+            expect(res).toBe(true)
+        })
+
+        it("should not delete friend and return false if not yet", async () => {
+            const res = await service.deleteFriend(user1Id, user3Id)
+            expect(res).toBe(false)
+        })
+    })
+
+    
 
 
 
