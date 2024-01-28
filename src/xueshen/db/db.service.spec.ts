@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DbService } from './db.service';
 import { resolve } from 'path';
 
+declare function Block(id:string):void;
 
+
+Block("DbService")
 describe('DbService', () => {
     let service: DbService;
 
@@ -567,6 +570,14 @@ describe('DbService', () => {
                     id: replyId
                 }
             })
+
+          
+
+            
+
+
+
+
 
             expect(reply).toBeNull()
 
