@@ -2,10 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DbService } from './db.service';
 import { resolve } from 'path';
 
-declare function Block(id:string):void;
 
 
-Block("DbService")
+
+
+
+
+
 describe('DbService', () => {
     let service: DbService;
 
@@ -15,7 +18,7 @@ describe('DbService', () => {
         }).compile();
 
         service = module.get<DbService>(DbService);
-        service.resetDatabse_DANGEROUS()
+        await service.resetDatabse_DANGEROUS()
     });
 
 
@@ -336,6 +339,8 @@ describe('DbService', () => {
                         }
                     }
                 })
+
+               
 
                 const post = await service.getMongoClient_DANGEROUS().post.findUnique({
                     where: {
