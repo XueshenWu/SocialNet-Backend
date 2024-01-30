@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import LoginDto from '../dto/loginDto';
 import { DbService } from '../db/db.service';
 import { User } from '@prisma/pg';
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import createUserDto from '../dto/createUserDto';
 
@@ -13,7 +12,7 @@ export class AuthService {
 
 
 
-    async login(longinDto: LoginDto): Promise<string | undefined> {
+    async login(longinDto: LoginDto): Promise<boolean> {
 
         this.logger.verbose("Enter login")
         this.logger.log(`login: ${longinDto.email}`);
@@ -22,20 +21,14 @@ export class AuthService {
 
         if (user && user.password === longinDto.password) {
             this.logger.verbose(`user exists: ${user.email}`);
-            const token = jwt.sign(
-                user.id,
-                process.env.JWT_SECRET,
-                {
-                    expiresIn: '7d'
-                }
-            )
-            this.logger.verbose(`token: ${token}`);
+           
+            
             this.logger.verbose("Exit login")
-            return token;
+            return true;
         } else {
             this.logger.log(`user not found: ${longinDto.email}`);
             this.logger.verbose("Exit login")
-            return undefined;
+            return false;
 
         }
     }
@@ -49,8 +42,10 @@ export class AuthService {
             return false;
         } else {
             this.logger.verbose(`creating user: ${createUserDto.email}`);
-            createUserDto.password = await bcrypt.hash(createUserDto.password, process.env.PSWD_SALT);
 
+            // FIXME: This line has a bug
+            createUserDto.password = await bcrypt.hash(createUserDto.password, process.env.PSWD_SALT);
+            createUserDto.password = "123"
             const res = await this.dbService.createUser(createUserDto);
             this.logger.log(`user created: ${createUserDto.email}`);
             this.logger.verbose("Exit register")

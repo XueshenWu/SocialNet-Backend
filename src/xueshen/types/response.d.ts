@@ -3,7 +3,7 @@ type ResponseStatus = "SUCCESS" | "ERROR" | "FAIL"
 
 type UniResponse<T> = {
     status: ResponseStatus;
-    data: T;
+    data?: T;
 }
 
 export type{
