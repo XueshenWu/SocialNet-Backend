@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 export class AppController {
 
 
-    private readonly configContent: string = "123"
+  private readonly configContent: string = "123"
 
 
   constructor(private readonly appService: AppService) {}
