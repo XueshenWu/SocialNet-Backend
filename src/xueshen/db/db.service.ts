@@ -22,6 +22,14 @@ export class DbService {
 
     }
 
+    async query_user_by_id(id: string): Promise<User | undefined> {
+        return this.pgClient.user.findUnique({
+            where: {
+                id: id
+            }
+        })
+    }
+
 
     async query_post_by_id(id: string): Promise<Post | undefined> {
         const res =  await this.mongoClient.post.findUnique({

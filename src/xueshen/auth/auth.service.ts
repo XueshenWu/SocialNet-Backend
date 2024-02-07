@@ -42,7 +42,7 @@ export class AuthService {
             return false;
         } else {
             this.logger.verbose(`creating user: ${createUserDto.email}`);
-
+            
             // FIXME: This line has a bug
             createUserDto.password = await bcrypt.hash(createUserDto.password, process.env.PSWD_SALT);
             createUserDto.password = "123"
