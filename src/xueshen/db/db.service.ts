@@ -1,18 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaClient as PgClient, Prisma as PgPrisma, User } from '@prisma/pg'
 import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from '@prisma/mongo';
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
+import { PrismaClient } from '@prisma/client';
 
 
 
 
 @Injectable()
 export class DbService {
+
     private readonly pgClient = new PgClient();
     private readonly mongoClient = new MongoClient();
     private readonly logger = new Logger();
 
+    //  byan comments: implements OnModuleInit 
+    // async onModuleInit() {
+    //     await this.pgClient.$connect();
+    //     await this.mongoClient.$connect();
+    // } 
+    
     async query_user_by_email(email: string): Promise<User | undefined> {
         return this.pgClient.user.findUnique({
             where: {
