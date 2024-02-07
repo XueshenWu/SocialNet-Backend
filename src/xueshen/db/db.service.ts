@@ -3,6 +3,7 @@ import { PrismaClient as PgClient, Prisma as PgPrisma, User } from '@prisma/pg'
 import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from '@prisma/mongo';
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
+import createUserDto from '../dto/createUserDto';
 
 
 
@@ -216,12 +217,34 @@ export class DbService {
 
     // Tested
     // return userId if success, undefined if failed(e.g. violation of unique constraint)
-    async createUser(createUserInput: PgPrisma.UserCreateInput): Promise<string | undefined> {
+    async createUser(createUserInput: createUserDto): Promise<string | undefined> {
         const res = await this.pgClient.$transaction(async (tx_pg) => {
+
+           
+
 
             try {
                 const user = await tx_pg.user.create({
-                    data: createUserInput
+                    data: {
+                        email: createUserInput.email,
+                        password: createUserInput.password,
+                        role: createUserInput.role,    
+                    }
+                    
+                })
+                await tx_pg.profile.create({
+                    data:{
+                        name: createUserInput.name??user.id,
+                        user:{
+                            connect:{
+                                id: user.id
+                            }
+                        },
+                        customId: user.id,
+                        gender: createUserInput.gender??"Prefer not to say",
+                       
+                    }
+                
                 })
 
                 await this.mongoClient.user.create({
@@ -231,13 +254,15 @@ export class DbService {
                             create: {
                                 notifications: []
                             }
-                        }
+                        },
+                        
                     }
                 })
                 return user.id;
 
             } catch (e) {
-                this.logger.verbose(e);
+                this.logger.warn(e);
+               
 
                 return undefined
             }
