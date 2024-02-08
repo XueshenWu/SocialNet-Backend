@@ -4,6 +4,7 @@ import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from '@prism
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
 import createUserDto from '../dto/createUserDto';
+import { DbPostService } from './db_post.service';
 
 
 
@@ -13,6 +14,11 @@ export class DbService {
     private readonly pgClient = new PgClient();
     private readonly mongoClient = new MongoClient();
     private readonly logger = new Logger();
+
+
+    constructor(private readonly dbPostService: DbPostService){
+
+    }
 
     async query_user_by_email(email: string): Promise<User | undefined> {
         return this.pgClient.user.findUnique({
@@ -33,12 +39,13 @@ export class DbService {
 
 
     async query_post_by_id(id: string): Promise<Post | undefined> {
-        const res =  await this.mongoClient.post.findUnique({
-            where: {
-                id: id
-            }
-        })
-        return res??undefined;
+        // const res =  await this.mongoClient.post.findUnique({
+        //     where: {
+        //         id: id
+        //     }
+        // })
+        // return res??undefined;
+        return this.dbPostService.query_post_by_id(id);
     }
 
     // Tested
@@ -275,35 +282,37 @@ export class DbService {
     //Tested
     // return postId if success, undefined if failed
     async addPost(post: MongoPrisma.PostCreateInput): Promise<string | undefined> {
-        try {
-            const postRecord = await this.mongoClient.post.create({
-                data: post
-            })
-            return postRecord.id;
-        } catch (e) {
-            this.logger.warn(e);
-            return undefined
-        }
+        // try {
+        //     const postRecord = await this.mongoClient.post.create({
+        //         data: post
+        //     })
+        //     return postRecord.id;
+        // } catch (e) {
+        //     this.logger.warn(e);
+        //     return undefined
+        // }
+        return this.dbPostService.addPost(post);
     }
 
 
     //Tested
     // return true if success, false if failed
     async updatePostStatus(postId: string, status: "DRAFT" | "UNDER_REVIEW" | "PUBLISHED" | "HIDDEN"): Promise<boolean> {
-        try {
-            await this.mongoClient.post.update({
-                where: {
-                    id: postId
-                },
-                data: {
-                    status: status
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
+        // try {
+        //     await this.mongoClient.post.update({
+        //         where: {
+        //             id: postId
+        //         },
+        //         data: {
+        //             status: status
+        //         }
+        //     })
+        //     return true;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return false;
+        // }
+        return this.dbPostService.updatePostStatus(postId, status);
     }
 
 
@@ -311,69 +320,73 @@ export class DbService {
     // Tested
     // return like-Table Id if success, undefined if failed
     async likePost(userId: string, postId: string): Promise<string | undefined> {
-        try {
-            const likeRecord = await this.mongoClient.likeTable.create({
-                data: {
-                    userId: userId,
-                    postId: postId
-                }
-            })
+        // try {
+        //     const likeRecord = await this.mongoClient.likeTable.create({
+        //         data: {
+        //             userId: userId,
+        //             postId: postId
+        //         }
+        //     })
 
 
-            return likeRecord.id;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
+        //     return likeRecord.id;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return undefined;
+        // }
+        return this.dbPostService.likePost(userId, postId);
     }
 
 
     // Tested
     // return true if success, false if failed
     async unlikePost(userId: string, postId: string): Promise<boolean> {
-        try {
-            await this.mongoClient.likeTable.delete({
-                where: {
-                    postId_userId: {
-                        postId: postId,
-                        userId: userId
-                    }
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
+        // try {
+        //     await this.mongoClient.likeTable.delete({
+        //         where: {
+        //             postId_userId: {
+        //                 postId: postId,
+        //                 userId: userId
+        //             }
+        //         }
+        //     })
+        //     return true;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return false;
+        // }
+        return this.dbPostService.unlikePost(userId, postId);
     }
 
     // Tested
     // return replyId if success, undefined if failed
     async addReply(reply: MongoPrisma.ReplyCreateInput): Promise<string | undefined> {
-        try {
-            const replyRecord = await this.mongoClient.reply.create({
-                data: reply
-            })
-            return replyRecord.id;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
+        // try {
+        //     const replyRecord = await this.mongoClient.reply.create({
+        //         data: reply
+        //     })
+        //     return replyRecord.id;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return undefined;
+        // }
+        return this.dbPostService.addReply(reply);
     }
 
     // Tested
     async removeReply(replyId: string): Promise<boolean> {
-        try {
-            await this.mongoClient.reply.delete({
-                where: {
-                    id: replyId
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
+        // try {
+        //     await this.mongoClient.reply.delete({
+        //         where: {
+        //             id: replyId
+        //         }
+        //     })
+        //     return true;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return false;
+        // }
+        return this.dbPostService.removeReply(replyId);
     }
 
 

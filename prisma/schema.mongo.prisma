@@ -39,6 +39,8 @@ model Post {
     replies   Reply[]
     LikeTable LikeTable[]
 
+    createTime DateTime @default(now())
+
     originPost String? @db.String // not care about consistency
 }
 
