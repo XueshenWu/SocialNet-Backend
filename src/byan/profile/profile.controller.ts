@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+// import { CreateProfileDto } from './dto/create-profile.dto';
+// import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Prisma as PgPrisma } from '@prisma/pg';
 
 @Controller('profile')
@@ -28,15 +28,17 @@ export class ProfileController {
     return this.profileService.findOne(+id);
   }
 
-  //only for testing
+  // only for testing
   @Post()
   create(@Body() createProfileDto: PgPrisma.ProfileCreateInput) {
+    console.log(createProfileDto.customId, createProfileDto.name);
     return this.profileService.create(createProfileDto);
   }
 
   // besed on the service provided by DbService
   @Patch(':id')
   update(@Param('id') userId: string, @Body() updateProfileDto: PgPrisma.ProfileUpdateInput) {
+    console.log(updateProfileDto.customId, updateProfileDto.user);
     return this.profileService.update(userId, updateProfileDto);
   }
 

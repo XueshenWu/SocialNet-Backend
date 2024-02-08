@@ -1,20 +1,58 @@
 ### Create a new uswr
 
-POST http://localhost:8000/profile
+
+# POST http://localhost:8000/profile
+# Content-Type: application/json
+
+# {
+#   "email": "asfg@123.com",
+#   "password": "sadff",
+#   "gender": "male", 
+#   "interest": "TRAVEL"
+# }
+
+#INSERT INTO "User" (id, email, password, role) 
+#VALUES ('097ab86f-c422-447b-8d50-855322f9fbb9', 'testbyan@163.com', '123456', 'COMMON');
+
+# {
+#   "name": "John Doe",
+#   "customId": "johndoe23",
+#   "bio": "A brief biography.",
+#   "interests": ["TRAVEL", "READING"],
+#   "gender": "male",
+#   "user": {
+#     "connect": {
+#       "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
+#     }
+#   }
+# }
+
+#INSERT INTO "Profile" ("userId", name, "customId", avatar, bio, interests, gender, "updateTime")
+#VALUES ('097ab86f-c422-447b-8d50-855322f9fbb9', 'John Doe', 'johndoe23', NULL, 'A brief biography.', ARRAY[CAST('TRAVEL' AS "Interest"), CAST('MUSIC' AS "Interest")], 'male', Now());
+
+
+# PATCH http://localhost:8000/profile/11e33
+# Content-Type: application/json
+
+# {
+#   "email": "bbq@123.com",
+#   "password": "sadff",
+#   "gender": "male"
+# }
+
+
+PATCH  http://localhost:8000/profile/097ab86f-c422-447b-8d50-855322f9fbb9
 Content-Type: application/json
 
 {
-  "email": "asfg@123.com",
-  "password": "sadff",
-  "gender": "male"
-}
-
-
-PATCH http://localhost:8000/profile/11e33
-Content-Type: application/json
-
-{
-  "email": "bbq@123.com",
-  "password": "sadff",
-  "gender": "male"
+  "name": "John Doe",
+  "customId": "johndoe25",
+  "bio": "A brief biography.",
+  "interests": ["TRAVEL", "READING"],
+  "gender": "male",
+  "user": {
+    "connect": {
+      "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
+    }
+  }
 }

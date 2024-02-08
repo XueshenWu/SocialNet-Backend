@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+// import { CreateProfileDto } from './dto/create-profile.dto';
+// import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DbService } from '../../xueshen/db/db.service';
 import { Prisma as PgPrisma } from '@prisma/pg';
 
@@ -9,6 +9,7 @@ export class ProfileService {
   constructor(private readonly dbService: DbService) {}
 
   // create(createProfileDto: CreateProfileDto) {
+  //   console.log("This action adds a new profile");
   //   return 'This action adds a new profile';
   // }
   // create(email: string, password: string) {
@@ -31,7 +32,7 @@ export class ProfileService {
   //   return `This action updates a #${id} profile`;
   // }
 
-  //only for testing
+  // only for testing
   create(createProfileDto: PgPrisma.ProfileCreateInput) {
     return this.dbService.createProfile(createProfileDto);
   }
