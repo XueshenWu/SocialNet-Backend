@@ -29,7 +29,7 @@ model Post {
     id      String  @id @default(auto()) @map("_id") @db.ObjectId
     title   String
     content String
-    media   String?
+    media   String[]
 
     status PostStatus @default(DRAFT)
 
@@ -41,7 +41,7 @@ model Post {
 
     createTime DateTime @default(now())
 
-    originPost String? @db.String // not care about consistency
+    referredPost String? @db.String // not care about consistency
 }
 
 model LikeTable {
