@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DbService } from './db.service';
 import { resolve } from 'path';
 import createUserDto from '../dto/createUserDto';
+import { DbPostService } from './db_post.service';
+import { ConnectionService } from './connection.service';
 
 
 
@@ -15,7 +17,10 @@ describe('DbService', () => {
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [DbService],
+            providers: [DbService, 
+                    DbPostService,
+                    ConnectionService
+            ],
         }).compile();
 
         service = module.get<DbService>(DbService);
