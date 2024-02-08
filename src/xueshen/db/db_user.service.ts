@@ -7,7 +7,7 @@ export class DbUserService {
     constructor(private readonly connectionService: ConnectionService) { }
 
     async updateProfile(updateProfileDto: UpdateProfileDto) {
-        await this.connectionService.pgClient.profile.update({
+        const res = await this.connectionService.pgClient.profile.update({
             where: {
                 userId: updateProfileDto.userId
             },
@@ -15,6 +15,8 @@ export class DbUserService {
                 ...updateProfileDto.getNoneEmptyData()
             }
         })
+
+        return !res === null
 
     }
 
