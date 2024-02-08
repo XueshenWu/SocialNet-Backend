@@ -5,6 +5,8 @@ import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
 import createUserDto from '../dto/createUserDto';
 import { DbPostService } from './db_post.service';
+import { DbUserService } from './db_user.service';
+import UpdateProfileDto from '../dto/updateProfileDto';
 
 
 
@@ -16,7 +18,7 @@ export class DbService {
     private readonly logger = new Logger();
 
 
-    constructor(private readonly dbPostService: DbPostService){
+    constructor(private readonly dbPostService: DbPostService, private readonly dbUserService:DbUserService){
 
     }
 
@@ -391,16 +393,17 @@ export class DbService {
 
 
     // return userId if success, undefined if failed
-    async updateProfile(profile: PgPrisma.ProfileCreateInput): Promise<string | undefined> {
-        try {
-            const profileRecord = await this.pgClient.profile.create({
-                data: profile
-            })
-            return profileRecord.userId;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
+    async updateProfile(profile: UpdateProfileDto): Promise<boolean> {
+        // try {
+        //     const profileRecord = await this.pgClient.profile.create({
+        //         data: profile
+        //     })
+        //     return profileRecord.userId;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return undefined;
+        // }
+        return this.dbUserService.updateProfile(profile);
     }
 
     private async aux_hide_all_posts(tx: PTX<"mongo">, id: string): Promise<boolean> {
