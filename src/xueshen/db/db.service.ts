@@ -351,7 +351,49 @@ export class DbService {
         }
     }
 
+    // comments by byan:
+    // Only for testing
+    // return userId if success, undefined if failed(e.g. violation of unique constraint)
+    async createProfile(createProfileInput: PgPrisma.ProfileCreateInput) {
+        try {
+            const profileRecord = await this.pgClient.profile.create({
+                data: createProfileInput
+            })
+            return profileRecord;
+        } catch (e) {
+            this.logger.verbose(e);
 
+            return undefined;
+        }
+    }
+
+    // comments by byan:
+    // When doing user signup service, maybe need to set up a corresponding profile at the same time?
+    // New profile create service will not be implemented in profile service maybe?
+
+    // comments by byan:
+    // The updateProfile() I need maybe?
+    async updateProfileNew(userId: string, profile: PgPrisma.ProfileUpdateInput): Promise<PgPrisma.ProfileUpdateInput | undefined> {
+        try {
+            const profileRecord = await this.pgClient.profile.update({
+                where: {
+                    userId : userId
+                },
+                data: profile
+            })
+            return profileRecord;
+        } catch (e) {
+            this.logger.verbose(e);
+            return undefined;
+        }
+    }
+    
+    // comments by byan: 
+    // 1) Input: why not userId, PgPrisma.ProfileUpdateInput
+    // 2) Type: Why use PgPrisma.ProfileCreateInput instead of PgPrisma.ProfileUpdateInput
+    // 3) Method: why use profile.create instead of profile.update?
+    // 4) Return: Why return profileRecord.userId istead of profileRecord
+    
     // return userId if success, undefined if failed
     async updateProfile(profile: PgPrisma.ProfileCreateInput): Promise<string | undefined> {
         try {

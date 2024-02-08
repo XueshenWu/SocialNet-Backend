@@ -2,16 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProfileService } from './profile.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { Prisma } from '@prisma/pg';
+import { Prisma as PgPrisma } from '@prisma/pg';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(createProfileDto);
-  }
+  // @Post()
+  // create(@Body() createProfileDto: CreateProfileDto) {
+  //   return this.profileService.create(createProfileDto);
+  // }
+
+  // @Post()
+  // create(@Body() createProfileDto: CreateProfileDto) {
+  //   return this.profileService.create(createProfileDto.email, createProfileDto.password);
+  // }
 
   @Get()
   findAll() {
@@ -23,9 +28,16 @@ export class ProfileController {
     return this.profileService.findOne(+id);
   }
 
+  //only for testing
+  @Post()
+  create(@Body() createProfileDto: PgPrisma.ProfileCreateInput) {
+    return this.profileService.create(createProfileDto);
+  }
+
+  // besed on the service provided by DbService
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(+id, updateProfileDto);
+  update(@Param('id') userId: string, @Body() updateProfileDto: PgPrisma.ProfileUpdateInput) {
+    return this.profileService.update(userId, updateProfileDto);
   }
 
   @Delete(':id')

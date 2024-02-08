@@ -1,0 +1,20 @@
+### Create a new uswr
+
+POST http://localhost:8000/profile
+Content-Type: application/json
+
+{
+  "email": "asfg@123.com",
+  "password": "sadff",
+  "gender": "male"
+}
+
+
+PATCH http://localhost:8000/profile/11e33
+Content-Type: application/json
+
+{
+  "email": "bbq@123.com",
+  "password": "sadff",
+  "gender": "male"
+}
