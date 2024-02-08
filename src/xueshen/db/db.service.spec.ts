@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DbService } from './db.service';
 import { resolve } from 'path';
+import createUserDto from '../dto/createUserDto';
 
 
 
@@ -47,11 +48,15 @@ describe('DbService', () => {
 
         it("should create a user and return id", async () => {
 
-            const res = await service.createUser({
+
+            const createUserDto:createUserDto = {
                 "email": "123123@gmail.com",
                 "password": "123",
-                "role": "COMMON"
-            })
+                "role": "COMMON",
+
+            }
+
+            const res = await service.createUser(createUserDto)
 
             const user = await service.getPgClient_DANGEROUS().user.findUnique({
                 where: {
@@ -67,7 +72,8 @@ describe('DbService', () => {
             const res = await service.createUser({
                 "email": "abcdefg@ms.com",
                 "password": "123",
-                "role": "COMMON"
+                "role": "COMMON",
+                "name": "123"
             })
             expect(res).toBeUndefined();
         })

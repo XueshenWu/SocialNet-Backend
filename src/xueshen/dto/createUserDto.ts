@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, IsEnum, IsNotEmpty, isString } from 'class-validator';
 import { User } from "@prisma/pg"
 
 export default class createUserDto {
@@ -17,5 +17,9 @@ export default class createUserDto {
 
     @IsNotEmpty()
     role: User["role"];
+
+
+    @IsString()
+    gender?:string
 
 }
