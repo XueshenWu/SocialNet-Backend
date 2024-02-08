@@ -4,6 +4,8 @@ import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from '@prism
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
 import { PrismaClient } from '@prisma/client';
+import createUserDto from '../dto/createUserDto';
+import { DbPostService } from './db_post.service';
 
 
 
@@ -20,6 +22,10 @@ export class DbService {
     //     await this.pgClient.$connect();
     //     await this.mongoClient.$connect();
     // } 
+
+    constructor(private readonly dbPostService: DbPostService){
+
+    }
     
     async query_user_by_email(email: string): Promise<User | undefined> {
         return this.pgClient.user.findUnique({
