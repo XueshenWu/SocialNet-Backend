@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DbService } from '../../xueshen/db/db.service';
 import { Prisma as PgPrisma } from '@prisma/pg';
+import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
 
 @Injectable()
 export class ProfileService {
@@ -40,6 +41,10 @@ export class ProfileService {
   // update(userId: string, updateProfileDto: PgPrisma.ProfileUpdateInput) {
   //   return this.dbService.updateProfileNew(userId, updateProfileDto);
   // }
+
+  update(updateProfileDto: UpdateProfileDto) {
+    return this.dbService.updateProfile(updateProfileDto);
+  }
 
   remove(id: number) {
     return `This action removes a #${id} profile`;
