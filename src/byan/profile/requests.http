@@ -41,7 +41,7 @@
 # }
 
 
-PATCH  http://localhost:8000/profile/097ab86f-c422-447b-8d50-855322f9fbb9
+POST  http://localhost:8000/profile/097ab86f-c422-447b-8d50-855322f9fbb9
 Content-Type: application/json
 
 {

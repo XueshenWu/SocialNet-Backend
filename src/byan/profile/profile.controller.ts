@@ -36,11 +36,12 @@ export class ProfileController {
   }
 
   // besed on the service provided by DbService
-  @Patch(':id')
-  update(@Param('id') userId: string, @Body() updateProfileDto: PgPrisma.ProfileUpdateInput) {
-    console.log(updateProfileDto.customId, updateProfileDto.user);
-    return this.profileService.update(userId, updateProfileDto);
-  }
+  // @Patch(':id')
+  // @Post(':id')
+  // update(@Param('id') userId: string, @Body() updateProfileDto: PgPrisma.ProfileUpdateInput) {
+  //   console.log(updateProfileDto.customId, updateProfileDto.user);
+  //   return this.profileService.update(userId, updateProfileDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

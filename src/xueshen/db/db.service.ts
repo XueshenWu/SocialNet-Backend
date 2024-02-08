@@ -373,20 +373,20 @@ export class DbService {
 
     // comments by byan:
     // The updateProfile() I need maybe?
-    async updateProfileNew(userId: string, profile: PgPrisma.ProfileUpdateInput): Promise<PgPrisma.ProfileUpdateInput | undefined> {
-        try {
-            const profileRecord = await this.pgClient.profile.update({
-                where: {
-                    userId : userId
-                },
-                data: profile
-            })
-            return profileRecord;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
-    }
+    // async updateProfileNew(userId: string, profile: PgPrisma.ProfileUpdateInput): Promise<PgPrisma.ProfileUpdateInput | undefined> {
+    //     try {
+    //         const profileRecord = await this.pgClient.profile.update({
+    //             where: {
+    //                 userId : userId
+    //             },
+    //             data: profile
+    //         })
+    //         return profileRecord;
+    //     } catch (e) {
+    //         this.logger.verbose(e);
+    //         return undefined;
+    //     }
+    // }
     
     // comments by byan: 
     // 1) Input: why not userId, PgPrisma.ProfileUpdateInput

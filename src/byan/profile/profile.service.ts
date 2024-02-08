@@ -37,9 +37,9 @@ export class ProfileService {
     return this.dbService.createProfile(createProfileDto);
   }
 
-  update(userId: string, updateProfileDto: PgPrisma.ProfileUpdateInput) {
-    return this.dbService.updateProfileNew(userId, updateProfileDto);
-  }
+  // update(userId: string, updateProfileDto: PgPrisma.ProfileUpdateInput) {
+  //   return this.dbService.updateProfileNew(userId, updateProfileDto);
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} profile`;
