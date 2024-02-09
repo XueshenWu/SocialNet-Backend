@@ -9,6 +9,8 @@ import { DbUserService } from './db_user.service';
 import UpdateProfileDto from '../dto/updateProfileDto';
 import CreatePostDto from '../dto/createPostDto';
 import CreateReplyDto from '../dto/createReplyDto';
+import { exec } from 'child_process';
+import CreateRepostDto from '../dto/createRepostDto';
 
 
 
@@ -20,10 +22,14 @@ export class DbService {
     private readonly logger = new Logger();
 
 
-    constructor(private readonly dbPostService: DbPostService, private readonly dbUserService:DbUserService){
+    constructor(private readonly dbPostService: DbPostService, private readonly dbUserService: DbUserService) {
 
     }
 
+
+    async repost(createRepostDto:CreateRepostDto):Promise<string|undefined>{
+        return await this.dbPostService.repost(createRepostDto);
+    }
     async query_user_by_email(email: string): Promise<User | undefined> {
         return this.pgClient.user.findUnique({
             where: {
@@ -31,6 +37,14 @@ export class DbService {
             }
         })
 
+    }   
+
+    async query_replies_by_post_id(id:string){
+        return this.dbPostService.getRepliesByPostId(id);
+    }
+
+    async query_posts_by_user_id(id: string): Promise<Post[]> {
+        return this.dbPostService.findPostsByUserId(id);
     }
 
     async query_user_by_id(id: string): Promise<User | undefined> {
@@ -49,7 +63,7 @@ export class DbService {
         //     }
         // })
         // return res??undefined;
-        return this.dbPostService.query_post_by_id(id);
+        return this.dbPostService.findPostByPostId(id);
     }
 
     // Tested
@@ -89,6 +103,9 @@ export class DbService {
     async resetDatabse_DANGEROUS(log = false) {
 
         assert(process.env.ALLOW_DANGEROUS === "TRUE")
+        // await new Promise((resolve)=>exec(` npx prisma migrate reset --force --schema="prisma/schema.mongo.prisma"&& npx prisma migrate reset --force --schema="prisma/schema.mongo.prisma"`, (err, stdout, stderr) => {resolve(undefined)}))
+        return;
+        
         const pgClient = this.getPgClient_DANGEROUS()
 
 
@@ -108,11 +125,11 @@ export class DbService {
             await tx.likeTable.deleteMany()
             await tx.likeTable.deleteMany()
 
-         
+
 
             await tx.post.deleteMany()
             await tx.post.deleteMany()
-            
+
             await tx.notificationCenter.deleteMany()
             await tx.notificationCenter.deleteMany()
 
@@ -230,7 +247,7 @@ export class DbService {
     async createUser(createUserInput: createUserDto): Promise<string | undefined> {
         const res = await this.pgClient.$transaction(async (tx_pg) => {
 
-           
+
 
 
             try {
@@ -238,23 +255,23 @@ export class DbService {
                     data: {
                         email: createUserInput.email,
                         password: createUserInput.password,
-                        role: createUserInput.role,    
+                        role: createUserInput.role,
                     }
-                    
+
                 })
                 await tx_pg.profile.create({
-                    data:{
-                        name: createUserInput.name??user.id,
-                        user:{
-                            connect:{
+                    data: {
+                        name: createUserInput.name ?? user.id,
+                        user: {
+                            connect: {
                                 id: user.id
                             }
                         },
                         customId: user.id,
-                        gender: createUserInput.gender??"Prefer not to say",
-                       
+                        gender: createUserInput.gender ?? "Prefer not to say",
+
                     }
-                
+
                 })
 
                 await this.mongoClient.user.create({
@@ -265,15 +282,15 @@ export class DbService {
                                 notifications: []
                             }
                         },
-                        
+
                     }
                 })
+               
                 return user.id;
 
             } catch (e) {
+                console.log(e)
                 this.logger.warn(e);
-               
-
                 return undefined
             }
 
@@ -377,7 +394,7 @@ export class DbService {
     }
 
     // Tested
-    async removeReply(replyId: string): Promise<boolean> {
+    async hidePost(postId: string): Promise<boolean> {
         // try {
         //     await this.mongoClient.reply.delete({
         //         where: {
@@ -389,7 +406,7 @@ export class DbService {
         //     this.logger.verbose(e);
         //     return false;
         // }
-        return this.dbPostService.removeReply(replyId);
+        return this.dbPostService.hidePost(postId);
     }
 
 
@@ -579,7 +596,7 @@ export class DbService {
                     await this.mongoClient.$transaction(async (tx_mongo: PTX<"mongo">) => {
                         await this.aux_dump_post(tx_mongo, id);
                         await this.aux_dump_like(tx_mongo, id);
-                     
+
                         await this.aux_dump_ncenter(tx_mongo, id);
                         await this.aux_dump_user_mongo(tx_mongo, id);
                     });
@@ -709,7 +726,7 @@ export class DbService {
         }
     }
 
-    
+
 
 
 

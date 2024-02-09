@@ -14,7 +14,9 @@ generator client {
 model User {
     id String @id @map("_id") @db.String
 
-    posts Post[] @relation("posts")
+    posts_ Post[] @relation("posts")
+
+    posts  String[]
 
     LikeTable LikeTable[]
 
@@ -24,7 +26,8 @@ model User {
 model Post {
     id String @id @default(auto()) @map("_id") @db.ObjectId
 
-    title String
+
+    title String?
 
     content String?
 
@@ -39,14 +42,16 @@ model Post {
 
     replyParentId String? @db.ObjectId
     replyParent   Post?   @relation("replyTo", fields: [replyParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-   
-    replies       Post[]  @relation("replyTo")
+
+    replies_ Post[]   @relation("replyTo")
+    replies  String[]
 
     repostParentId String? @db.ObjectId
-    repostParent   Post?   @relation("repostTo", fields: [repostParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-    reposts        Post[]  @relation("repostTo")
-
-    likes LikeTable[]
+    repostParent Post?       @relation("repostTo", fields: [repostParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+    reposts_     Post[]      @relation("repostTo")
+    
+    reposts      String[]
+    likes        LikeTable[]
 }
 
 model LikeTable {

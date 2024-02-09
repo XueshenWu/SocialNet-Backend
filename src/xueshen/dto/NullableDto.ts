@@ -1,4 +1,4 @@
-class NullableDto{
+export default class NullableDto{
     getNoneEmptyData(){
         for(let key in this) {
             if(this[key] === undefined) {

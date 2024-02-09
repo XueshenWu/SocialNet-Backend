@@ -9,4 +9,12 @@ export default class CreateReplyDto extends CreatePostDto {
     @IsString()
     replyParentId: Exclude<Post['id'], undefined>
 
+
+    constructor(title: string, authorId: string, replyParentId: string, media?: string[], content?: string) {
+
+        super(title, authorId, media, content);
+
+        this.replyParentId = replyParentId;
+    }
+
 }

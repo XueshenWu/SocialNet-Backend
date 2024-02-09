@@ -20,6 +20,15 @@ export class DbUserService {
 
     }
 
+    async userExists(userId: string) {
+        const res = await this.connectionService.pgClient.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        return res !== null
+    }
+
 
 
 }
