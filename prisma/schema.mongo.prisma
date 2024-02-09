@@ -8,7 +8,7 @@ datasource db {
 
 generator client {
     provider = "prisma-client-js"
-     output   = "../node_modules/@prisma/mongo"
+    output   = "../node_modules/@prisma/mongo"
 }
 
 model User {
@@ -16,34 +16,36 @@ model User {
 
     posts Post[] @relation("posts")
 
-    repliesFrom Reply[] @relation("repliesFrom")
-    repliesTo   Reply[] @relation("repliesTo")
-
     LikeTable LikeTable[]
 
-    notificationCenter NotificationCenter? 
-
+    notificationCenter NotificationCenter?
 }
 
 model Post {
-    id      String  @id @default(auto()) @map("_id") @db.ObjectId
-    title   String
-    content String
-    media   String[]
+    id String @id @default(auto()) @map("_id") @db.ObjectId
 
-    
+    title String
+
+    content String
+
+    media String[]
 
     status PostStatus @default(DRAFT)
 
     author   User   @relation(name: "posts", fields: [authorId], references: [id])
     authorId String @db.String
 
-    replies   Reply[]
-    LikeTable LikeTable[]
-
     createTime DateTime @default(now())
 
-    referredPost String? @db.String // not care about consistency
+    replyParentId String? @db.ObjectId
+    replyParent   Post?   @relation("replyTo", fields: [replyParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+    replies       Post[]  @relation("replyTo")
+
+    repostParentId String? @db.ObjectId
+    repostParent   Post?   @relation("repostTo", fields: [repostParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+    reposts        Post[]  @relation("repostTo")
+
+    likes LikeTable[]
 }
 
 model LikeTable {
@@ -58,40 +60,20 @@ model LikeTable {
     @@unique([postId, userId])
 }
 
-model Reply {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-
-    text String
-
-    from   User   @relation(name: "repliesFrom", fields: [fromId], references: [id])
-    fromId String @db.String
-
-    to   User   @relation(name: "repliesTo", fields: [toId], references: [id])
-    toId String @db.String
-
-    post   Post   @relation(fields: [postId], references: [id])
-    postId String @db.ObjectId
-}
-
 model NotificationCenter {
-    
-
     user   User   @relation(fields: [userId], references: [id])
-    userId String @id @db.String @map("_id")
- 
+    userId String @id @map("_id") @db.String
+
     notifications Notification[]
 }
 
-type Notification{
-    type NotificationType
-    content String
-    sender String
-    createTime DateTime @default(now())
-    read Boolean @default(false)
-    
+type Notification {
+    type       NotificationType
+    content    String
+    sender     String
+    createTime DateTime         @default(now())
+    read       Boolean          @default(false)
 }
-
-
 
 enum NotificationType {
     LIKE
