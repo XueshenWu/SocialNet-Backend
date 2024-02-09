@@ -19,7 +19,7 @@ import { Profile } from "@prisma/pg"
 
 
 
-export default class UpdateProfileDto {
+export default class UpdateProfileDto extends NullableDto{
 
     @IsString()
     @IsNotEmpty()
@@ -45,14 +45,6 @@ export default class UpdateProfileDto {
     readonly gender: Profile["gender"]
 
 
-    getNoneEmptyData() {
-        for(let key in this) {
-            if(this[key] === undefined) {
-                delete this[key]
-            }
-        }
-        return this
-    }
 
 
 }

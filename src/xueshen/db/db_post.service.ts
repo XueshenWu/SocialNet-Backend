@@ -3,6 +3,8 @@ import { ConnectionService } from "./connection.service";
 import { Post } from "@prisma/mongo";
 import { Prisma as MongoPrisma } from "@prisma/mongo";
 import { Logger } from "@nestjs/common";
+import CreatePostDto from "../dto/createPostDto";
+import CreateReplyDto from "../dto/createReplyDto";
 
 
 
@@ -26,10 +28,12 @@ export class DbPostService {
     }
 
 
-    async addPost(post: MongoPrisma.PostCreateInput): Promise<string | undefined> {
+    async addPost(post: CreatePostDto): Promise<string | undefined> {
         try {
             const postRecord = await this.connectionService.mongoClient.post.create({
-                data: post
+                data: {
+                    ...post.getNoneEmptyData()
+                }
             })
             return postRecord.id;
         } catch (e) {
@@ -88,10 +92,28 @@ export class DbPostService {
             return false;
         }
     }
-    async addReply(reply: MongoPrisma.ReplyCreateInput): Promise<string | undefined> {
+    async addReply(reply: CreateReplyDto): Promise<string | undefined> {
         try {
-            const replyRecord = await this.connectionService.mongoClient.reply.create({
-                data: reply
+            // const res = await this.connectionService.mongoClient.$transaction(async (tx)=>{
+            //     await tx.post.create({
+            //         data: {
+            //             ...reply.getNoneEmptyData()
+            //         }
+            //     })
+            //     await tx.post.update({
+            //         where: {
+            //             id: reply.replyParentId
+            //         },
+            //         data: {
+                      
+            //         }
+            //     })
+            // })
+
+            const replyRecord = await this.connectionService.mongoClient.post.create({
+                data: {
+                    ...reply.getNoneEmptyData()
+                }
             })
             return replyRecord.id;
         } catch (e) {
@@ -102,9 +124,12 @@ export class DbPostService {
 
     async removeReply(replyId: string): Promise<boolean> {
         try {
-            await this.connectionService.mongoClient.reply.delete({
+            await this.connectionService.mongoClient.post.update({
                 where: {
                     id: replyId
+                },
+                data: {
+                    status:"HIDDEN"
                 }
             })
             return true;
@@ -114,6 +139,7 @@ export class DbPostService {
         }
     }
 
+    //TODO: add repost apis
 
 
 

@@ -26,7 +26,7 @@ model Post {
 
     title String
 
-    content String
+    content String?
 
     media String[]
 
@@ -39,6 +39,7 @@ model Post {
 
     replyParentId String? @db.ObjectId
     replyParent   Post?   @relation("replyTo", fields: [replyParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+   
     replies       Post[]  @relation("replyTo")
 
     repostParentId String? @db.ObjectId

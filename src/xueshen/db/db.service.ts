@@ -7,6 +7,8 @@ import createUserDto from '../dto/createUserDto';
 import { DbPostService } from './db_post.service';
 import { DbUserService } from './db_user.service';
 import UpdateProfileDto from '../dto/updateProfileDto';
+import CreatePostDto from '../dto/createPostDto';
+import CreateReplyDto from '../dto/createReplyDto';
 
 
 
@@ -106,8 +108,7 @@ export class DbService {
             await tx.likeTable.deleteMany()
             await tx.likeTable.deleteMany()
 
-            await tx.reply.deleteMany()
-            await tx.reply.deleteMany()
+         
 
             await tx.post.deleteMany()
             await tx.post.deleteMany()
@@ -283,7 +284,7 @@ export class DbService {
 
     //Tested
     // return postId if success, undefined if failed
-    async addPost(post: MongoPrisma.PostCreateInput): Promise<string | undefined> {
+    async addPost(post: CreatePostDto): Promise<string | undefined> {
         // try {
         //     const postRecord = await this.mongoClient.post.create({
         //         data: post
@@ -362,7 +363,7 @@ export class DbService {
 
     // Tested
     // return replyId if success, undefined if failed
-    async addReply(reply: MongoPrisma.ReplyCreateInput): Promise<string | undefined> {
+    async addReply(reply: CreateReplyDto): Promise<string | undefined> {
         // try {
         //     const replyRecord = await this.mongoClient.reply.create({
         //         data: reply
@@ -511,19 +512,7 @@ export class DbService {
         }
     }
 
-    private async aux_dump_reply(tx: PTX<"mongo">, id: string): Promise<boolean> {
-        try {
-            await tx.reply.deleteMany({
-                where: {
-                    fromId: id
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
-    }
+
 
     private async aux_dump_ncenter(tx: PTX<"mongo">, id: string): Promise<boolean> {
         try {
@@ -590,7 +579,7 @@ export class DbService {
                     await this.mongoClient.$transaction(async (tx_mongo: PTX<"mongo">) => {
                         await this.aux_dump_post(tx_mongo, id);
                         await this.aux_dump_like(tx_mongo, id);
-                        await this.aux_dump_reply(tx_mongo, id);
+                     
                         await this.aux_dump_ncenter(tx_mongo, id);
                         await this.aux_dump_user_mongo(tx_mongo, id);
                     });
@@ -720,22 +709,7 @@ export class DbService {
         }
     }
 
-    private async aux_nullify_reply(tx: PTX<"mongo">, id: string): Promise<boolean> {
-        try {
-            await tx.reply.updateMany({
-                data: {
-                    fromId: process.env.VOID_USER_ID
-                },
-                where: {
-                    fromId: id
-                }
-            });
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
-    }
+    
 
 
 
@@ -762,7 +736,6 @@ export class DbService {
                         await this.aux_hide_all_posts(tx_mongo, id);
                         await this.aux_nullify_post(tx_mongo, id);
                         await this.aux_nullify_like(tx_mongo, id);
-                        await this.aux_nullify_reply(tx_mongo, id);
                         await this.aux_dump_user_mongo(tx_mongo, id);
                     });
                     return true;

@@ -1,7 +1,7 @@
 import { IsString, IsEmail, IsEnum, IsNotEmpty, isString } from 'class-validator';
 import { User } from "@prisma/pg"
 
-export default class createUserDto {
+export default class CreateUserDto extends NullableDto{
 
     @IsString()
     name?: string;
