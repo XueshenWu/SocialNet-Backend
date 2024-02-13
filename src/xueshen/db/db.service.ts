@@ -39,6 +39,11 @@ export class DbService {
     }
 
 
+
+    async isFollowing(id_from: string, id_to: string): Promise<boolean> {
+        return this.dbUserService.isFollowing(id_from, id_to);
+    }
+
     async repost(createRepostDto:CreateRepostDto):Promise<string|undefined>{
         return await this.dbPostService.repost(createRepostDto);
     }
