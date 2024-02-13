@@ -18,6 +18,7 @@ describe('FollowController', () => {
 
     controller = module.get<FollowController>(FollowController);
     followService = module.get<FollowService>(FollowService);
+
   });
 
   it('should be defined', () => {

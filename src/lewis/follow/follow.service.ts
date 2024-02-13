@@ -15,19 +15,19 @@ export class FollowService {
         }
 
         try {
-            // Check if user is already following
-            // const isFollowing = await this.dbService.isFollowing(id_from, id_to);
-            // if (isFollowing) {
-            //     this.logger.log('User is already following')
-            //     return false;
-            // }
-
             // Check if user exists
-            // const userExists = await this.dbService.userExists(id_to);
-            // if (!userExists) {
-            //     this.logger.log('User does not exist')
-            //     return false;
-            // }
+            const userExists = await this.dbService.query_posts_by_user_id(id_to);
+            if (!userExists) {
+                this.logger.log('User does not exist')
+                return false;
+            }
+
+            // Check if user is already following
+            const isFollowing = await this.dbService.isFollowing(id_from, id_to);
+            if (isFollowing) {
+                this.logger.log('User is already following')
+                return false;
+            }
 
             // Send the Follow Request
             await this.dbService.followUser(id_from, id_to);
@@ -49,19 +49,19 @@ export class FollowService {
         }
 
         try {
-            // Check if user is already following
-            // const isFollowing = await this.dbService.isFollowing(id_from, id_to);
-            // if (!isFollowing) {
-            //     this.logger.log('User is not following')
-            //     return false;
-            // }
-
             // Check if user exists
-            // const userExists = await this.dbService.userExists(id_to);
-            // if (!userExists) {
-            //     this.logger.log('User does not exist')
-            //     return false;
-            // }
+            const userExists = await this.dbService.query_posts_by_user_id(id_to);
+            if (!userExists) {
+                this.logger.log('User does not exist')
+                return false;
+            }
+
+            // Check if user is already following
+            const isFollowing = await this.dbService.isFollowing(id_from, id_to);
+            if (!isFollowing) {
+                this.logger.log('User is not following')
+                return false;
+            }
 
             // Send the Unfollow Request
             await this.dbService.unfollowUser(id_from, id_to);
