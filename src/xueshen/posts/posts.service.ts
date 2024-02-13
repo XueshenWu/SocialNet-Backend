@@ -13,7 +13,18 @@ export class PostsService {
         return await this.dbService.addPost(createPostDto);
     }
 
-    
+
+
+    async getOriginPostsByUserId(id:string):Promise<Post[]>{
+        return await this.dbService.query_origin_posts_by_user_id(id);
+    }
+    async getRepostedPostsByUserId(id:string):Promise<Post[]>{
+        return await this.dbService.query_reposted_posts_by_user_id(id);
+    }
+
+    async getLikedPostsByUserId(id:string):Promise<String[]>{
+        return await this.dbService.query_liked_posts_by_user_id(id);
+    }
 
     async getPostByPostId(id:string):Promise<Post>{
         return await this.dbService.query_post_by_id(id);

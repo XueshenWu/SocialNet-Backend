@@ -49,6 +49,39 @@ export class DbPostService {
     }
 
 
+    async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
+        try{
+            const posts = await this.connectionService.mongoClient.post.findMany({
+                where:{
+                    authorId: id,
+                    repostParentId: null
+                }
+            })
+            return posts;
+        }catch(e){
+            this.logger.verbose(e);
+            return [];
+        }
+    }
+
+    async query_reposted_posts_by_user_id(id: string): Promise<Post[]> {
+        try{
+            const posts = await this.connectionService.mongoClient.post.findMany({
+                where:{
+                    authorId: id,
+                    repostParentId: {
+                        not: null
+                    }
+                }
+            })
+            return posts;
+        }catch(e){
+            this.logger.verbose(e);
+            return [];
+        }
+    }
+    
+
     //tested
     async addPost(post: CreatePostDto): Promise<string | undefined> {
         try {
@@ -85,6 +118,21 @@ export class DbPostService {
             return undefined
         }
     }
+
+    async query_liked_posts_by_user_id(id: string): Promise<String[]> {
+        try{
+            const id_posts =  await this.connectionService.mongoClient.likeTable.findMany({
+                where:{
+                    userId: id
+                }           
+            })
+            return id_posts.map((x)=>x.postId);
+        }catch(e){
+            this.logger.verbose(e);
+            return [];
+        }    
+    }
+
 
 
     async updatePostStatus(postId: string, status: "DRAFT" | "UNDER_REVIEW" | "PUBLISHED" | "HIDDEN"): Promise<boolean> {

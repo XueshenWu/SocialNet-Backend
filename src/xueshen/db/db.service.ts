@@ -26,6 +26,18 @@ export class DbService {
 
     }
 
+    async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
+        return this.dbPostService.query_origin_posts_by_user_id(id);
+    }
+
+    async query_reposted_posts_by_user_id(id: string): Promise<Post[]> {
+        return this.dbPostService.query_reposted_posts_by_user_id(id);
+    }
+
+    async query_liked_posts_by_user_id(id: string): Promise<String[]> {
+       return this.dbPostService.query_liked_posts_by_user_id(id);
+    }
+
 
     async repost(createRepostDto:CreateRepostDto):Promise<string|undefined>{
         return await this.dbPostService.repost(createRepostDto);
