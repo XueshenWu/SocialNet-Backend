@@ -8,14 +8,14 @@ export class FollowService {
 
     // Send follow request
     async followUser(id_from: string, id_to: string): Promise<boolean> {
+        if (!id_from || !id_to) {
+            throw new NotFoundException('Invalid id');
+        }
+
         try {
             // Check ids exist or not
             // const fromUserExists = await this.dbService.findUserById(id_from);
             // const toUserExists = await this.dbService.findUserById(id_to);
-            // if (!id_from || !id_to) {
-            //     throw new NotFoundException('Invalid id');
-            // }
-
             await this.dbService.followUser(id_from, id_to);
             this.logger.log('Follow Message Sent Successfully')
             return true;
