@@ -2,6 +2,11 @@ import { Controller, Post } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import CreatePostDto from '../dto/createPostDto';
 import { Post as Post_t} from '@prisma/mongo';
+
+import BasicQueryDto from '../dto/basicQueryDto';
+import CreateReplyDto from '../dto/createReplyDto';
+
+
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postService:PostsService) {}
@@ -14,48 +19,44 @@ export class PostsController {
     }
 
     @Post('getOriginPostsByUserId')
-    async getOriginPostsByUserId(id:string):Promise<Post_t[]>{
-        return await this.postService.getOriginPostsByUserId(id);
+    async getOriginPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
+        return await this.postService.getOriginPostsByUserId(basicQueryDto.id);
     }
 
     @Post('getRepostedPostsByUserId')
-    async getRepostedPostsByUserId(id:string):Promise<Post_t[]>{
-        return await this.postService.getRepostedPostsByUserId(id);
+    async getRepostedPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
+        return await this.postService.getRepostedPostsByUserId(basicQueryDto.id);
     }
 
     @Post('getLikedPostsByUserId')
-    async getLikedPostsByUserId(id:string):Promise<String[]>{
-        return await this.postService.getLikedPostsByUserId(id);
+    async getLikedPostsByUserId(basicQueryDto:BasicQueryDto):Promise<String[]>{
+        return await this.postService.getLikedPostsByUserId(basicQueryDto.id);
     }
 
     @Post('getPostByPostId')
-    async getPostByPostId(id:string):Promise<Post_t>{
-        return await this.postService.getPostByPostId(id);
+    async getPostByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t>{
+        return await this.postService.getPostByPostId(basicQueryDto.id);
     }
 
     @Post('getPostsByUserId')
-    async getPostsByUserId(id:string):Promise<Post_t[]>{
-        return await this.postService.getPostsByUserId(id);
+    async getPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
+        return await this.postService.getPostsByUserId(basicQueryDto.id);
     }
 
     @Post('getRepliesByPostId')
-    async getRepliesByPostId(id:string):Promise<Post_t[]>{
-        return await this.postService.getRepliesByPostId(id);
+    async getRepliesByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
+        return await this.postService.getRepliesByPostId(basicQueryDto.id);
     }
 
     @Post('addReply')
-    async addReply(createReplyDto):Promise<String|undefined>{
+    async addReply(createReplyDto:CreateReplyDto):Promise<String|undefined>{
         return await this.postService.addReply(createReplyDto);
     }
 
     @Post('hidePost')
-    async hidePost(id:string):Promise<boolean>{
-        return await this.postService.hidePost(id);
+    async hidePost(basicQueryDto:BasicQueryDto):Promise<boolean>{
+        return await this.postService.hidePost(basicQueryDto.id);
     }
-
-    
-
-
 
 }
 
