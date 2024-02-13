@@ -16,7 +16,7 @@ export class FollowService {
 
         try {
             // Check if user exists
-            const userExists = await this.dbService.query_posts_by_user_id(id_to);
+            const userExists = !!(await this.dbService.query_user_by_id(id_to));
             if (!userExists) {
                 this.logger.log('User does not exist')
                 return false;
@@ -50,7 +50,7 @@ export class FollowService {
 
         try {
             // Check if user exists
-            const userExists = await this.dbService.query_posts_by_user_id(id_to);
+            const userExists = await this.dbService.query_user_by_id(id_to);
             if (!userExists) {
                 this.logger.log('User does not exist')
                 return false;
