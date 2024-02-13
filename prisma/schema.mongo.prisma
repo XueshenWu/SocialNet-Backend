@@ -39,6 +39,7 @@ model Post {
     authorId String @db.String
 
     createTime DateTime @default(now())
+    updateTime DateTime @updatedAt
 
     replyParentId String? @db.ObjectId
     replyParent   Post?   @relation("replyTo", fields: [replyParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
@@ -48,9 +49,10 @@ model Post {
 
     repostParentId String? @db.ObjectId
     repostParent Post?       @relation("repostTo", fields: [repostParentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-    reposts_     Post[]      @relation("repostTo")
     
+    reposts_     Post[]      @relation("repostTo")
     reposts      String[]
+
     likes        LikeTable[]
 }
 

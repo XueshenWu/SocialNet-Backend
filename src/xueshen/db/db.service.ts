@@ -261,14 +261,15 @@ export class DbService {
                 })
                 await tx_pg.profile.create({
                     data: {
-                        name: createUserInput.name ?? user.id,
+                        fullname: createUserInput.name ?? user.id,
                         user: {
                             connect: {
                                 id: user.id
                             }
                         },
-                        customId: user.id,
+                        username: user.id,
                         gender: createUserInput.gender ?? "Prefer not to say",
+                        
 
                     }
 
