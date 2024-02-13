@@ -1,16 +1,30 @@
 import { FollowService } from './follow.service';
 import { NotFoundException } from '@nestjs/common';
 import { DbService } from '../../xueshen/db/db.service';
+import { Test } from '@nestjs/testing';
+import { DbPostService } from '../../xueshen/db/db_post.service';
+import { DbUserService } from '../../xueshen/db/db_user.service';
+import { ConnectionService } from '../../xueshen/db/connection.service';
 
 describe('FollowService', () => {
   let followService: FollowService;
   let dbService: DbService;
 
-  beforeEach(() => {
-    dbService = new DbService();
-    followService = new FollowService(dbService);
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [FollowService, DbService, DbPostService, DbUserService, ConnectionService],
+    }).compile();
+
+    followService = module.get<FollowService>(FollowService);
+    dbService = module.get<DbService>(DbService);
+
   });
 
+  it('should be defined', () => {
+    expect(followService).toBeDefined();
+  });
+
+  // 1. Follow Testing
   it('should follow user successfully', async () => {
     const id_from = 'user1';
     const id_to = 'user2';
@@ -21,6 +35,15 @@ describe('FollowService', () => {
     expect(result).toBe(true);
   });
 
+  it('should handle NotFoundException when following user with invalid id', async () => {
+    const id_from = '';
+    const id_to = 'user2';
+    jest.spyOn(dbService, 'followUser').mockRejectedValueOnce(new NotFoundException());
+
+    await expect(followService.followUser(id_from, id_to)).rejects.toThrowError(NotFoundException);
+  });
+
+  // 2. Unfollow Testing
   it('should unfollow user successfully', async () => {
     const id_from = 'user1';
     const id_to = 'user2';
@@ -31,11 +54,11 @@ describe('FollowService', () => {
     expect(result).toBe(true);
   });
 
-  it('should handle NotFoundException when following user with invalid id', async () => {
+  it('should handle NotFoundException when unfollowing user with invalid id', async () => {
     const id_from = '';
     const id_to = 'user2';
-    jest.spyOn(dbService, 'followUser').mockRejectedValueOnce(new NotFoundException());
+    jest.spyOn(dbService, 'unfollowUser').mockRejectedValueOnce(new NotFoundException());
 
-    await expect(followService.followUser(id_from, id_to)).rejects.toThrowError(NotFoundException);
+    await expect(followService.unfollowUser(id_from, id_to)).rejects.toThrowError(NotFoundException);
   });
 });
