@@ -7,14 +7,14 @@ const mongoClient = new MongoClient();
 
 
 const main = async () => {
-    const id = await pgClient.$transaction(async (tx) => {
+    const id1 = await pgClient.$transaction(async (tx) => {
 
 
-   
+
 
 
         const user = await tx.user.create({
-            data: {     
+            data: {
                 password: "void",
                 email: "",
                 role: "COMMON"
@@ -29,6 +29,30 @@ const main = async () => {
 
         return user.id;
     })
+
+    const id2 = await pgClient.$transaction(async (tx) => {
+        const user = await tx.user.create({
+            data: {
+                password: "void",
+                email: "",
+                role: "COMMON"
+            }
+        })
+
+        await mongoClient.user.create({
+            data: {
+                id: user.id
+            }
+        })
+
+        return user.id;
+        }
+    )
+
+    console.log(id1);
+        console.log('----------------')
+    console.log(id2);
+
 
 
 

@@ -3,6 +3,14 @@ import { PrismaClient as PgClient, Prisma as PgPrisma, User } from '@prisma/pg'
 import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from '@prisma/mongo';
 import { PTX } from '../types/prisma_tx';
 import * as assert from 'assert';
+import createUserDto from '../dto/createUserDto';
+import { DbPostService } from './db_post.service';
+import { DbUserService } from './db_user.service';
+import UpdateProfileDto from '../dto/updateProfileDto';
+import CreatePostDto from '../dto/createPostDto';
+import CreateReplyDto from '../dto/createReplyDto';
+import { exec } from 'child_process';
+import CreateRepostDto from '../dto/createRepostDto';
 
 
 
@@ -13,6 +21,15 @@ export class DbService {
     private readonly mongoClient = new MongoClient();
     private readonly logger = new Logger();
 
+
+    constructor(private readonly dbPostService: DbPostService, private readonly dbUserService: DbUserService) {
+
+    }
+
+
+    async repost(createRepostDto:CreateRepostDto):Promise<string|undefined>{
+        return await this.dbPostService.repost(createRepostDto);
+    }
     async query_user_by_email(email: string): Promise<User | undefined> {
         return this.pgClient.user.findUnique({
             where: {
@@ -20,16 +37,33 @@ export class DbService {
             }
         })
 
+    }   
+
+    async query_replies_by_post_id(id:string){
+        return this.dbPostService.getRepliesByPostId(id);
     }
 
+    async query_posts_by_user_id(id: string): Promise<Post[]> {
+        return this.dbPostService.findPostsByUserId(id);
+    }
 
-    async query_post_by_id(id: string): Promise<Post | undefined> {
-        const res =  await this.mongoClient.post.findUnique({
+    async query_user_by_id(id: string): Promise<User | undefined> {
+        return this.pgClient.user.findUnique({
             where: {
                 id: id
             }
         })
-        return res??undefined;
+    }
+
+
+    async query_post_by_id(id: string): Promise<Post | undefined> {
+        // const res =  await this.mongoClient.post.findUnique({
+        //     where: {
+        //         id: id
+        //     }
+        // })
+        // return res??undefined;
+        return this.dbPostService.findPostByPostId(id);
     }
 
     // Tested
@@ -69,6 +103,9 @@ export class DbService {
     async resetDatabse_DANGEROUS(log = false) {
 
         assert(process.env.ALLOW_DANGEROUS === "TRUE")
+        // await new Promise((resolve)=>exec(` npx prisma migrate reset --force --schema="prisma/schema.mongo.prisma"&& npx prisma migrate reset --force --schema="prisma/schema.mongo.prisma"`, (err, stdout, stderr) => {resolve(undefined)}))
+        return;
+        
         const pgClient = this.getPgClient_DANGEROUS()
 
 
@@ -88,12 +125,11 @@ export class DbService {
             await tx.likeTable.deleteMany()
             await tx.likeTable.deleteMany()
 
-            await tx.reply.deleteMany()
-            await tx.reply.deleteMany()
+
 
             await tx.post.deleteMany()
             await tx.post.deleteMany()
-            
+
             await tx.notificationCenter.deleteMany()
             await tx.notificationCenter.deleteMany()
 
@@ -208,12 +244,34 @@ export class DbService {
 
     // Tested
     // return userId if success, undefined if failed(e.g. violation of unique constraint)
-    async createUser(createUserInput: PgPrisma.UserCreateInput): Promise<string | undefined> {
+    async createUser(createUserInput: createUserDto): Promise<string | undefined> {
         const res = await this.pgClient.$transaction(async (tx_pg) => {
+
+
+
 
             try {
                 const user = await tx_pg.user.create({
-                    data: createUserInput
+                    data: {
+                        email: createUserInput.email,
+                        password: createUserInput.password,
+                        role: createUserInput.role,
+                    }
+
+                })
+                await tx_pg.profile.create({
+                    data: {
+                        name: createUserInput.name ?? user.id,
+                        user: {
+                            connect: {
+                                id: user.id
+                            }
+                        },
+                        customId: user.id,
+                        gender: createUserInput.gender ?? "Prefer not to say",
+
+                    }
+
                 })
 
                 await this.mongoClient.user.create({
@@ -223,14 +281,16 @@ export class DbService {
                             create: {
                                 notifications: []
                             }
-                        }
+                        },
+
                     }
                 })
+               
                 return user.id;
 
             } catch (e) {
-                this.logger.verbose(e);
-
+                console.log(e)
+                this.logger.warn(e);
                 return undefined
             }
 
@@ -241,36 +301,38 @@ export class DbService {
 
     //Tested
     // return postId if success, undefined if failed
-    async addPost(post: MongoPrisma.PostCreateInput): Promise<string | undefined> {
-        try {
-            const postRecord = await this.mongoClient.post.create({
-                data: post
-            })
-            return postRecord.id;
-        } catch (e) {
-            this.logger.warn(e);
-            return undefined
-        }
+    async addPost(post: CreatePostDto): Promise<string | undefined> {
+        // try {
+        //     const postRecord = await this.mongoClient.post.create({
+        //         data: post
+        //     })
+        //     return postRecord.id;
+        // } catch (e) {
+        //     this.logger.warn(e);
+        //     return undefined
+        // }
+        return this.dbPostService.addPost(post);
     }
 
 
     //Tested
     // return true if success, false if failed
     async updatePostStatus(postId: string, status: "DRAFT" | "UNDER_REVIEW" | "PUBLISHED" | "HIDDEN"): Promise<boolean> {
-        try {
-            await this.mongoClient.post.update({
-                where: {
-                    id: postId
-                },
-                data: {
-                    status: status
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
+        // try {
+        //     await this.mongoClient.post.update({
+        //         where: {
+        //             id: postId
+        //         },
+        //         data: {
+        //             status: status
+        //         }
+        //     })
+        //     return true;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return false;
+        // }
+        return this.dbPostService.updatePostStatus(postId, status);
     }
 
 
@@ -278,83 +340,88 @@ export class DbService {
     // Tested
     // return like-Table Id if success, undefined if failed
     async likePost(userId: string, postId: string): Promise<string | undefined> {
-        try {
-            const likeRecord = await this.mongoClient.likeTable.create({
-                data: {
-                    userId: userId,
-                    postId: postId
-                }
-            })
+        // try {
+        //     const likeRecord = await this.mongoClient.likeTable.create({
+        //         data: {
+        //             userId: userId,
+        //             postId: postId
+        //         }
+        //     })
 
 
-            return likeRecord.id;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
+        //     return likeRecord.id;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return undefined;
+        // }
+        return this.dbPostService.likePost(userId, postId);
     }
 
 
     // Tested
     // return true if success, false if failed
     async unlikePost(userId: string, postId: string): Promise<boolean> {
-        try {
-            await this.mongoClient.likeTable.delete({
-                where: {
-                    postId_userId: {
-                        postId: postId,
-                        userId: userId
-                    }
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
+        // try {
+        //     await this.mongoClient.likeTable.delete({
+        //         where: {
+        //             postId_userId: {
+        //                 postId: postId,
+        //                 userId: userId
+        //             }
+        //         }
+        //     })
+        //     return true;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return false;
+        // }
+        return this.dbPostService.unlikePost(userId, postId);
     }
 
     // Tested
     // return replyId if success, undefined if failed
-    async addReply(reply: MongoPrisma.ReplyCreateInput): Promise<string | undefined> {
-        try {
-            const replyRecord = await this.mongoClient.reply.create({
-                data: reply
-            })
-            return replyRecord.id;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
+    async addReply(reply: CreateReplyDto): Promise<string | undefined> {
+        // try {
+        //     const replyRecord = await this.mongoClient.reply.create({
+        //         data: reply
+        //     })
+        //     return replyRecord.id;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return undefined;
+        // }
+        return this.dbPostService.addReply(reply);
     }
 
     // Tested
-    async removeReply(replyId: string): Promise<boolean> {
-        try {
-            await this.mongoClient.reply.delete({
-                where: {
-                    id: replyId
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
+    async hidePost(postId: string): Promise<boolean> {
+        // try {
+        //     await this.mongoClient.reply.delete({
+        //         where: {
+        //             id: replyId
+        //         }
+        //     })
+        //     return true;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return false;
+        // }
+        return this.dbPostService.hidePost(postId);
     }
 
 
     // return userId if success, undefined if failed
-    async updateProfile(profile: PgPrisma.ProfileCreateInput): Promise<string | undefined> {
-        try {
-            const profileRecord = await this.pgClient.profile.create({
-                data: profile
-            })
-            return profileRecord.userId;
-        } catch (e) {
-            this.logger.verbose(e);
-            return undefined;
-        }
+    async updateProfile(profile: UpdateProfileDto): Promise<boolean> {
+        // try {
+        //     const profileRecord = await this.pgClient.profile.create({
+        //         data: profile
+        //     })
+        //     return profileRecord.userId;
+        // } catch (e) {
+        //     this.logger.verbose(e);
+        //     return undefined;
+        // }
+        return this.dbUserService.updateProfile(profile);
     }
 
     private async aux_hide_all_posts(tx: PTX<"mongo">, id: string): Promise<boolean> {
@@ -462,19 +529,7 @@ export class DbService {
         }
     }
 
-    private async aux_dump_reply(tx: PTX<"mongo">, id: string): Promise<boolean> {
-        try {
-            await tx.reply.deleteMany({
-                where: {
-                    fromId: id
-                }
-            })
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
-    }
+
 
     private async aux_dump_ncenter(tx: PTX<"mongo">, id: string): Promise<boolean> {
         try {
@@ -541,7 +596,7 @@ export class DbService {
                     await this.mongoClient.$transaction(async (tx_mongo: PTX<"mongo">) => {
                         await this.aux_dump_post(tx_mongo, id);
                         await this.aux_dump_like(tx_mongo, id);
-                        await this.aux_dump_reply(tx_mongo, id);
+
                         await this.aux_dump_ncenter(tx_mongo, id);
                         await this.aux_dump_user_mongo(tx_mongo, id);
                     });
@@ -671,22 +726,7 @@ export class DbService {
         }
     }
 
-    private async aux_nullify_reply(tx: PTX<"mongo">, id: string): Promise<boolean> {
-        try {
-            await tx.reply.updateMany({
-                data: {
-                    fromId: process.env.VOID_USER_ID
-                },
-                where: {
-                    fromId: id
-                }
-            });
-            return true;
-        } catch (e) {
-            this.logger.verbose(e);
-            return false;
-        }
-    }
+
 
 
 
@@ -713,7 +753,6 @@ export class DbService {
                         await this.aux_hide_all_posts(tx_mongo, id);
                         await this.aux_nullify_post(tx_mongo, id);
                         await this.aux_nullify_like(tx_mongo, id);
-                        await this.aux_nullify_reply(tx_mongo, id);
                         await this.aux_dump_user_mongo(tx_mongo, id);
                     });
                     return true;

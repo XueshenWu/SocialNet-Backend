@@ -28,10 +28,7 @@ export class AuthController {
             }
         } else {
             this.logger.verbose("Exit login: FAIL")
-            // return {
-            //     status: "FAIL",
-            //     data: retval
-            // }
+            
             throw new HttpException(
                 "Unauthorized",
                 HttpStatus.UNAUTHORIZED

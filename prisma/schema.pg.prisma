@@ -34,7 +34,7 @@ model Profile {
     customId   String     @unique
     avatar     String?
     bio        String?
-    interests  Interest[]
+    interests  String[]
     gender     String?
     createTime DateTime   @default(now())
     updateTime DateTime   @updatedAt
@@ -76,18 +76,18 @@ enum Role {
     DISABLED
 }
 
-enum Interest {
-    SPORT
-    MUSIC
-    MOVIE
-    TRAVEL
-    FOOD
-    GAME
-    TECH
-    ART
-    SCIENCE
-    LITERATURE
-    OTHER
-}
+// enum Interest {
+//     SPORT
+//     MUSIC
+//     MOVIE
+//     TRAVEL
+//     FOOD
+//     GAME
+//     TECH
+//     ART
+//     SCIENCE
+//     LITERATURE
+//     OTHER
+// }
 
 

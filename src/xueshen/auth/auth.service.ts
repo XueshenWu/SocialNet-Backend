@@ -43,13 +43,13 @@ export class AuthService {
         } else {
             this.logger.verbose(`creating user: ${createUserDto.email}`);
 
-            // FIXME: This line has a bug
-            createUserDto.password = await bcrypt.hash(createUserDto.password, process.env.PSWD_SALT);
-            createUserDto.password = "123"
+            // TODO: hash password
+            // createUserDto.password = await new Promise((resolve)=>bcrypt.hash(createUserDto.password, "$2b$24$h/zcUE26srKAcEPqa4pFd.", (err, hash)=>resolve(hash)))
+           
             const res = await this.dbService.createUser(createUserDto);
             this.logger.log(`user created: ${createUserDto.email}`);
             this.logger.verbose("Exit register")
-
+           
             return res? true: false;
 
         }

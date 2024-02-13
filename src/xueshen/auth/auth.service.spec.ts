@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import createUserDto from '../dto/createUserDto';
 import * as jwt from 'jsonwebtoken'
 import { DbService } from '../db/db.service';
-
+const PSWD_SALT = "$2b$24$h/zcUE26srKAcEPqa4pFd."
 describe('AuthService', () => {
     let service: AuthService;
     let dbService: DbService;
@@ -18,10 +18,10 @@ describe('AuthService', () => {
         dbService = module.get<DbService>(DbService);
         dbService.resetDatabse_DANGEROUS();
 
-      
+
     });
 
-    afterAll(async ()=>{
+    afterAll(async () => {
         await dbService.resetDatabse_DANGEROUS();
     })
 
@@ -39,12 +39,12 @@ describe('AuthService', () => {
             role: "COMMON"
         }
         const res = await service.register(createUserDto);
-        console.log()
-        // expect(res).toBe(true);
-        // const login_res: boolean = await service.login(createUserDto);
+   
+        expect(res).toBe(true);
+        const login_res: boolean = await service.login(createUserDto);
 
-        // expect(login_res).toBe(true);
-       
+        expect(login_res).toBe(true);
+
     })
 
     it("should return undefined", async () => {
@@ -55,6 +55,6 @@ describe('AuthService', () => {
             role: "COMMON"
         }
 
-        
+
     })
 });
