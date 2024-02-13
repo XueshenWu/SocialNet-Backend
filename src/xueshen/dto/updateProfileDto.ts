@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsBoolean } from 'class-validator';
-import { Profile } from "@prisma/pg"
+import { Profile, Interest } from "@prisma/pg"
 import NullableDto from './nullableDto';
 
 /*
@@ -27,11 +27,11 @@ export default class UpdateProfileDto extends NullableDto{
     userId: Profile['userId'];
 
     @IsString()
-    readonly name: Profile['name'];
+    readonly fullname: Profile['fullname'];
 
 
     @IsString()
-    readonly customId: Profile['customId'];
+    readonly username: Profile['username'];
     
     @IsString()
     readonly avatar: Profile['avatar'];
@@ -45,11 +45,11 @@ export default class UpdateProfileDto extends NullableDto{
     @IsString()
     readonly gender: Profile["gender"]
 
-    constructor(userId: string, name: string, customId: string, avatar: string, bio: string, interests:string[]){
+    constructor(userId: string, fullname: string, username: string, avatar: string, bio: string, interests:Interest[]){
         super();
         this.userId = userId;
-        this.name = name;
-        this.customId = customId;
+        this.fullname = fullname;
+        this.username = username;
         this.avatar = avatar;
         this.bio = bio;
         this.interests = interests;

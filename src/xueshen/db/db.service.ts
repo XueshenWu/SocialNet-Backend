@@ -269,6 +269,7 @@ export class DbService {
                         },
                         username: user.id,
                         gender: createUserInput.gender ?? "Prefer not to say",
+                        
 
                     }
 
