@@ -41,7 +41,7 @@
 # }
 
 
-POST  http://localhost:8000/profile/097ab86f-c422-447b-8d50-855322f9fbb9
+POST  http://localhost:8000/api/profile/097ab86f-c422-447b-8d50-855322f9fbb9
 Content-Type: application/json
 
 {
@@ -49,10 +49,21 @@ Content-Type: application/json
   "customId": "johndoe25",
   "bio": "A brief biography.",
   "interests": ["TRAVEL", "READING"],
-  "gender": "male",
-  "user": {
-    "connect": {
-      "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
-    }
-  }
+  "gender": "male"
+  //"user": {
+  //  "connect": {
+  //    "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
+  //  }
+  //}
 }
+
+
+# {
+#   "userId": "097ab86f-c422-447b-8d50-855322f9fbb9", 
+#   "name": "John Doe",
+#   "avatar": "2.jpg",
+#   "customId": "johndoe25",
+#   "bio": "A brief biography.",
+#   //"interests": ["TRAVEL"],
+#   "gender": "male"
+# }
