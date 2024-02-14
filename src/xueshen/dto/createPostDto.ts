@@ -6,8 +6,7 @@ import NullableDto from './nullableDto';
 export default class CreatePostDto extends NullableDto {
 
     @IsString()
-    @IsNotEmpty()
-    title: Post['title']
+    title?: Post['title']
 
     @IsString()
     media?: Post['media']

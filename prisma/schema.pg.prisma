@@ -13,6 +13,7 @@ model User {
 
     email      String   @unique
     password   String
+    username   String     @unique // limited chance to modify
     role       Role
     createTime DateTime @default(now())
 
@@ -32,7 +33,7 @@ model Profile {
     userId     String     @id
 
     fullname       String? // this one can be changed anytime
-    username   String     @unique // limited chance to modify
+    
     avatar     String?
     bio        String?
     interests  Interest[]

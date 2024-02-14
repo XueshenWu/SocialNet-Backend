@@ -273,6 +273,7 @@ export class DbService {
                         email: createUserInput.email,
                         password: createUserInput.password,
                         role: createUserInput.role,
+                        username: createUserInput.email
                     }
 
                 })
@@ -284,7 +285,7 @@ export class DbService {
                                 id: user.id
                             }
                         },
-                        username: user.id,
+                        
                         gender: createUserInput.gender ?? "Prefer not to say",
                         
 
