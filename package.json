@@ -21,7 +21,7 @@
         "dbpush": "prisma db push --schema=./prisma/schema.mongo.prisma&&prisma db push --schema=./prisma/schema.pg.prisma",
         "dbgen": "prisma generate --schema=./prisma/schema.mongo.prisma&&prisma generate --schema=./prisma/schema.pg.prisma",
         "dbscript": "npx ts-node ./src/xueshen/db/dbscript.ts",
-        "dbreset_DANGER": "prisma migrate reset --schema=./prisma/schema.mongo.prisma&&prisma migrate reset --schema=./prisma/schema.pg.prisma"
+        "dbtrunc": "prisma migrate reset --force --schema=./prisma/schema.pg.prisma && prisma migrate reset --force --schema=./prisma/schema.mongo.prisma ||prisma db push --schema=./prisma/schema.mongo.prisma&&prisma db push --schema=./prisma/schema.pg.prisma "
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",
@@ -29,8 +29,10 @@
         "@nestjs/platform-express": "^10.0.0",
         "@prisma/client": "^5.8.1",
         "@reactivex/rxjs": "^6.6.7",
+        "@types/amqplib": "^0.10.4",
         "@types/bcrypt": "^5.0.2",
         "@types/jsonwebtoken": "^9.0.5",
+        "amqplib": "^0.10.3",
         "aws-sdk": "^2.1540.0",
         "bcrypt": "^5.1.1",
         "class-transformer": "^0.5.1",

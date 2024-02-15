@@ -13,6 +13,7 @@ model User {
 
     email      String   @unique
     password   String
+    username   String     @unique // limited chance to modify
     role       Role
     createTime DateTime @default(now())
 
@@ -30,12 +31,24 @@ model User {
 model Profile {
     user       User       @relation(fields: [userId], references: [id], onUpdate: Cascade)
     userId     String     @id
-    name       String?
-    customId   String     @unique
+
+    fullname       String? // this one can be changed anytime
+    
     avatar     String?
     bio        String?
     interests  Interest[]
+    
+    tags  String[]
+
+    location   String?
+    external_link String?
+
+
+   
+
+
     gender     String?
+    birthday   DateTime?
     createTime DateTime   @default(now())
     updateTime DateTime   @updatedAt
 }
@@ -53,22 +66,14 @@ model Friend {
 model Follow {
     id_from String
     id_to   String
-    user1   User   @relation(name: "UserFollows", fields: [id_from], references: [id], onUpdate: Cascade)
-    user2   User   @relation(name: "UserFollowed", fields: [id_to], references: [id], onUpdate: Cascade)
+    user_follows   User   @relation(name: "UserFollows", fields: [id_from], references: [id], onUpdate: Cascade)
+    user_followed   User   @relation(name: "UserFollowed", fields: [id_to], references: [id], onUpdate: Cascade)
 
     @@id([id_from, id_to])
     @@unique([id_from, id_to])
 }
 
-// model Post {
-//     id       String @id @default(uuid())
-//     title    String
-//     author   User   @relation(name: "originPosts", fields: [authorId], references: [id])
-//     authorId String
 
-//     poster   User   @relation(name: "forwardedPosts", fields: [posterId], references: [id])
-//     posterId String
-// }
 
 enum Role {
     COMMON
@@ -89,5 +94,4 @@ enum Interest {
     LITERATURE
     OTHER
 }
-
 

@@ -20,6 +20,27 @@ export class DbUserService {
 
     }
 
+    async userExists(userId: string) {
+        const res = await this.connectionService.pgClient.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        return res !== null
+    }
+
+    async isFollowing(userId: string, followingId: string) {
+        const res = await this.connectionService.pgClient.follow.findUnique({
+            where:{
+                id_from_id_to:{
+                    id_from: userId,
+                    id_to: followingId
+                }
+            }
+        })
+        return res !== null
+    }
+
 
 
 }

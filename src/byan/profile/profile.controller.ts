@@ -48,7 +48,7 @@ export class ProfileController {
 
   @Post('/profile/:id')
   update(@Body() updateProfileDto: UpdateProfileDto) {
-    console.log(updateProfileDto.customId, updateProfileDto.userId);
+    console.log(updateProfileDto.userId);
     return this.dbService.updateProfile(updateProfileDto);
   }
 
