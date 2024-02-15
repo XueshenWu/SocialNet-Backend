@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProfileService } from './profile.service';
+import { DbService } from 'src/xueshen/db/db.service';
 
 describe('ProfileService', () => {
   let service: ProfileService;
