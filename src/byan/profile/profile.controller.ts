@@ -47,12 +47,25 @@ export class ProfileController {
   // }
 
   @Post('/profile/:id')
+  getProfileByUserId(@Body() updateProfileDto: UpdateProfileDto) {
+    console.log(updateProfileDto.userId);
+    return this.profileService.getProfileByUserId(updateProfileDto);
+  }
+
+  @Post('/profile/:id')
   updateProfile(@Body() updateProfileDto: UpdateProfileDto) {
     console.log(updateProfileDto.userId);
     // return this.dbService.updateProfile(updateProfileDto);
     return this.profileService.updateProfile(updateProfileDto);
   }
-
+  
+  //visitProfle(uid, vid)
+  // @Post('/profile/:id')
+  // visitProfle(@Body() updateProfileDto: UpdateProfileDto) {
+  //   console.log(updateProfileDto.userId);
+  //   // return this.dbService.updateProfile(updateProfileDto);
+  //   return this.profileService.updateProfile(updateProfileDto);
+  // }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

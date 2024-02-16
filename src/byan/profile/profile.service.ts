@@ -43,7 +43,7 @@ export class ProfileService {
   //   return this.dbService.updateProfileNew(userId, updateProfileDto);
   // }
 
-  getProfile(updateProfileDto: UpdateProfileDto) {
+  getProfileByUserId(updateProfileDto: UpdateProfileDto) {
     return this.dbService.updateProfile(updateProfileDto);
   }
 
