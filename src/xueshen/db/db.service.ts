@@ -32,9 +32,6 @@ export class DbService {
     constructor(private readonly dbPostService: DbPostService, private readonly dbUserService: DbUserService) {
 
     }
-<<<<<<< HEAD
-    
-=======
 
     async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
         return this.dbPostService.query_origin_posts_by_user_id(id);
@@ -57,7 +54,6 @@ export class DbService {
     async repost(createRepostDto:CreateRepostDto):Promise<string|undefined>{
         return await this.dbPostService.repost(createRepostDto);
     }
->>>>>>> origin/xueshen
     async query_user_by_email(email: string): Promise<User | undefined> {
         return this.pgClient.user.findUnique({
             where: {
@@ -272,6 +268,9 @@ export class DbService {
 
     // Tested
     // return userId if success, undefined if failed(e.g. violation of unique constraint)
+
+    // byan comment: hide temporaliy
+    /* 
     async createUser(createUserInput: createUserDto): Promise<string | undefined> {
         const res = await this.pgClient.$transaction(async (tx_pg) => {
 
@@ -327,7 +326,7 @@ export class DbService {
         })
         return res;
     }
-
+    */
 
     //Tested
     // return postId if success, undefined if failed

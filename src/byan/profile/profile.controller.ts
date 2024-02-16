@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProfileService } from './profile.service';
 // import { CreateProfileDto } from './dto/create-profile.dto';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
-import { Prisma as PgPrisma } from '@prisma/pg';
+// import { Prisma as PgPrisma } from '@prisma/pg';
 import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
 import { DbService } from '../../xueshen/db/db.service';
 
 @Controller('api')
 export class ProfileController {
-  // constructor(private readonly profileService: ProfileService) {}
-  constructor(private readonly dbService: DbService) {}
+  constructor(private readonly profileService: ProfileService) {}
+  // constructor(private readonly dbService: DbService) {}
 
   // @Post()
   // create(@Body() createProfileDto: CreateProfileDto) {
@@ -47,9 +47,10 @@ export class ProfileController {
   // }
 
   @Post('/profile/:id')
-  update(@Body() updateProfileDto: UpdateProfileDto) {
+  updateProfile(@Body() updateProfileDto: UpdateProfileDto) {
     console.log(updateProfileDto.userId);
-    return this.dbService.updateProfile(updateProfileDto);
+    // return this.dbService.updateProfile(updateProfileDto);
+    return this.profileService.updateProfile(updateProfileDto);
   }
 
 

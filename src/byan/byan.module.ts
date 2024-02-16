@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
 import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [UsersModule, ProfileModule],
-  exports: [UsersModule, ProfileModule],
+  imports: [ProfileModule],
+  exports: [ProfileModule],
 })
 export class ByanModule {}
 

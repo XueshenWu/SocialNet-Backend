@@ -9,6 +9,7 @@ import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
 export class ProfileService {
   constructor(private readonly dbService: DbService) {}
 
+  // Only for testing
   // create(createProfileDto: CreateProfileDto) {
   //   console.log("This action adds a new profile");
   //   return 'This action adds a new profile';
@@ -42,7 +43,11 @@ export class ProfileService {
   //   return this.dbService.updateProfileNew(userId, updateProfileDto);
   // }
 
-  update(updateProfileDto: UpdateProfileDto) {
+  getProfile(updateProfileDto: UpdateProfileDto) {
+    return this.dbService.updateProfile(updateProfileDto);
+  }
+
+  updateProfile(updateProfileDto: UpdateProfileDto) {
     return this.dbService.updateProfile(updateProfileDto);
   }
 
