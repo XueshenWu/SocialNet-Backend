@@ -7,8 +7,10 @@ describe('ProfileService', () => {
   let service: ProfileService;
 
   beforeEach(async () => {
-    // Create a fake copy of the DbService
+    // Create a fake copy of the DbUserService
     const fakeDbService: Partial<DbUserService> = {
+      query_profile_by_user_id: (userId: string) => 
+        Promise.resolve(null),
       updateProfile: (updateProfileDto: UpdateProfileDto) => 
         Promise.resolve(true),
     };
