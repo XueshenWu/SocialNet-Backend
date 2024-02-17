@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DbService } from './db.service';
-import { ConnectionService } from './connection.service';
-import { DbPostService } from './db_post.service';
-import { DbUserService } from './db_user.service';
+
+import { ConnectionService } from './connection/connection.service';
+import { DbPostService } from './post/db_post.service';
+import { DbUserService } from './user/db_user.service';
+
 @Module({
-  providers: [DbService, ConnectionService, DbPostService, DbUserService],
-  exports: [DbService, ConnectionService, DbPostService, DbUserService]
+  providers: [ConnectionService, DbPostService, DbUserService],
+  exports: [ConnectionService, DbPostService, DbUserService],
 })
 export class DbModule {
 }

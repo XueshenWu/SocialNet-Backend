@@ -13,7 +13,7 @@ model User {
 
     email      String   @unique
     password   String
-    username   String     @unique // limited chance to modify
+   
     role       Role
     createTime DateTime @default(now())
 
@@ -31,7 +31,7 @@ model User {
 model Profile {
     user       User       @relation(fields: [userId], references: [id], onUpdate: Cascade)
     userId     String     @id
-
+    username   String     @unique // limited chance to modify
     fullname       String? // this one can be changed anytime
     
     avatar     String?
@@ -42,10 +42,6 @@ model Profile {
 
     location   String?
     external_link String?
-
-
-   
-
 
     gender     String?
     birthday   DateTime?

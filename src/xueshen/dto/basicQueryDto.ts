@@ -1,17 +1,15 @@
-import{IsString} from 'class-validator';
+import{IsNotEmpty, IsString} from 'class-validator';
 
 export default class BasicQueryDto {
     
     
     @IsString()
-    id: string;
-    
-    constructor() {
-        this.id = '';
-    }
-    
-    setValue(value:string) {
-        this.id = value;
-    }
+    @IsNotEmpty()
+    identity: string;
 
+    identityType: "email"|"username"|"id" = "id";
+    
+   
+    
+    
 }

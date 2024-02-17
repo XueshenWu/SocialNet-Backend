@@ -31,9 +31,6 @@ export default class UpdateProfileDto extends NullableDto{
 
 
     @IsString()
-    readonly username: Profile['username'];
-    
-    @IsString()
     readonly avatar: Profile['avatar'];
 
     @IsString()
@@ -45,11 +42,10 @@ export default class UpdateProfileDto extends NullableDto{
     @IsString()
     readonly gender: Profile["gender"]
 
-    constructor(userId: string, fullname: string, username: string, avatar: string, bio: string, interests:Interest[]){
+    constructor(userId: string, fullname: string, avatar: string, bio: string, interests:Interest[]){
         super();
         this.userId = userId;
         this.fullname = fullname;
-        this.username = username;
         this.avatar = avatar;
         this.bio = bio;
         this.interests = interests;
