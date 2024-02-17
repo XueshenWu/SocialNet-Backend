@@ -37,8 +37,11 @@ export default class UpdateProfileDto extends NullableDto{
     readonly bio: Profile['bio'];
 
     @IsEnum(Interest, {each: true})
-    // @IsString()
     readonly interests: Profile['interests'];
+
+
+    
+    tags: string[]|null;
 
     @IsString()
     readonly gender: Profile["gender"]
