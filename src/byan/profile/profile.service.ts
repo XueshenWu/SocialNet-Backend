@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 // import { CreateProfileDto } from './dto/create-profile.dto';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
-import { DbService } from '../../xueshen/db/db.service';
-import { Prisma as PgPrisma } from '@prisma/pg';
+import { DbUserService } from '../../xueshen/db/user/db_user.service';
 import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
 
 @Injectable()
 export class ProfileService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(private readonly dbUserService: DbUserService) {}
 
   // Only for testing
   // create(createProfileDto: CreateProfileDto) {
@@ -35,20 +34,20 @@ export class ProfileService {
   // }
 
   // only for testing
-  create(createProfileDto: PgPrisma.ProfileCreateInput) {
-    return this.dbService.createProfile(createProfileDto);
-  }
+  // create(createProfileDto: PgPrisma.ProfileCreateInput) {
+  //   return this.dbUserService.createProfile(createProfileDto);
+  // }
 
   // update(userId: string, updateProfileDto: PgPrisma.ProfileUpdateInput) {
   //   return this.dbService.updateProfileNew(userId, updateProfileDto);
   // }
 
-  getProfileByUserId(updateProfileDto: UpdateProfileDto) {
-    return this.dbService.updateProfile(updateProfileDto);
+  async getProfileByUserId(userId: string) {
+    return await this.dbUserService.query_profile_by_user_id(userId);
   }
 
-  updateProfile(updateProfileDto: UpdateProfileDto) {
-    return this.dbService.updateProfile(updateProfileDto);
+  async updateProfile(updateProfileDto: UpdateProfileDto) {
+    return await this.dbUserService.updateProfile(updateProfileDto);
   }
 
   remove(id: number) {

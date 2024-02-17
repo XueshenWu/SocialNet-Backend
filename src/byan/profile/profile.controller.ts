@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 // import { CreateProfileDto } from './dto/create-profile.dto';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
 // import { Prisma as PgPrisma } from '@prisma/pg';
 import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
-import { DbService } from '../../xueshen/db/db.service';
+import { NotFoundError } from 'rxjs';
 
 @Controller('api')
 export class ProfileController {
@@ -47,14 +47,17 @@ export class ProfileController {
   // }
 
   @Post('/profile/:id')
-  getProfileByUserId(@Body() updateProfileDto: UpdateProfileDto) {
-    console.log(updateProfileDto.userId);
-    return this.profileService.getProfileByUserId(updateProfileDto);
+  async getProfileByUserId(@Param('id') userId: string) {
+    const userProfile = await this.profileService.getProfileByUserId(userId);
+    if (!userProfile) {
+      throw new NotFoundException('User profile not found');
+    }
+    return userProfile;
   }
 
   @Post('/profile/:id')
-  updateProfile(@Body() updateProfileDto: UpdateProfileDto) {
-    console.log(updateProfileDto.userId);
+  updateProfile(@Param('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
+    // console.log(updateProfileDto.userId);
     // return this.dbService.updateProfile(updateProfileDto);
     return this.profileService.updateProfile(updateProfileDto);
   }
