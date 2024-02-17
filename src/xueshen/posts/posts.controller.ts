@@ -20,33 +20,33 @@ export class PostsController {
 
     @Post('getOriginPostsByUserId')
     async getOriginPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
-        return await this.postService.getOriginPostsByUserId(basicQueryDto.id);
+        return await this.postService.getOriginPostsByUserId(basicQueryDto.identity);
     }
 
     @Post('getRepostedPostsByUserId')
     async getRepostedPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
-        return await this.postService.getRepostedPostsByUserId(basicQueryDto.id);
+        return await this.postService.getRepostedPostsByUserId(basicQueryDto.identity);
     }
 
     @Post('getLikedPostsByUserId')
     async getLikedPostsByUserId(basicQueryDto:BasicQueryDto):Promise<String[]>{
-        return await this.postService.getLikedPostsByUserId(basicQueryDto.id);
+        return await this.postService.getLikedPostsByUserId(basicQueryDto.identity);
     }
 
     @Post('getPostByPostId')
     async getPostByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t>{
-        return await this.postService.getPostByPostId(basicQueryDto.id);
+        return await this.postService.getPostByPostId(basicQueryDto.identity);
     }
 
-    @Post('getPostsByUserId')
-    async getPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
-        return await this.postService.getPostsByUserId(basicQueryDto.id);
-    }
+    // @Post('getPostsByUserId')
+    // async getPostsByUserId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
+    //     return await this.postService.getPostsByUserId(basicQueryDto.identity);
+    // }
 
-    @Post('getRepliesByPostId')
-    async getRepliesByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
-        return await this.postService.getRepliesByPostId(basicQueryDto.id);
-    }
+    // @Post('getRepliesByPostId')
+    // async getRepliesByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
+    //     return await this.postService.getRepliesByPostId(basicQueryDto.identity);
+    // }
 
     @Post('addReply')
     async addReply(createReplyDto:CreateReplyDto):Promise<String|undefined>{
@@ -55,7 +55,7 @@ export class PostsController {
 
     @Post('hidePost')
     async hidePost(basicQueryDto:BasicQueryDto):Promise<boolean>{
-        return await this.postService.hidePost(basicQueryDto.id);
+        return await this.postService.hidePost(basicQueryDto.identity);
     }
 
 }
