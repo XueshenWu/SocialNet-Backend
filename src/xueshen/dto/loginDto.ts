@@ -5,10 +5,15 @@ export default class LoginDto {
 
     @IsString()
     @IsNotEmpty()
-    email: string;
+    identity: string;
+
+
+ 
 
     @IsString()
     @IsNotEmpty()
     password: string;
 
+
+    identityType: "email"|"username"
 }

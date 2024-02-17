@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { ConnectionService } from "./connection.service";
+import { ConnectionService } from "../connection/connection.service";
 import { Post } from "@prisma/mongo";
-import { Prisma as MongoPrisma } from "@prisma/mongo";
 import { Logger } from "@nestjs/common";
-import CreatePostDto from "../dto/createPostDto";
-import CreateReplyDto from "../dto/createReplyDto";
-import CreateRepostDto from "../dto/createRepostDto";
+import CreatePostDto from "../../dto/createPostDto";
+import CreateReplyDto from "../../dto/createReplyDto";
+import CreateRepostDto from "../../dto/createRepostDto";
+import { Profile } from "@prisma/pg"
+import type { Post_Author } from "src/xueshen/types/post-t";
 
 
 
@@ -50,24 +51,24 @@ export class DbPostService {
 
 
     async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
-        try{
+        try {
             const posts = await this.connectionService.mongoClient.post.findMany({
-                where:{
+                where: {
                     authorId: id,
                     repostParentId: null
                 }
             })
             return posts;
-        }catch(e){
+        } catch (e) {
             this.logger.verbose(e);
             return [];
         }
     }
 
     async query_reposted_posts_by_user_id(id: string): Promise<Post[]> {
-        try{
+        try {
             const posts = await this.connectionService.mongoClient.post.findMany({
-                where:{
+                where: {
                     authorId: id,
                     repostParentId: {
                         not: null
@@ -75,12 +76,12 @@ export class DbPostService {
                 }
             })
             return posts;
-        }catch(e){
+        } catch (e) {
             this.logger.verbose(e);
             return [];
         }
     }
-    
+
 
     //tested
     async addPost(post: CreatePostDto): Promise<string | undefined> {
@@ -120,17 +121,17 @@ export class DbPostService {
     }
 
     async query_liked_posts_by_user_id(id: string): Promise<String[]> {
-        try{
-            const id_posts =  await this.connectionService.mongoClient.likeTable.findMany({
-                where:{
+        try {
+            const id_posts = await this.connectionService.mongoClient.likeTable.findMany({
+                where: {
                     userId: id
-                }           
+                }
             })
-            return id_posts.map((x)=>x.postId);
-        }catch(e){
+            return id_posts.map((x) => x.postId);
+        } catch (e) {
             this.logger.verbose(e);
             return [];
-        }    
+        }
     }
 
 
@@ -325,6 +326,29 @@ export class DbPostService {
         })
         return res;
     }
+
+
+
+    async query_post_by_post_id(postId: string): Promise<Post_Author| null> {
+        const post = await this.connectionService.mongoClient.post.findUnique({
+            where: {
+                id: postId
+            }
+        })
+
+        if (post === null) {
+            return null;
+        }
+        const user = await this.connectionService.pgClient.profile.findUnique({
+            where: {
+                userId: post.authorId
+            }
+        })
+
+        let res: Post_Author = { ...post, author: user }
+        return res;
+    }
+
 
 
 
