@@ -3,8 +3,8 @@ import { ProfileService } from './profile.service';
 // import { CreateProfileDto } from './dto/create-profile.dto';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
 // import { Prisma as PgPrisma } from '@prisma/pg';
-import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
-import { NotFoundError } from 'rxjs';
+import UpdateProfileDto from '../../xueshen/dto/updateProfileDto';
+// import { NotFoundError } from 'rxjs';
 
 @Controller('api')
 export class ProfileController {
@@ -56,10 +56,10 @@ export class ProfileController {
   }
 
   @Post('/profile/update/:id')
-  updateProfile(@Param('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
+  async updateProfile(@Param('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
     // console.log(updateProfileDto.userId);
     // return this.dbService.updateProfile(updateProfileDto);
-    return this.profileService.updateProfile(updateProfileDto);
+    return await this.profileService.updateProfile(updateProfileDto);
   }
   
   //visitProfle(uid, vid)

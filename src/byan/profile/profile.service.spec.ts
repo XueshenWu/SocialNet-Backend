@@ -115,9 +115,6 @@ describe('ProfileService', () => {
     userProfilesNew.push(profile2New);
     userProfilesNew.push(profile3New);
 
-    userProfilesNew[2].avatar = '3u.jpg';
-    console.log(userProfilesNew[2].avatar);
-
     fakeDbUserService.updateProfile = (updateProfileDto: UpdateProfileDto) =>  {
         // const profile3Updated = {
         //   userId : "3c",
