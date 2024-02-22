@@ -22,6 +22,33 @@ export class DbUserService {
 
     }
 
+
+
+    async follow(id_from: string, id_to: string): Promise<boolean> {
+        if (await this.userExists(id_from) && await this.userExists(id_to)) {
+            await this.connectionService.pgClient.follow.create({
+                data: {
+                    id_from: id_from,
+                    id_to: id_to
+                }
+            })
+            return true
+        }
+        return false
+    }
+
+    async unfollow(id_from:string, id_to:string):Promise<boolean>{
+        this.connectionService.pgClient.follow.delete({
+            where:{
+                id_from_id_to:{
+                    id_from:id_from,
+                    id_to:id_to
+                }
+            }
+        })
+        return true;
+    }
+
     async userExists(userId: string) {
         const res = await this.connectionService.pgClient.user.findUnique({
             where: {
@@ -108,11 +135,11 @@ export class DbUserService {
                 return null
             }
         })
-        
+
         return res;
     }
 
-   
+
 
 
 
