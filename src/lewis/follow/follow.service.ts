@@ -73,4 +73,44 @@ export class FollowService {
             return false;
         }
     }
+
+    // 3. Get followers list
+    async getFollowers(id: string): Promise<string[]> {
+        // Check if id is valid
+        if (!id) {
+            this.logger.log('Invalid id when fetching followers')
+            throw new NotFoundException('Invalid id');
+        }
+
+        try {
+            // Get the Followers List
+            const followers = await this.dbUserService.getFollowers(id);
+            this.logger.log('Followers List Fetched Successfully')
+            return followers;
+        } catch (error) {
+            this.logger.log('Failed to fetch followers list')
+            console.error('Error while fetching followers list:', error);
+            return [];
+        }
+    }
+
+    // 4. Get following list
+    async getFollowing(id: string): Promise<string[]> {
+        // Check if id is valid
+        if (!id) {
+            this.logger.log('Invalid id when fetching following')
+            throw new NotFoundException('Invalid id');
+        }
+
+        try {
+            // Get the Following List
+            const following = await this.dbUserService.getFollowing(id);
+            this.logger.log('Following List Fetched Successfully')
+            return following;
+        } catch (error) {
+            this.logger.log('Failed to fetch following list')
+            console.error('Error while fetching following list:', error);
+            return [];
+        }
+    }
 }
