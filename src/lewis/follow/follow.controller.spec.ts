@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FollowController } from './follow.controller';
 import { FollowService } from './follow.service';
-import { DbService } from '../../xueshen/db/db.service';
-import { DbUserService } from '../../xueshen/db/db_user.service';
-import { DbPostService } from '../../xueshen/db/db_post.service';
-import { ConnectionService } from '../../xueshen/db/connection.service';
+import { DbUserService } from '../../xueshen/db/user/db_user.service';
+import { ConnectionService } from '../../xueshen/db/connection/connection.service';
 
 describe('FollowController', () => {
   let controller: FollowController;
@@ -13,7 +11,7 @@ describe('FollowController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FollowController],
-      providers: [FollowService, DbService, DbUserService, DbPostService, ConnectionService],
+      providers: [FollowService, DbUserService, ConnectionService],
     }).compile();
 
     controller = module.get<FollowController>(FollowController);

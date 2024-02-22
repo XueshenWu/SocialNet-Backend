@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { DbService } from '../../xueshen/db/db.service';
+import { DbUserService } from '../../xueshen/db/user/db_user.service';
 
 @Injectable()
 export class FollowService {
     logger: Logger = new Logger('FollowService')
-    constructor(private readonly dbService: DbService) { }
+    constructor(private readonly dbUserService: DbUserService) { }
 
     // 1. Send follow request
     async followUser(id_from: string, id_to: string): Promise<boolean> {
@@ -16,21 +16,21 @@ export class FollowService {
 
         try {
             // Check if user exists
-            const userExists = !!(await this.dbService.query_user_by_id(id_to));
+            const userExists = !!(await this.dbUserService.query_user_by_id(id_to));
             if (!userExists) {
                 this.logger.log('User does not exist')
                 return false;
             }
 
             // Check if user is already following
-            const isFollowing = await this.dbService.isFollowing(id_from, id_to);
+            const isFollowing = await this.dbUserService.isFollowing(id_from, id_to);
             if (isFollowing) {
                 this.logger.log('User is already following')
                 return false;
             }
 
             // Send the Follow Request
-            await this.dbService.followUser(id_from, id_to);
+            await this.dbUserService.follow(id_from, id_to);
             this.logger.log('Follow Message Sent Successfully')
             return true;
         } catch (error) {
@@ -50,21 +50,21 @@ export class FollowService {
 
         try {
             // Check if user exists
-            const userExists = await this.dbService.query_user_by_id(id_to);
+            const userExists = await this.dbUserService.query_user_by_id(id_to);
             if (!userExists) {
                 this.logger.log('User does not exist')
                 return false;
             }
 
             // Check if user is already following
-            const isFollowing = await this.dbService.isFollowing(id_from, id_to);
+            const isFollowing = await this.dbUserService.isFollowing(id_from, id_to);
             if (!isFollowing) {
                 this.logger.log('User is not following')
                 return false;
             }
 
             // Send the Unfollow Request
-            await this.dbService.unfollowUser(id_from, id_to);
+            await this.dbUserService.unfollow(id_from, id_to);
             this.logger.log('Unfollow Message Sent Successfully')
             return true;
         } catch (error) {
