@@ -5,7 +5,7 @@ import { DbUserService } from '../../xueshen/db/user/db_user.service';
 import { ConnectionService } from '../../xueshen/db/connection/connection.service';
 
 @Module({
-  providers: [FriendService],
-  controllers: [FriendController, DbUserService, ConnectionService]
+  providers: [FriendService, DbUserService, ConnectionService],
+  controllers: [FriendController]
 })
 export class FriendModule {}

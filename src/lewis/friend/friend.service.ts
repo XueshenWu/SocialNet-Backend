@@ -23,14 +23,14 @@ export class FriendService {
             }
 
             // Check if user is already friend
-            const isFriend = await this.dbUserService.isFriend(id_from, id_to);
-            if (isFriend) {
-                this.logger.log('User is already your friend')
-                return false;
-            }
+            // const isFriend = await this.dbUserService.isFriend(id_from, id_to);
+            // if (isFriend) {
+            //     this.logger.log('User is already your friend')
+            //     return false;
+            // }
 
             // Send the Friend Request
-            await this.dbUserService.send_request(id_from, id_to);
+            // await this.dbUserService.send_request(id_from, id_to);
             this.logger.log('Friend Request Sent Successfully')
             return true;
         } catch (error) {
@@ -50,7 +50,7 @@ export class FriendService {
 
         // Accept the Friend Request
         try {
-            await this.dbUserService.accept_request(id_from, id_to);
+            // await this.dbUserService.accept_request(id_from, id_to);
             this.logger.log('Friend Request Accepted Successfully')
             return true;
         } catch (error) {
@@ -70,7 +70,7 @@ export class FriendService {
 
         // Reject the Friend Request
         try {
-            await this.dbUserService.reject_request(id_from, id_to);
+            // await this.dbUserService.reject_request(id_from, id_to);
             this.logger.log('Friend Request Rejected Successfully')
             return true;
         } catch (error) {
@@ -90,7 +90,7 @@ export class FriendService {
 
         // Remove the Friend
         try {
-            await this.dbUserService.remove_friend(id_from, id_to);
+            // await this.dbUserService.remove_friend(id_from, id_to);
             this.logger.log('Friend Removed Successfully')
             return true;
         } catch (error) {
@@ -110,7 +110,7 @@ export class FriendService {
 
         // Block the Friend
         try {
-            await this.dbUserService.block_friend(id_from, id_to);
+            // await this.dbUserService.block_friend(id_from, id_to);
             this.logger.log('Friend Blocked Successfully')
             return true;
         } catch (error) {
@@ -130,7 +130,7 @@ export class FriendService {
 
         // Unblock the Friend
         try {
-            await this.dbUserService.unblock_friend(id_from, id_to);
+            // await this.dbUserService.unblock_friend(id_from, id_to);
             this.logger.log('Friend Unblocked Successfully')
             return true;
         } catch (error) {
@@ -150,9 +150,9 @@ export class FriendService {
 
         // Get the Friends
         try {
-            const friends = await this.dbUserService.get_friends(id);
+            // const friends = await this.dbUserService.get_friends(id);
             this.logger.log('Friends List Fetched Successfully')
-            return friends;
+            // return friends;
         } catch (error) {
             this.logger.log('Failed to fetch friends list')
             console.error('Error while fetching friends list:', error);
@@ -170,9 +170,9 @@ export class FriendService {
 
         // Get the Friend Requests List
         try {
-            const friendRequests = await this.dbUserService.get_friend_requests(id);
+            // const friendRequests = await this.dbUserService.get_friend_requests(id);
             this.logger.log('Friend Requests Fetched Successfully')
-            return friendRequests;
+            // return friendRequests;
         } catch (error) {
             this.logger.log('Failed to fetch friend requests list')
             console.error('Error while fetching friend requests list:', error);
@@ -190,9 +190,9 @@ export class FriendService {
 
         // Get the Blocked Friends List
         try {
-            const blockedFriends = await this.dbUserService.get_blocked_friends(id);
+            // const blockedFriends = await this.dbUserService.get_blocked_friends(id);
             this.logger.log('Blocked Friends Fetched Successfully')
-            return blockedFriends;
+            // return blockedFriends;
         } catch (error) {
             this.logger.log('Failed to fetch blocked friends list')
             console.error('Error while fetching blocked friends list:', error);
