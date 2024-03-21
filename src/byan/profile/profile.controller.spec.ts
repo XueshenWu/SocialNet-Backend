@@ -106,6 +106,12 @@ describe('ProfileController', () => {
     ).rejects.toThrow(NotFoundException);
   });
 
+  it('throw NotFoundException if an non-existing userId given_case 2', async () => {
+    await expect(
+      controller.getProfileByUserId('m2m'),
+    ).rejects.toThrow(NotFoundException);
+  });
+
   it('update the profile for the given user', async () => {
     const userProfilesNew: Profile[] = [];
 
