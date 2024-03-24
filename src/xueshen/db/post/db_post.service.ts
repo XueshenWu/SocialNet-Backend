@@ -349,6 +349,14 @@ export class DbPostService {
         return res;
     }
 
+    async getPostIds():Promise<string[]>{
+        return (await this.connectionService.mongoClient.post.findMany({
+            select:{
+                id:true
+            }
+        })).map(record=>record.id)
+    }
+
 
 
 

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
 
 
 export default class LoginDto {
@@ -14,6 +14,6 @@ export default class LoginDto {
     @IsNotEmpty()
     password: string;
 
-
+    @IsString()
     identityType: "email"|"username"
 }
