@@ -15,10 +15,11 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
          
     @Post('login')
-    async login(@Body() longinDto: LoginDto): Promise<UniResponse<string | undefined>> {
+    async login(@Body() loginDto: LoginDto): Promise<UniResponse<string | undefined>> {
         this.logger.verbose("Enter login")
-        const retval = await this.authService.login(longinDto);
-        this.logger.log(`login: ${longinDto.identity}, status: ${retval ? "SUCCESS" : "FAIL"}`);
+        this.logger.warn("loginDto: ", JSON.stringify(loginDto))
+        const retval = await this.authService.login(loginDto);
+        this.logger.log(`login: ${loginDto.identity}, status: ${retval ? "SUCCESS" : "FAIL"}`);
 
         if (retval) {
             this.logger.verbose("Exit login: SUCCESS")
