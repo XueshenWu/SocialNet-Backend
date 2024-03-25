@@ -16,7 +16,7 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true,
   }))
-  await app.listen(8000,'172.20.10.4');
+  await app.listen(8000,'127.0.0.1');
 
 }
 bootstrap();
