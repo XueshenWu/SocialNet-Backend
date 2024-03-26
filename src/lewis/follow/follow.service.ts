@@ -84,9 +84,9 @@ export class FollowService {
 
         try {
             // Get the Followers List
-            // const followers = await this.dbUserService.getFollowers(id);
+            const followers = await this.dbUserService.query_follower_by_id(id);
             this.logger.log('Followers List Fetched Successfully')
-            // return followers;
+            return followers;
         } catch (error) {
             this.logger.log('Failed to fetch followers list')
             console.error('Error while fetching followers list:', error);
@@ -104,9 +104,9 @@ export class FollowService {
 
         try {
             // Get the Following List
-            // const following = await this.dbUserService.getFollowing(id);
+            const following = await this.dbUserService.query_following_by_id(id);
             this.logger.log('Following List Fetched Successfully')
-            // return following;
+            return following;
         } catch (error) {
             this.logger.log('Failed to fetch following list')
             console.error('Error while fetching following list:', error);

@@ -25,6 +25,7 @@ export class FollowController {
       }
     } catch (error) {
       this.logger.verbose('Error while following user:', error);
+      return { status: "FAILED", }
     }
   }
 
@@ -48,4 +49,56 @@ export class FollowController {
       this.logger.verbose('Error while unfollowing user:', error);
     }
   }
+
+  // Get Followers List
+    @Post('get-followers')
+    async getFollowers(@Body() data: { id: string }) {
+        try {
+            const followers = await this.followService.getFollowers(data.id);
+            this.logger.log('Followers list sent')
+
+            if (followers) {
+                this.logger.log("Followers list sent successfully")
+                return {
+                    status: "SUCCESS",
+                    followers: followers
+                }
+            } else {
+                this.logger.log("Follower List is empty")
+                return {
+                    status: "FAILED",
+                }
+            }
+        }
+        catch (error) {
+            this.logger.verbose('Error while getting followers:', error);
+            return { status: "FAILED", }
+        }
+    }
+
+  // Get Following List
+  @Post('get-following')
+  async getFollowing(@Body() data: { id: string }) {
+      try {
+          const following = await this.followService.getFollowing(data.id);
+          this.logger.log('Following list sent')
+
+          if (following) {
+              this.logger.log("Following list sent successfully")
+              return {
+                  status: "SUCCESS",
+                  following: following
+              }
+          } else {
+              this.logger.log("Following List is empty")
+              return {
+                  status: "FAILED",
+              }
+          }
+      } catch (error) {
+          this.logger.verbose('Error while getting following:', error);
+          return { status: "FAILED", }
+      }
+  }
+
 }

@@ -104,4 +104,54 @@ describe('FollowService', () => {
       await expect(followService.unfollowUser(id_from, id_to)).rejects.toThrowError(NotFoundException);
     });
   });
+
+  // 3. Get Followers Testing
+  describe('getFollowers', () => {
+      it('should get followers list successfully', async () => {
+        const id = 'user1';
+        const mockFollowers = ['user2', 'user3'];
+        jest.spyOn(dbUserService, 'query_follower_by_id').mockResolvedValueOnce(mockFollowers);
+
+        const result = await followService.getFollowers(id);
+        expect(result).toEqual(mockFollowers);
+      });
+
+      it('should handle NotFoundException when fetching followers with invalid id', async () => {
+        const id = '';
+        jest.spyOn(dbUserService, 'query_follower_by_id').mockRejectedValueOnce(new NotFoundException());
+        await expect(followService.getFollowers(id)).rejects.toThrowError(NotFoundException);
+      });
+
+      it('should handle empty followers list', async () => {
+        const id = 'user1';
+        jest.spyOn(dbUserService, 'query_follower_by_id').mockResolvedValueOnce([]);
+        const result = await followService.getFollowers(id);
+        expect(result).toEqual([]);
+      });
+  });
+
+  // 4. Get Following Testing
+    describe('getFollowing', () => {
+        it('should get following list successfully', async () => {
+        const id = 'user1';
+        const mockFollowing = ['user2', 'user3'];
+        jest.spyOn(dbUserService, 'query_following_by_id').mockResolvedValueOnce(mockFollowing);
+
+        const result = await followService.getFollowing(id);
+        expect(result).toEqual(mockFollowing);
+        });
+
+        it('should handle NotFoundException when fetching following with invalid id', async () => {
+          const id = '';
+          jest.spyOn(dbUserService, 'query_following_by_id').mockRejectedValueOnce(new NotFoundException());
+          await expect(followService.getFollowing(id)).rejects.toThrowError(NotFoundException);
+        });
+
+        it('should handle empty following list', async () => {
+          const id = 'user1';
+          jest.spyOn(dbUserService, 'query_following_by_id').mockResolvedValueOnce([]);
+          const result = await followService.getFollowing(id);
+          expect(result).toEqual([]);
+        });
+    });
 });

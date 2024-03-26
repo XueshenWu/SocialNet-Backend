@@ -3,6 +3,7 @@ import { FollowController } from './follow.controller';
 import { FollowService } from './follow.service';
 import { DbUserService } from '../../xueshen/db/user/db_user.service';
 import { ConnectionService } from '../../xueshen/db/connection/connection.service';
+import { NotFoundException } from '@nestjs/common';
 
 describe('FollowController', () => {
   let controller: FollowController;
@@ -28,18 +29,20 @@ describe('FollowController', () => {
     it('should follow a user successfully', async () => {
       const mockData = { id_from: 'user1', id_to: 'user2' };
       jest.spyOn(followService, 'followUser').mockResolvedValue(true);
-
       const result = await controller.followUser(mockData);
-
       expect(result).toEqual({ status: 'SUCCESS' });
     });
 
     it('should handle failure to follow a user', async () => {
       const mockData = { id_from: 'user1', id_to: 'user2' };
       jest.spyOn(followService, 'followUser').mockResolvedValue(false);
-
       const result = await controller.followUser(mockData);
+      expect(result).toEqual({ status: 'FAILED' });
+    });
 
+    it('should handle invalid id when following a user', async () => {
+      const mockData = { id_from: '', id_to: 'user2' };
+      const result = await controller.followUser(mockData);
       expect(result).toEqual({ status: 'FAILED' });
     });
   });
@@ -49,19 +52,64 @@ describe('FollowController', () => {
     it('should unfollow a user successfully', async () => {
       const mockData = { id_from: 'user1', id_to: 'user2' };
       jest.spyOn(followService, 'unfollowUser').mockResolvedValue(true);
-
       const result = await controller.unfollowUser(mockData);
-
       expect(result).toEqual({ status: 'SUCCESS' });
     });
 
     it('should handle failure to unfollow a user', async () => {
       const mockData = { id_from: 'user1', id_to: 'user2' };
       jest.spyOn(followService, 'unfollowUser').mockResolvedValue(false);
-
       const result = await controller.unfollowUser(mockData);
-
       expect(result).toEqual({ status: 'FAILED' });
     });
   });
+
+    // 3. Get Followers Testing
+    describe('getFollowers', () => {
+        it('should get followers list successfully', async () => {
+            const mockData = { id: 'user1' };
+            const mockFollowers = ['user2', 'user3'];
+            jest.spyOn(followService, 'getFollowers').mockResolvedValue(mockFollowers);
+            const result = await controller.getFollowers(mockData);
+            expect(result).toEqual({ status: 'SUCCESS', followers: mockFollowers });
+        });
+
+        it('should handle failure to get followers list', async () => {
+            const mockData = { id: 'user1' };
+            jest.spyOn(followService, 'getFollowers').mockResolvedValue([]);
+            const result = await controller.getFollowers(mockData);
+            expect(result).toEqual({ status: 'SUCCESS' , followers: []});
+        });
+
+        it('should handle invalid id when fetching followers', async () => {
+            const mockData = { id: '' };
+            const result = await controller.getFollowers(mockData);
+            expect(result).toEqual({ status: 'FAILED' });
+        });
+    });
+
+    // 4. Get Following Testing
+    describe('getFollowing', () => {
+        it('should get following list successfully', async () => {
+            const mockData = { id: 'user1' };
+            const mockFollowing = ['user2', 'user3'];
+            jest.spyOn(followService, 'getFollowing').mockResolvedValue(mockFollowing);
+            const result = await controller.getFollowing(mockData);
+            expect(result).toEqual({ status: 'SUCCESS', following: mockFollowing });
+        });
+
+        it('should handle failure to get following list', async () => {
+            const mockData = { id: 'user1' };
+            jest.spyOn(followService, 'getFollowing').mockResolvedValue([]);
+            const result = await controller.getFollowing(mockData);
+            expect(result).toEqual({ status: 'SUCCESS' , following: []});
+        });
+
+        it('should handle invalid id when fetching following', async () => {
+            const mockData = { id: '' };
+            const result = await controller.getFollowing(mockData);
+            expect(result).toEqual({ status: 'FAILED' });
+        });
+    });
+
 });
