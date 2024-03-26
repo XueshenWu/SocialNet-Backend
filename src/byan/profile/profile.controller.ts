@@ -46,7 +46,7 @@ export class ProfileController {
   //   return this.profileService.update(userId, updateProfileDto);
   // }
 
-  @Post('/profile/:id')
+  @Post('/getProfile/:id')
   async getProfileByUserId(@Param('id') userId: string) {
     const userProfile = await this.profileService.getProfileByUserId(userId);
     if (!userProfile) {
@@ -55,7 +55,7 @@ export class ProfileController {
     return userProfile;
   }
 
-  @Post('/profile/update/:id')
+  @Post('/updatepProfile/:id')
   async updateProfile(@Param('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
     // console.log(updateProfileDto.userId);
     // return this.dbService.updateProfile(updateProfileDto);
