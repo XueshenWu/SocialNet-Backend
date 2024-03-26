@@ -55,7 +55,7 @@ export class ProfileController {
     return userProfile;
   }
 
-  @Post('/updatepProfile/:id')
+  @Post('/updateProfile/:id')
   async updateProfile(@Param('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
     // console.log(updateProfileDto.userId);
     // return this.dbService.updateProfile(updateProfileDto);
