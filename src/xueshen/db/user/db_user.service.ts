@@ -22,6 +22,33 @@ export class DbUserService {
 
     }
 
+
+
+    async follow(id_from: string, id_to: string): Promise<boolean> {
+        if (await this.userExists(id_from) && await this.userExists(id_to)) {
+            await this.connectionService.pgClient.follow.create({
+                data: {
+                    id_from: id_from,
+                    id_to: id_to
+                }
+            })
+            return true
+        }
+        return false
+    }
+
+    async unfollow(id_from:string, id_to:string):Promise<boolean>{
+        this.connectionService.pgClient.follow.delete({
+            where:{
+                id_from_id_to:{
+                    id_from:id_from,
+                    id_to:id_to
+                }
+            }
+        })
+        return true;
+    }
+
     async userExists(userId: string) {
         const res = await this.connectionService.pgClient.user.findUnique({
             where: {
@@ -69,6 +96,57 @@ export class DbUserService {
     }
 
 
+
+    async query_follower_by_id(id:string):Promise<String[]>{
+        const res = await this.connectionService.pgClient.friend.findMany({
+            where:{
+                user1:{
+                    id:id
+                }
+            }
+        })
+        if(!res){
+            return []
+        }else{
+            return res.map(record=>record.id_to)
+        }
+        
+    }
+
+    async query_follower_by_username(username:string){
+        const profile:Profile|null = await this.query_profile_by_username(username);
+        if(!profile){
+            return null
+        }
+        const id = profile.userId;
+        
+    }
+
+    async query_following_by_id(id:string):Promise<string[]>{
+        const res = await this.connectionService.pgClient.friend.findMany({
+            where:{
+                user2:{
+                    id:id
+                }
+            }
+        })
+        if(!res){
+            return []
+        }else{
+            return res.map(record=>record.id_from)
+        }
+    }
+
+    async query_following_by_name(name:string):Promise<string[]>{
+        const id = (await this.query_user_by_username(name))?.id??null;
+        if(!id){
+            return []
+        }else{
+            return await this.query_following_by_id(id)
+        }
+    }
+
+
     async query_profile_by_user_id(id: string): Promise<Profile | null> {
         return await this.connectionService.pgClient.profile.findUnique({
             where: {
@@ -108,11 +186,11 @@ export class DbUserService {
                 return null
             }
         })
-        
+
         return res;
     }
 
-   
+
 
 
 
