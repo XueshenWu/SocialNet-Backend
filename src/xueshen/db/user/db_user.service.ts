@@ -97,7 +97,7 @@ export class DbUserService {
 
 
 
-    async query_follower_by_id(id:string):Promise<String[]>{
+    async query_follower_by_id(id:string):Promise<string[]>{
         const res = await this.connectionService.pgClient.friend.findMany({
             where:{
                 user1:{
