@@ -83,16 +83,20 @@ export class FollowController {
 
   // Get Following List
   @Post('getFollowings')
-  async getFollowing(@Body() data: { id: string,  }) {
+  async getFollowing(@Body() data: { id: string, viewer?: string }) {
       try {
           const following = await this.followService.getFollowing(data.id);
           this.logger.log('Following list sent')
 
           if (following) {
               this.logger.log("Following list sent successfully")
+
               return {
                   status: "SUCCESS",
-                  following: following
+                  following: following.map(following => ({
+                      following: following,
+                      isFollowing: data.viewer?this.dbUserService.isFollowing(data.viewer, following):false
+                  }))
               }
           } else {
               this.logger.log("Following List is empty")
