@@ -1,11 +1,12 @@
 import { Body, Controller, NotFoundException, Post } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 import { FollowService } from './follow.service';
+import { DbUserService } from '../../xueshen/db/user/db_user.service';
 
 @Controller('friends')
 export class FollowController {
   logger = new Logger('FollowController');
-  constructor(private readonly followService : FollowService) {}
+  constructor(private readonly followService : FollowService, private readonly dbUserService: DbUserService) {}
 
   // Follow Friend
   @Post('follow')
@@ -51,17 +52,21 @@ export class FollowController {
   }
 
   // Get Followers List
-    @Post('get-followers')
-    async getFollowers(@Body() data: { id: string }) {
+    @Post('getFollowers')
+    async getFollowers(@Body() data: { id: string, viewer?: string }) {
         try {
             const followers = await this.followService.getFollowers(data.id);
             this.logger.log('Followers list sent')
 
             if (followers) {
                 this.logger.log("Followers list sent successfully")
+
                 return {
                     status: "SUCCESS",
-                    followers: followers
+                    followers: followers.map(follower => ({
+                        follower: follower,
+                        isFollowing: data.viewer?this.dbUserService.isFollowing(data.viewer, follower):false
+                    }))
                 }
             } else {
                 this.logger.log("Follower List is empty")
@@ -77,8 +82,8 @@ export class FollowController {
     }
 
   // Get Following List
-  @Post('get-following')
-  async getFollowing(@Body() data: { id: string }) {
+  @Post('getFollowings')
+  async getFollowing(@Body() data: { id: string,  }) {
       try {
           const following = await this.followService.getFollowing(data.id);
           this.logger.log('Following list sent')

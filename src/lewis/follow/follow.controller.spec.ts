@@ -8,6 +8,7 @@ import { NotFoundException } from '@nestjs/common';
 describe('FollowController', () => {
   let controller: FollowController;
   let followService: FollowService;
+  let dbUserService: DbUserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,6 +18,7 @@ describe('FollowController', () => {
 
     controller = module.get<FollowController>(FollowController);
     followService = module.get<FollowService>(FollowService);
+    dbUserService = module.get<DbUserService>(DbUserService);
 
   });
 
@@ -66,12 +68,27 @@ describe('FollowController', () => {
 
     // 3. Get Followers Testing
     describe('getFollowers', () => {
-        it('should get followers list successfully', async () => {
+        it('should get followers list successfully and return followers with viewer', async () => {
+            const mockData = { id: 'user1', viewer: 'user2' };
+            const mockFollowers = ['user2', 'user3'];
+            jest.spyOn(followService, 'getFollowers').mockResolvedValue(mockFollowers);
+            jest.spyOn(dbUserService, 'isFollowing').mockResolvedValue(true);
+            const result = await controller.getFollowers(mockData);
+            expect(result).toEqual({ status: 'SUCCESS', followers: mockFollowers.map(follower => ({
+                    follower: follower,
+                    isFollowing: dbUserService.isFollowing(mockData.viewer, follower)
+            })) });
+        });
+
+        it('should get followers list successfully and return followers without viewer', async () => {
             const mockData = { id: 'user1' };
             const mockFollowers = ['user2', 'user3'];
             jest.spyOn(followService, 'getFollowers').mockResolvedValue(mockFollowers);
             const result = await controller.getFollowers(mockData);
-            expect(result).toEqual({ status: 'SUCCESS', followers: mockFollowers });
+            expect(result).toEqual({ status: 'SUCCESS', followers: mockFollowers.map(follower => ({
+                    follower: follower,
+                    isFollowing: false
+            })) });
         });
 
         it('should handle failure to get followers list', async () => {
@@ -110,6 +127,14 @@ describe('FollowController', () => {
             const result = await controller.getFollowing(mockData);
             expect(result).toEqual({ status: 'FAILED' });
         });
-    });
 
+        it('should handle viewer when fetching following', async () => {
+            const mockData = { id: 'user1', viewer: 'user2' };
+            const mockFollowing = ['user2', 'user3'];
+            jest.spyOn(followService, 'getFollowing').mockResolvedValue(mockFollowing);
+            jest.spyOn(dbUserService, 'isFollowing').mockResolvedValue(true);
+            const result = await controller.getFollowing(mockData);
+            expect(result).toEqual({ status: 'SUCCESS', following: mockFollowing });
+        });
+    });
 });
