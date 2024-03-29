@@ -89,7 +89,6 @@ export class FollowService {
             return followers;
         } catch (error) {
             this.logger.log('Failed to fetch followers list')
-            console.error('Error while fetching followers list:', error);
             return [];
         }
     }
@@ -109,7 +108,6 @@ export class FollowService {
             return following;
         } catch (error) {
             this.logger.log('Failed to fetch following list')
-            console.error('Error while fetching following list:', error);
             return [];
         }
     }
