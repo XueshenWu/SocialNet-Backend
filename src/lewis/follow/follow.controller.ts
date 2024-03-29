@@ -53,9 +53,9 @@ export class FollowController {
 
   // Get Followers List
     @Post('getFollowers')
-    async getFollowers(@Body() data: { id: string, viewer?: string }) {
+    async getFollowers(@Body() data: { userId: string, viewerId?: string }) {
         try {
-            const followers = await this.followService.getFollowers(data.id);
+            const followers = await this.followService.getFollowers(data.userId);
             this.logger.log('Followers list sent')
 
             if (followers) {
@@ -63,10 +63,11 @@ export class FollowController {
 
                 return {
                     status: "SUCCESS",
-                    followers: followers.map(follower => ({
-                        follower: follower,
-                        isFollowing: data.viewer?this.dbUserService.isFollowing(data.viewer, follower):false
-                    }))
+                    data: followers.map(follower => ({
+                        profile: this.dbUserService.query_profile_by_user_id(follower),
+                        isFollowing: data.viewerId?this.dbUserService.isFollowing(data.viewerId, follower):false
+                    })),
+                    error: {message: 'User not found'}
                 }
             } else {
                 this.logger.log("Follower List is empty")
@@ -83,9 +84,9 @@ export class FollowController {
 
   // Get Following List
   @Post('getFollowings')
-  async getFollowing(@Body() data: { id: string, viewer?: string }) {
+  async getFollowing(@Body() data: { userId: string, viewerId?: string }) {
       try {
-          const following = await this.followService.getFollowing(data.id);
+          const following = await this.followService.getFollowing(data.userId);
           this.logger.log('Following list sent')
 
           if (following) {
@@ -93,10 +94,11 @@ export class FollowController {
 
               return {
                   status: "SUCCESS",
-                  following: following.map(following => ({
-                      following: following,
-                      isFollowing: data.viewer?this.dbUserService.isFollowing(data.viewer, following):false
-                  }))
+                  data: following.map(following => ({
+                      profile: this.dbUserService.query_profile_by_user_id(following),
+                      isFollowing: data.viewerId?this.dbUserService.isFollowing(data.viewerId, following):false
+                  })),
+                  error: {message: 'User not found'}
               }
           } else {
               this.logger.log("Following List is empty")
@@ -109,5 +111,4 @@ export class FollowController {
           return { status: "FAILED", }
       }
   }
-
 }

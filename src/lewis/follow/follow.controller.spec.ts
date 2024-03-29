@@ -69,37 +69,41 @@ describe('FollowController', () => {
     // 3. Get Followers Testing
     describe('getFollowers', () => {
         it('should get followers list successfully and return followers with viewer', async () => {
-            const mockData = { id: 'user1', viewer: 'user2' };
+            const mockData = { userId: 'user1', viewerId: 'user2' };
             const mockFollowers = ['user2', 'user3'];
             jest.spyOn(followService, 'getFollowers').mockResolvedValue(mockFollowers);
             jest.spyOn(dbUserService, 'isFollowing').mockResolvedValue(true);
             const result = await controller.getFollowers(mockData);
-            expect(result).toEqual({ status: 'SUCCESS', followers: mockFollowers.map(follower => ({
-                    follower: follower,
-                    isFollowing: dbUserService.isFollowing(mockData.viewer, follower)
-            })) });
+            expect(result).toEqual({ status: 'SUCCESS', data: mockFollowers.map(follower => ({
+                    profile: dbUserService.query_profile_by_user_id(follower),
+                    isFollowing: dbUserService.isFollowing(mockData.viewerId, follower)
+            })),
+                error: {message: 'User not found'}
+            });
         });
 
         it('should get followers list successfully and return followers without viewer', async () => {
-            const mockData = { id: 'user1' };
+            const mockData = { userId: 'user1' };
             const mockFollowers = ['user2', 'user3'];
             jest.spyOn(followService, 'getFollowers').mockResolvedValue(mockFollowers);
             const result = await controller.getFollowers(mockData);
-            expect(result).toEqual({ status: 'SUCCESS', followers: mockFollowers.map(follower => ({
-                    follower: follower,
+            expect(result).toEqual({ status: 'SUCCESS', data: mockFollowers.map(follower => ({
+                    profile: dbUserService.query_profile_by_user_id(follower),
                     isFollowing: false
-            })) });
+            })),
+                error: {message: 'User not found'}
+            });
         });
 
         it('should handle failure to get followers list', async () => {
-            const mockData = { id: 'user1' };
+            const mockData = { userId: 'user1' };
             jest.spyOn(followService, 'getFollowers').mockResolvedValue([]);
             const result = await controller.getFollowers(mockData);
-            expect(result).toEqual({ status: 'SUCCESS' , followers: []});
+            expect(result).toEqual({ status: 'SUCCESS', data: [], error: {message: 'User not found'} });
         });
 
         it('should handle invalid id when fetching followers', async () => {
-            const mockData = { id: '' };
+            const mockData = { userId: '' };
             const result = await controller.getFollowers(mockData);
             expect(result).toEqual({ status: 'FAILED' });
         });
@@ -108,37 +112,39 @@ describe('FollowController', () => {
     // 4. Get Following Testing
     describe('getFollowing', () => {
         it('should get following list successfully and return following with viewer', async () => {
-            const mockData = { id: 'user1', viewer: 'user2' };
+            const mockData = { userId: 'user1', viewerId: 'user2' };
             const mockFollowing = ['user2', 'user3'];
             jest.spyOn(followService, 'getFollowing').mockResolvedValue(mockFollowing);
             jest.spyOn(dbUserService, 'isFollowing').mockResolvedValue(true);
             const result = await controller.getFollowing(mockData);
-            expect(result).toEqual({ status: 'SUCCESS', following: mockFollowing.map(following => ({
-                    following: following,
-                    isFollowing: dbUserService.isFollowing(mockData.viewer, following)
-                })) });
+            expect(result).toEqual({ status: 'SUCCESS', data: mockFollowing.map(following => ({
+                    profile: dbUserService.query_profile_by_user_id(following),
+                    isFollowing: dbUserService.isFollowing(mockData.viewerId, following)
+                })),
+                error: {message: 'User not found'} });
         });
 
         it('should get following list successfully and return following without viewer', async () => {
-            const mockData = { id: 'user1' };
+            const mockData = { userId: 'user1' };
             const mockFollowing = ['user2', 'user3'];
             jest.spyOn(followService, 'getFollowing').mockResolvedValue(mockFollowing);
             const result = await controller.getFollowing(mockData);
-            expect(result).toEqual({ status: 'SUCCESS', following: mockFollowing.map(following => ({
-                    following: following,
+            expect(result).toEqual({ status: 'SUCCESS', data: mockFollowing.map(following => ({
+                    profile: dbUserService.query_profile_by_user_id(following),
                     isFollowing: false
-                })) });
+                })),
+                error: {message: 'User not found'} });
         });
 
         it('should handle failure to get following list', async () => {
-            const mockData = { id: 'user1' };
+            const mockData = { userId: 'user1' };
             jest.spyOn(followService, 'getFollowing').mockResolvedValue([]);
             const result = await controller.getFollowing(mockData);
-            expect(result).toEqual({ status: 'SUCCESS' , following: []});
+            expect(result).toEqual({ status: 'SUCCESS', data: [], error: {message: 'User not found'} });
         });
 
         it('should handle invalid id when fetching following', async () => {
-            const mockData = { id: '' };
+            const mockData = { userId: '' };
             const result = await controller.getFollowing(mockData);
             expect(result).toEqual({ status: 'FAILED' });
         });
