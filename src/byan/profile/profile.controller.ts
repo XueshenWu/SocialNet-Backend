@@ -46,20 +46,57 @@ export class ProfileController {
   //   return this.profileService.update(userId, updateProfileDto);
   // }
 
+  // getProfileByEmail
+  // +queryuserbyemail
+  // +queryprofilebyuserid
+
   @Post('/getProfile/:id')
-  async getProfileByUserId(@Param('id') userId: string) {
-    const userProfile = await this.profileService.getProfileByUserId(userId);
-    if (!userProfile) {
-      throw new NotFoundException('User profile not found');
+  async getProfileByUserId(@Param('id') userId: string): Promise<Record<string, any>> {
+    try {
+      const userProfile = await this.profileService.getProfileByUserId(userId);
+
+      return {
+        data:{
+          profile: userProfile
+        },
+        error: {}
+      }
+    } catch (err) {
+      // const userProfile = await this.profileService.getProfileByUserId(userId);
+      // if (!userProfile) {
+      //   throw new NotFoundException('User profile not found');
+      // }
+      return {
+        data:{},
+        error: {
+          message: err.message
+        }
+      }
     }
-    return userProfile;
   }
 
-  @Post('/updateProfile/:id')
-  async updateProfile(@Param('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
+  @Post('/updateProfile')
+  async updateProfile(@Body() updateProfileDto: UpdateProfileDto): Promise<Record<string, any>> {
     // console.log(updateProfileDto.userId);
     // return this.dbService.updateProfile(updateProfileDto);
-    return await this.profileService.updateProfile(updateProfileDto);
+
+    try {
+      const updatedUserProfile = await this.profileService.updateProfile(updateProfileDto);
+
+      return {
+        data:{
+          profile: updatedUserProfile
+        },
+        error: {}
+      }
+    } catch (err) {
+      return {
+        data:{},
+        error: {
+          message: err.message
+        }
+      }
+    }
   }
   
   //visitProfle(uid, vid)

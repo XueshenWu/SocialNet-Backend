@@ -9,10 +9,12 @@ export class SearchService {
 
   constructor(private readonly connectionService: ConnectionService) { }
 
+  //const db = this.connectionService.mongoClient.post
+
   async searchPosts(query: string):Promise<any> {
     try {
       const response: any = await this.connectionService.mongoClient.$runCommandRaw({
-        aggregate: 'posts',
+        aggregate: 'post',
         pipeline: [
           {
             $search: {

@@ -50,6 +50,14 @@ export class ProfileService {
     return await this.dbUserService.updateProfile(updateProfileDto);
   }
 
+  async getUsrByEmail(email: string) {
+    return await this.dbUserService.query_user_by_email(email);
+  }
+
+  async getProfileByUser(userId: string) {
+    return await this.dbUserService.query_profile_by_user_id(userId);
+  }
+
   remove(id: number) {
     return `This action removes a #${id} profile`;
   }
