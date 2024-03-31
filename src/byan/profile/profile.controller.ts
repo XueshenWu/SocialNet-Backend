@@ -50,10 +50,19 @@ export class ProfileController {
   // +queryuserbyemail
   // +queryprofilebyuserid
 
-  @Post('/getProfile/:id')
-  async getProfileByUserId(@Param('id') userId: string): Promise<Record<string, any>> {
+  @Post('/getProfile')
+  async getProfileByUserId(@Body() updateProfileDto: UpdateProfileDto): Promise<Record<string, any>> {
     try {
-      const userProfile = await this.profileService.getProfileByUserId(userId);
+      const userProfile = await this.profileService.getProfileByUserId(updateProfileDto.userId);
+
+      if (!userProfile) {
+        return {
+          data:{},
+          error: {
+            message: "user not found"
+          }
+        }
+      }
 
       return {
         data:{
@@ -84,14 +93,10 @@ export class ProfileController {
       const updatedUserProfile = await this.profileService.updateProfile(updateProfileDto);
 
       return {
-        data:{
-          profile: updatedUserProfile
-        },
         error: {}
       }
     } catch (err) {
       return {
-        data:{},
         error: {
           message: err.message
         }
