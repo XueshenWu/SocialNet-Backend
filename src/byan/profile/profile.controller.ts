@@ -46,14 +46,10 @@ export class ProfileController {
   //   return this.profileService.update(userId, updateProfileDto);
   // }
 
-  // getProfileByEmail
-  // +queryuserbyemail
-  // +queryprofilebyuserid
-
   @Post('/getProfile')
-  async getProfileByUserId(@Body() updateProfileDto: UpdateProfileDto): Promise<Record<string, any>> {
+  async getProfileByUserId(@Body() userId: string): Promise<Record<string, any>> {
     try {
-      const userProfile = await this.profileService.getProfileByUserId(updateProfileDto.userId);
+      const userProfile = await this.profileService.getProfileByUserId(userId);
 
       if (!userProfile) {
         return {
@@ -103,6 +99,45 @@ export class ProfileController {
       }
     }
   }
+
+  @Post('/getProfileByEmail')
+  async getProfileByEmail(@Body() email: string): Promise<Record<string, any>> {
+    try {
+      const user = await this.profileService.getUserByEmail(email);
+      
+      if (!user) {
+        return {
+          data:{},
+          error: {
+            message: "user not found"
+          }
+        }
+      }
+
+      const userProfile = await this.profileService.getProfileByUserId(user.id);
+      return {
+        data:{
+          profile: userProfile
+        },
+        error: {}
+      }
+    } catch (err) {
+      // const userProfile = await this.profileService.getProfileByUserId(userId);
+      // if (!userProfile) {
+      //   throw new NotFoundException('User profile not found');
+      // }
+      return {
+        data:{},
+        error: {
+          message: err.message
+        }
+      }
+    }
+  }
+    
+  // getProfileByEmail
+  // +queryuserbyemail
+  // +queryprofilebyuserid
   
   //visitProfle(uid, vid)
   // @Post('/profile/:id')

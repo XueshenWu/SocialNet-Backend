@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProfileService } from './profile.service';
 import { DbUserService } from '../../xueshen/db/user/db_user.service';
-import { Profile } from "@prisma/pg";
+import { User, Profile } from "@prisma/pg";
 import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
 
 describe('ProfileService', () => {
@@ -11,6 +11,7 @@ describe('ProfileService', () => {
   beforeEach(async () => {
     // Create a fake copy of the DbUserService
     const userProfiles: Profile[] = [];
+    const users: User[] = [];
 
     const profile1 = {
       userId : "1a",
@@ -40,8 +41,30 @@ describe('ProfileService', () => {
     userProfiles.push(profile2);
     userProfiles.push(profile3);
 
+    const user1 = {
+      id : "u1",
+      email: "u1@gmail.com",
+      password: "u1u1"
+    } as User;
+
+    const user2 = {
+      id : "u2",
+      email: "u2@gmail.com",
+      password: "u2u2"
+    } as User;
+
+    const user3 = {
+      id : "u3",
+      email: "u3@gmail.com",
+      password: "u3u3"
+    } as User;
+
+    users.push(user1);
+    users.push(user2);
+    users.push(user3);
+
     fakeDbUserService = {
-      query_profile_by_user_id: (userId: string) =>  {
+      query_profile_by_user_id: (userId: string): Promise<Profile | null> =>  {
         const filteredUserProfile = userProfiles.filter((profile) => profile.userId === userId);
         if (!filteredUserProfile) {
           return Promise.resolve(null);
@@ -49,8 +72,16 @@ describe('ProfileService', () => {
           return Promise.resolve(filteredUserProfile[0]);
         }
       },
-      updateProfile: (updateProfileDto: UpdateProfileDto) =>  {
-        return Promise.resolve(false)
+      updateProfile: (updateProfileDto: UpdateProfileDto): Promise<false> => {
+        return Promise.resolve(false);
+      },
+      query_user_by_email: (email: string): Promise<User | null> => {
+        const filteredUser = users.filter((user) => user.email === email);
+        if (!filteredUser) {
+          return Promise.resolve(null);
+        } else {
+          return Promise.resolve(filteredUser[0]);
+        }
       }
     };
 
@@ -142,5 +173,17 @@ describe('ProfileService', () => {
     expect(userProfilesNew[2].avatar).toEqual('3updated.jpg');
     expect(userProfilesNew[2].bio).toEqual('shero Updated');
     expect(userProfileUpdated).toEqual(false);
+  });
+
+  it('return corresponding user if an existing email given', async () => {
+    const returnedUser = await service.getUserByEmail('u1@gmail.com');
+    expect(service).toBeDefined();
+    expect(returnedUser.id).toEqual('u1');
+  });
+
+  it('return undefined if an non-existing email given', async () => {
+    const returnedUser = await service.getUserByEmail('upp@gmail.com');
+    expect(service).toBeDefined();
+    expect(returnedUser).toEqual(undefined);
   });
 });

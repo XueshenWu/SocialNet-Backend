@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DbUserService } from '../../xueshen/db/user/db_user.service';
 import UpdateProfileDto from 'src/xueshen/dto/updateProfileDto';
+import { User, Profile } from "@prisma/pg";
 
 @Injectable()
 export class ProfileService {
@@ -17,13 +18,13 @@ export class ProfileService {
   //   return `This action returns all profile`;
   // }
 
-  findAll() {
-    return `This action returns all profile`;
-  }
+  // findAll() {
+  //   return `This action returns all profile`;
+  // }
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} profile`;
+  // }
 
   // update(id: number, updateProfileDto: UpdateProfileDto) {
   //   return `This action updates a #${id} profile`;
@@ -42,23 +43,19 @@ export class ProfileService {
   //   return this.dbService.updateProfileNew(userId, updateProfileDto);
   // }
 
-  async getProfileByUserId(userId: string) {
+  async getProfileByUserId(userId: string): Promise<Profile | null>  {
     return await this.dbUserService.query_profile_by_user_id(userId);
   }
 
-  async updateProfile(updateProfileDto: UpdateProfileDto) {
+  async updateProfile(updateProfileDto: UpdateProfileDto): Promise<boolean> {
     return await this.dbUserService.updateProfile(updateProfileDto);
   }
 
-  async getUsrByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<User | null> {
     return await this.dbUserService.query_user_by_email(email);
   }
 
-  async getProfileByUser(userId: string) {
-    return await this.dbUserService.query_profile_by_user_id(userId);
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} profile`;
+  // }
 }
