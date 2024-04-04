@@ -1,15 +1,25 @@
-import { Module } from '@nestjs/common';
+import { Module,ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core'
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-
 import { XueshenModule } from './xueshen/xueshen.module';
 import { DemoModule } from './demo/demo.module';
+import { ByanModule } from './byan/byan.module';
 
 
 @Module({
-  imports: [XueshenModule, DemoModule],
+  imports: [XueshenModule, ByanModule,DemoModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+  // {
+  //   provide: APP_PIPE,
+  //   useValue: new ValidationPipe({
+  //     transform: true,
+  //     whitelist: true,
+  //     forbidNonWhitelisted: true,
+  //   })
+  // }
+  ],
 })
 export class AppModule {}

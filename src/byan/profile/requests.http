@@ -1,0 +1,100 @@
+### Create a new uswr
+# POST http://localhost:8000/profile
+# Content-Type: application/json
+
+# {
+#   "email": "asfg@123.com",
+#   "password": "sadff",
+#   "gender": "male", 
+#   "interest": "TRAVEL"
+# }
+
+
+# create user and profile mannually
+#INSERT INTO "User" (id, email, password, role) 
+#VALUES ('097ab86f-c422-447b-8d50-855322f9fbb9', 'testbyan@163.com', '123456', 'COMMON');
+
+#INSERT INTO "Profile" ("userId", name, "customId", avatar, bio, interests, gender, "updateTime")
+#VALUES ('097ab86f-c422-447b-8d50-855322f9fbb9', 'John Doe', 'johndoe23', NULL, 'A brief biography.', ARRAY[CAST('TRAVEL' AS "Interest"), CAST('MUSIC' AS "Interest")], 'male', Now());
+
+# {
+#   "name": "John Doe",
+#   "customId": "johndoe23",
+#   "bio": "A brief biography.",
+#   "interests": ["TRAVEL", "READING"],
+#   "gender": "male",
+#   "user": {
+#     "connect": {
+#       "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
+#     }
+#   }
+# }
+
+# postgres schema changed @20240217
+# INSERT INTO "Profile" ("userId", username, fullname, avatar, bio, interests, gender, birthday, "updateTime")
+# VALUES ('097ab86f-c422-447b-8d50-855322f9fbb9', 'johndoe23', 'John Doe', NULL, 'A brief biography.', ARRAY[CAST('TRAVEL' AS "Interest"), CAST('MUSIC' AS "Interest")], 'male', '2000-01-01', Now());
+
+### Get the profile of an unknown user
+POST http://localhost:8000/api/profile/11e33
+Content-Type: application/json
+
+{
+  "email": "bbq@123.com",
+  "password": "sadff",
+  "gender": "male"
+}
+
+### Get the profile of an existing user
+POST  http://localhost:8000/api/profile/097ab86f-c422-447b-8d50-855322f9fbb9
+Content-Type: application/json
+
+### Update the profile of an existing user
+POST  http://localhost:8000/api/profile/update/097ab86f-c422-447b-8d50-855322f9fbb9
+Content-Type: application/json
+
+{
+  "userId":"097ab86f-c422-447b-8d50-855322f9fbb9",
+  // "username": "johndoe25",
+  "fullname": "John Doe",
+  "avatar": "",
+  "bio": "Updated biography.",
+  "interests": ["TRAVEL", "OTHER"],
+  "gender": "male"
+  //"user": {
+  //  "connect": {
+  //    "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
+  //  }
+  //}
+}
+
+
+# {
+#   "userId": "097ab86f-c422-447b-8d50-855322f9fbb9", 
+#   "customId": "johndoe23",
+#   "fullname": "John Doe",
+#   "avatar": "2.jpg",
+#   "bio": "A brief biography.",
+#   //"interests": ["TRAVEL"],
+#   "gender": "male"
+# }
+
+
+### Update the profile of an existing user (2)
+POST  http://localhost:8000/api/profile/update/097ab86f-c422-447b-8d50-855322f9fbb9
+Content-Type: application/json
+
+{
+  "userId":"097ab86f-c422-447b-8d50-855322f9fbb9",
+  // "username": "johndoe25",
+  "fullname": "John Doe",
+  "avatar": "",
+  "bio": "Updated biography.",
+  "interests": ["TRAVEL", "OTHER"],
+  "gender": "male",
+  "tags": ["movie lover"]
+  //"user": {
+  //  "connect": {
+  //    "id": "097ab86f-c422-447b-8d50-855322f9fbb9"
+  //  }
+  //}
+}
