@@ -50,6 +50,14 @@ export class DbPostService {
     }
 
 
+    async query_posts_by_user_id(id:string):Promise<Post[]>{
+        return await this.connectionService.mongoClient.post.findMany({
+            where:{
+                authorId:id
+            }
+        })
+    }
+
     async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
         try {
             const posts = await this.connectionService.mongoClient.post.findMany({
@@ -93,6 +101,7 @@ export class DbPostService {
                     id: post.authorId
                 }
             })
+            console.log('user:', user)
             if (user === null) {
                 return undefined;
             }
@@ -270,6 +279,15 @@ export class DbPostService {
     }
 
 
+    async search_post_by_title(title:string):Promise<Post[]>{
+        return this.connectionService.mongoClient.post.findMany({
+            where:{
+                title:{
+                    contains:title
+                }
+            }
+        })
+    }
 
     async repost(createRepostDto: CreateRepostDto): Promise<string | undefined> {
         try {

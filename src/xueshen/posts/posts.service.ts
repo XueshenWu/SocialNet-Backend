@@ -3,17 +3,18 @@ import CreatePostDto from '../dto/createPostDto';
 import { Post } from '@prisma/mongo';
 import CreateRepostDto from '../dto/createRepostDto';
 import { DbPostService } from '../db/post/db_post.service';
+import CreateReplyDto from '../dto/createReplyDto';
 
 @Injectable()
 export class PostsService {
 
     constructor( private readonly dbPostService:DbPostService){}
 
-    async addPost(createPostDto:CreatePostDto):Promise<String|undefined>{
+    async addPost(createPostDto:CreatePostDto):Promise<string|undefined>{
         return await this.dbPostService.addPost(createPostDto);
     }
 
-
+   
 
     async getOriginPostsByUserId(id:string):Promise<Post[]>{
         return await this.dbPostService.query_origin_posts_by_user_id(id);
@@ -30,16 +31,21 @@ export class PostsService {
         return await this.dbPostService.query_post_by_post_id(id);
     }
 
-    // async getPostsByUserId(id:string):Promise<Post[]>{
-    //     return await this.dbPostService.query_posts_by_user_id(id);
-    // }
+    async getPostsByUserId(id:string):Promise<Post[]>{
+        return await this.dbPostService.query_posts_by_user_id(id);
+    }
 
     // async getRepliesByPostId(id:string):Promise<Post[]>{
     //     return await this.dbPostService.query_replies_by_post_id(id);
     // }
 
-    async addReply(createReplyDto):Promise<String|undefined>{
+    async addReply(createReplyDto:CreateReplyDto):Promise<String|undefined>{
         return await this.dbPostService.addReply(createReplyDto);
+    }
+
+
+    async searchPost(title:string){
+        return await this.dbPostService.search_post_by_title(title)
     }
 
     async hidePost(id:string):Promise<boolean>{
