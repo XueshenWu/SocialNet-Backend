@@ -42,6 +42,7 @@ export class AuthController {
     @Post('register')
     async register(@Body() createUserDto: CreateUserDto): Promise<UniResponse<boolean>> {
         this.logger.verbose("Enter register")
+        console.log(createUserDto)
         const retval = await this.authService.register(createUserDto);
         this.logger.log(`register: ${createUserDto.email}, status: ${retval ? "SUCCESS" : "FAIL"}`);
         if (retval) {

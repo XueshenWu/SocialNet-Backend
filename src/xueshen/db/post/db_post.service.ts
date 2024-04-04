@@ -20,6 +20,19 @@ export class DbPostService {
 
     }
 
+
+    async query_likes(postId:string){
+        const likes:string[] = (await this.connectionService.mongoClient.likeTable.findMany({
+            where:{
+                postId:postId
+            },
+            select:{
+                userId:true
+            }
+        })).map(record=>record.userId)
+        return likes;
+    }
+
     async getRepliesByPostId(postId: string): Promise<Post[]> {
         try {
             const post = await this.connectionService.mongoClient.post.findUnique({
@@ -49,6 +62,14 @@ export class DbPostService {
         }
     }
 
+
+    async query_posts_by_user_id(id:string):Promise<Post[]>{
+        return await this.connectionService.mongoClient.post.findMany({
+            where:{
+                authorId:id
+            }
+        })
+    }
 
     async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
         try {
@@ -93,6 +114,7 @@ export class DbPostService {
                     id: post.authorId
                 }
             })
+            
             if (user === null) {
                 return undefined;
             }
@@ -270,6 +292,15 @@ export class DbPostService {
     }
 
 
+    async search_post_by_title(title:string):Promise<Post[]>{
+        return this.connectionService.mongoClient.post.findMany({
+            where:{
+                title:{
+                    contains:title
+                }
+            }
+        })
+    }
 
     async repost(createRepostDto: CreateRepostDto): Promise<string | undefined> {
         try {
