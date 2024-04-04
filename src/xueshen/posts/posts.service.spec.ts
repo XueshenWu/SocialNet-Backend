@@ -25,6 +25,7 @@ describe('PostsService', () => {
     service = module.get<PostsService>(PostsService);
     dbPostService = module.get<DbPostService>(DbPostService)
     authService = module.get<AuthService>(AuthService)
+
     dbUserService = module.get<DbUserService>(DbUserService);
 
     rn = v4().substring(0,8)
@@ -45,6 +46,7 @@ describe('PostsService', () => {
     expect(res).toBeTruthy()
     const post = await dbPostService.query_post_by_post_id(res)
     expect(post).toBeTruthy()
+   
   })
 
  

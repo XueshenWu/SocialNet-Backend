@@ -101,7 +101,7 @@ export class DbPostService {
                     id: post.authorId
                 }
             })
-            console.log('user:', user)
+            
             if (user === null) {
                 return undefined;
             }

@@ -23,8 +23,8 @@ export class PostsController {
     }
 
     @Post('createPost')
-    async create(createPostDto:CreatePostDto):Promise<String|undefined>{
-        return await this.postService.addPost(createPostDto);
+    async create(createPostDto:CreatePostDto):Promise<{data:string}|undefined>{
+        return {data:await this.postService.addPost(createPostDto)};
     }
 
     @Post('getOriginPostsByUserId')
