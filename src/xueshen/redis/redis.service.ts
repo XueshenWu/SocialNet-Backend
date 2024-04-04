@@ -8,24 +8,13 @@ import { DbPostService } from '../db/post/db_post.service';
 
 
 @Injectable()
-export class RedisService implements OnModuleInit, OnModuleDestroy{
+export class RedisService {
 
     private postStorage = new Array<string>();
 
    
 
-    async onModuleInit() {
-        // await this.redisClient.connect()
-        // await this.redisClient.configSet("maxmemory", process.env.REDIS_MAX_MEMORY ?? "100mb");
-        // (await this.dbPostSerive.getPostIds()).sort(()=>Math.random()-0.5).forEach(id=>{
-        //     this.redisClient.rPush('timeline', id)
-        // })
-    
-    }
-
-    async onModuleDestroy() {
-        // await this.redisClient.quit();
-    }
+   
     
     constructor(private readonly dbPostSerive:DbPostService) {
         

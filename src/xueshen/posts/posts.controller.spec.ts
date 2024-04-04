@@ -32,14 +32,12 @@ describe('PostsController', () => {
         authService = module.get<AuthService>(AuthService)
         dbPostService = module.get<DbPostService>(DbPostService)
         dbUserService = module.get<DbUserService>(DbUserService)
-        await redisService.onModuleInit()
+       
         rn = v4().substring(0, 8)
         await authService.register(new CreateUserDto('test', '123123', `${rn}@qwe.com`))
 
     });
-    afterAll(async () => {
-        await redisService.onModuleDestroy()
-    })
+  
 
     it('should be defined', () => {
         expect(controller).toBeDefined();
@@ -47,7 +45,7 @@ describe('PostsController', () => {
     });
 
     it('should return a recommended post id', async () => {
-        const postid = await controller.getFeed('123', 'FORYOU')
+        const postid = await controller.getFeed({userid:'123', feedtype:'FORYOU'})
         expect(postid).toBeTruthy()
     })
 
@@ -61,6 +59,6 @@ describe('PostsController', () => {
 
         }
         const res = await controller.searchPost('testpost')
-        expect(res.length).toBeGreaterThan(0)
+        expect(res.data.length).toBeGreaterThan(0)
     })
 });
