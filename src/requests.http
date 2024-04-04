@@ -1,0 +1,3 @@
+### test main page response
+GET http://localhost:8000/
+
