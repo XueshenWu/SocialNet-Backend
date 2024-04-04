@@ -10,9 +10,9 @@ export class FollowController {
 
   // Follow Friend
   @Post('follow')
-  async followUser(@Body() data: { id_from: string, id_to: string }) {
+  async followUser(@Body() data: { userId: string, followerId: string }) {
     try {
-      const success = await this.followService.followUser(data.id_from, data.id_to);
+      const success = await this.followService.followUser(data.userId, data.followerId);
       this.logger.log('Follow response sent')
 
       if (success) {
@@ -21,7 +21,7 @@ export class FollowController {
       } else {
         this.logger.log("Failed to follow user")
         return {
-          status: "FAILED",
+          status: 401,
         }
       }
     } catch (error) {
@@ -32,9 +32,9 @@ export class FollowController {
 
   // Unfollow Friend
   @Post('unfollow')
-  async unfollowUser(@Body() data: { id_from: string, id_to: string }) {
+  async unfollowUser(@Body() data: { userId: string, followerId: string }) {
     try {
-      const success = await this.followService.unfollowUser(data.id_from, data.id_to);
+      const success = await this.followService.unfollowUser(data.userId, data.followerId);
       this.logger.log('Unfollow response sent')
 
       if (success) {
@@ -43,7 +43,7 @@ export class FollowController {
       } else {
         this.logger.log("Failed to unfollow user")
         return {
-          status: "FAILED",
+          status: 401,
         }
       }
     } catch (error) {
@@ -103,12 +103,45 @@ export class FollowController {
           } else {
               this.logger.log("Following List is empty")
               return {
-                  status: "FAILED",
+                  status: 401,
               }
           }
       } catch (error) {
           this.logger.verbose('Error while getting following:', error);
-          return { status: "FAILED", }
+          return { status: 401, }
       }
   }
+
+  // Get followers and following count
+    @Post('getFollowStats')
+    async getFollowStats(@Body() data: { userId: string, viewerId?: string }) {
+        try {
+            const followers = await this.followService.getFollowers(data.userId);
+            const following = await this.followService.getFollowing(data.userId);
+            this.logger.log('Follow stats sent')
+
+            if (followers && following) {
+                this.logger.log("Follow stats sent successfully")
+
+                return {
+                    status: "SUCCESS",
+                    data: {
+                        followerCount: followers.length,
+                        followingCount: following.length,
+                        isFollowing: data.viewerId?await this.dbUserService.isFollowing(data.viewerId, data.userId):false
+                    },
+                    error: {message: 'User not found'}
+                }
+            } else {
+                this.logger.log("Follow stats not found")
+                return {
+                    status: 401,
+                }
+            }
+        } catch (error) {
+            this.logger.verbose('Error while getting follow stats:', error);
+            return { status: 401, }
+        }
+    }
+
 }
