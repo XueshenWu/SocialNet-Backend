@@ -6,7 +6,7 @@ import { ProfileService } from './profile.service';
 import UpdateProfileDto from '../../xueshen/dto/updateProfileDto';
 // import { NotFoundError } from 'rxjs';
 
-@Controller('api')
+@Controller()
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
   // constructor(private readonly dbService: DbService) {}
