@@ -1,0 +1,625 @@
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>db.service.spec.ts</title>
+      <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" type="text/css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css" type="text/css" rel="stylesheet">
+<script src="..\..\..\..\assets\source-file.js" type="text/javascript" charset="utf-8"></script>
+<link href="..\..\..\..\assets\source-file.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="margin-top:3em" class="ui container"><h1 class="ui header"><a href="..\..\..\..\index.html">TypeScript coverage report</a></h1><table style="margin-top:2em" class="ui celled table"><thead class=""><tr class=""><th class="">Filename</th><th class="">Percent</th><th class="">Threshold</th><th class="">Total</th><th class="">Covered</th><th class="">Uncovered</th></tr></thead><tbody class=""><tr class="positive"><td class="">src\xueshen\db\db.service.spec.ts</td><td class="">100.00%</td><td class="">80%</td><td class="">2</td><td class="">2</td><td class="">0</td></tr></tbody></table><textarea id="editor" readonly="" style="margin-top:3em">// import { Test, TestingModule } from &#x27;@nestjs/testing&#x27;;
+// import { DbService } from &#x27;./db.service&#x27;;
+// import { resolve } from &#x27;path&#x27;;
+// import createUserDto from &#x27;../dto/createUserDto&#x27;;
+// import { DbPostService } from &#x27;./db_post.service&#x27;;
+// import { ConnectionService } from &#x27;./connection.service&#x27;;
+
+
+describe(&quot;skip&quot;,()=&gt;{
+    it(&quot;skip&quot;,()=&gt;{})
+})
+
+
+
+
+
+// describe(&#x27;DbService&#x27;, () =&gt; {
+//     let service: DbService;
+
+//     beforeAll(async () =&gt; {
+//         const module: TestingModule = await Test.createTestingModule({
+//             providers: [DbService, 
+//                     DbPostService,
+//                     ConnectionService
+//             ],
+//         }).compile();
+
+//         service = module.get&lt;DbService&gt;(DbService);
+//         await service.resetDatabse_DANGEROUS()
+//     });
+
+
+//     it(&#x27;should be defined&#x27;, () =&gt; {
+//         expect(service).toBeDefined();
+//     });
+
+
+//     describe(&#x27;createUser&#x27;, () =&gt; {
+
+
+//         beforeAll(async () =&gt; {
+//             await service.deleteUser_notsafe_cascade(&quot;123123@gmail.com&quot;)
+//             await service.deleteUser_notsafe_cascade(&quot;abc@gmail.com&quot;)
+
+//             await service.createUser({
+//                 &quot;email&quot;: &quot;abcdefg@ms.com&quot;,
+//                 &quot;password&quot;: &quot;123&quot;,
+//                 &quot;role&quot;: &quot;COMMON&quot;
+//             })
+//         })
+
+//         afterAll(async () =&gt; {
+//             await service.resetDatabse_DANGEROUS()
+//         })
+
+//         it(&quot;should create a user and return id&quot;, async () =&gt; {
+
+
+//             const createUserDto:createUserDto = {
+//                 &quot;email&quot;: &quot;123123@gmail.com&quot;,
+//                 &quot;password&quot;: &quot;123&quot;,
+//                 &quot;role&quot;: &quot;COMMON&quot;,
+
+//             }
+
+//             const res = await service.createUser(createUserDto)
+
+//             const user = await service.getPgClient_DANGEROUS().user.findUnique({
+//                 where: {
+//                     email: &quot;123123@gmail.com&quot;
+//                 }
+//             })
+//             expect(res).toBe(user.id);
+
+//         })
+
+//         it(&quot;should not create a user and return undefined&quot;, async () =&gt; {
+
+//             const res = await service.createUser({
+//                 &quot;email&quot;: &quot;abcdefg@ms.com&quot;,
+//                 &quot;password&quot;: &quot;123&quot;,
+//                 &quot;role&quot;: &quot;COMMON&quot;,
+//                 &quot;name&quot;: &quot;123&quot;
+//             })
+//             expect(res).toBeUndefined();
+//         })
+
+
+//     })
+
+//     describe(&quot;addFriend&quot;, () =&gt; {
+
+//         let user1Id: string;
+//         let user2Id: string;
+//         let user3Id: string;
+//         beforeAll(async () =&gt; {
+//             user1Id = await service.createUser({
+//                 email: &quot;user1@u1.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             user2Id = await service.createUser({
+//                 email: &quot;user2@u2.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             user3Id = await service.createUser({
+//                 email: &quot;user3@u3.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             await service.getPgClient_DANGEROUS().friend.create({
+//                 data: {
+//                     id_from: user1Id,
+//                     id_to: user2Id
+//                 }
+//             })
+//         })
+
+//         afterAll(async () =&gt; {
+//             await service.resetDatabse_DANGEROUS()
+
+//         })
+
+//         it(&quot;should add friend and return true&quot;, async () =&gt; {
+//             const res = await service.addFriend(user1Id, user3Id)
+//             expect(res).toBe(true)
+//         })
+
+//         it(&quot;should not add friend and return false&quot;, async () =&gt; {
+//             const res = await service.addFriend(user1Id, user2Id)
+//             expect(res).toBe(false)
+//         })
+//     })
+
+
+//     describe(&quot;deleteFriend&quot;, () =&gt; {
+//         let user1Id: string;
+//         let user2Id: string;
+//         let user3Id: string;
+//         beforeAll(async () =&gt; {
+//             user1Id = await service.createUser({
+//                 email: &quot;abc@abc.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             user2Id = await service.createUser({
+//                 email: &quot;qwe@qwe.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             user3Id = await service.createUser({
+//                 email: &quot;poi@poi.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             await service.getPgClient_DANGEROUS().friend.create({
+//                 data: {
+//                     id_from: user1Id,
+//                     id_to: user2Id
+//                 }
+//             })
+
+//             await service.getPgClient_DANGEROUS().friend.create({
+//                 data: {
+//                     id_from: user2Id,
+//                     id_to: user1Id
+//                 }
+//             })
+//         })
+
+//         afterAll(async () =&gt; {
+//             await service.resetDatabse_DANGEROUS()
+//         })
+
+
+//         it(&quot;should delete friend and return true&quot;, async () =&gt; {
+//             const res = await service.deleteFriend(user1Id, user2Id)
+//             expect(res).toBe(true)
+//         })
+
+//         it(&quot;should not delete friend and return false if not yet&quot;, async () =&gt; {
+//             const res = await service.deleteFriend(user1Id, user3Id)
+//             expect(res).toBe(false)
+//         })
+//     })
+
+
+//     describe(&quot;sendNotification&quot;, () =&gt; {
+//         it(&quot;should send notification and return true and can be queryed&quot;, async () =&gt; {
+
+//             const user1Id = await service.createUser({
+//                 email: &quot;1213@123123.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             const user2Id = await service.createUser({
+//                 email: &quot;121212@12.com&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             await service.sendNotification(user1Id, {
+//                 type: &quot;FOLLOW&quot;,
+//                 content: `You are followed by ${user2Id}`,
+//                 sender: user2Id
+//             })
+
+//             await service.sendNotification(user1Id, {
+//                 type: &quot;REPLY&quot;,
+//                 content: `You are replied by ${user2Id}`,
+//                 sender: user2Id
+//             })
+
+//             await service.sendNotification(user2Id, {
+//                 type: &quot;REPLY&quot;,
+//                 content: `You are replied by ${user1Id}`,
+//                 sender: user1Id
+//             })
+
+//             const notificationCenter = await service.getMongoClient_DANGEROUS().notificationCenter.findUnique({
+//                 where: {
+//                     userId: user1Id
+//                 }
+//             })
+
+//             expect(notificationCenter.notifications.length).toBe(2)
+
+//             const m0 = notificationCenter.notifications[0]
+//             const m1 = notificationCenter.notifications[1]
+
+//             expect(m0.type).toBe(&quot;FOLLOW&quot;)
+//             expect(m0.content).toBe(`You are followed by ${user2Id}`)
+//             expect(m0.sender).toBe(user2Id)
+
+//             expect(m1.type).toBe(&quot;REPLY&quot;)
+//             expect(m1.content).toBe(`You are replied by ${user2Id}`)
+//             expect(m1.sender).toBe(user2Id)
+
+
+//             await service.resetDatabse_DANGEROUS(true)
+
+
+//         })
+//     })
+
+
+
+//     describe(&quot;follow&amp;unfollow User&quot;, () =&gt; {
+//         it(&quot;should follow user and return true&quot;, async () =&gt; {
+//             const user1Id = await service.createUser({
+//                 email: &quot;1&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+
+//             const user2Id = await service.createUser({
+//                 email: &quot;2&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             const res = await service.followUser(user1Id, user2Id)
+//             expect(res).toBe(true)
+
+//             const res1_2 = await service.getPgClient_DANGEROUS().follow.findUnique({
+//                 where: {
+//                     id_from_id_to: {
+//                         id_from: user1Id,
+//                         id_to: user2Id
+//                     }
+//                 }
+//             })
+
+//             const res2_1 = await service.getPgClient_DANGEROUS().follow.findUnique({
+//                 where: {
+//                     id_from_id_to: {
+//                         id_from: user2Id,
+//                         id_to: user1Id
+//                     }
+//                 }
+//             })
+
+//             expect(res1_2).toBeDefined()
+//             expect(res2_1).toBeNull()
+
+//             await service.resetDatabse_DANGEROUS(true)
+
+
+//         })
+
+//         it(&quot;should unfollow user and return true&quot;, async () =&gt; {
+//             const user1Id = await service.createUser({
+//                 email: &quot;1&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+//             const user2Id = await service.createUser({
+//                 email: &quot;2&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             await service.getPgClient_DANGEROUS().follow.create({
+//                 data: {
+//                     id_from: user1Id,
+//                     id_to: user2Id
+//                 }
+//             })
+
+//             const res = await service.unfollowUser(user1Id, user2Id)
+
+//             expect(res).toBe(true)
+
+//             const res1_2 = await service.getPgClient_DANGEROUS().follow.findUnique({
+//                 where: {
+//                     id_from_id_to: {
+//                         id_from: user1Id,
+//                         id_to: user2Id
+//                     }
+//                 }
+//             })
+//             expect(res1_2).toBeNull()
+//             await service.resetDatabse_DANGEROUS(true)
+//         })
+
+
+
+
+//         describe(&quot;add post&quot;, () =&gt; {
+//             it(&quot;should add post and return id&quot;, async () =&gt; {
+//                 const user1Id = await service.createUser({
+//                     email: &quot;1&quot;,
+//                     password: &quot;123&quot;,
+//                     role: &quot;COMMON&quot;
+//                 })
+
+//                 const res = await service.addPost({
+//                     title: &quot;123&quot;,
+//                     content: &quot;12223&quot;,
+//                     author: {
+//                         connect: {
+//                             id: user1Id
+//                         }
+//                     }
+//                 })
+
+               
+
+//                 const post = await service.getMongoClient_DANGEROUS().post.findUnique({
+//                     where: {
+//                         id: res
+//                     }
+//                 })
+
+//                 expect(post).toBeDefined()
+//                 expect(post.content).toBe(&quot;12223&quot;)
+
+
+//                 await service.resetDatabse_DANGEROUS(true)
+//             })
+
+
+//             it(&quot;should update post status and return true&quot;, async () =&gt; {
+//                 const user1Id = await service.createUser({
+//                     email: &quot;1&quot;,
+//                     password: &quot;123&quot;,
+//                     role: &quot;COMMON&quot;
+//                 })
+
+//                 const postId = await service.addPost({
+//                     title: &quot;123&quot;,
+//                     content: &quot;12223&quot;,
+//                     author: {
+//                         connect: {
+//                             id: user1Id
+//                         }
+//                     }
+//                 })
+
+
+//                 expect(postId).toBeDefined()
+
+//                 const res = await service.updatePostStatus(postId, &quot;UNDER_REVIEW&quot;)
+
+
+//                 const post = await service.getMongoClient_DANGEROUS().post.findUnique({
+//                     where: {
+//                         id: postId
+//                     }
+//                 })
+
+//                 expect(post).toBeDefined()
+//                 expect(post.status).toBe(&quot;UNDER_REVIEW&quot;)
+
+//                 await service.resetDatabse_DANGEROUS()
+//             })
+//         })
+//     })
+
+
+//     describe(&quot;like&amp;unlike post&quot;, () =&gt; {
+//         it(&quot;should like post and return true&quot;, async () =&gt; {
+//             const user1Id = await service.createUser({
+//                 email: &quot;1&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             const postId = await service.addPost({
+//                 title: &quot;123&quot;,
+//                 content: &quot;12223&quot;,
+//                 author: {
+//                     connect: {
+//                         id: user1Id
+//                     }
+//                 }
+//             })
+
+//             const res = await service.likePost(user1Id, postId)
+
+//             expect(res).toBeDefined()
+
+
+//             const res1 = await service.getMongoClient_DANGEROUS().likeTable.findUnique({
+//                 where: {
+//                     id: res
+//                 }
+//             })
+
+//             expect(res1).toBeDefined()
+
+//             await service.resetDatabse_DANGEROUS(true)
+//         })
+
+//         it(&quot;should unlike post and return true&quot;, async () =&gt; {
+//             const user1Id = await service.createUser({
+//                 email: &quot;1&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             const postId = await service.addPost({
+//                 title: &quot;123&quot;,
+//                 content: &quot;12223&quot;,
+//                 author: {
+//                     connect: {
+//                         id: user1Id
+//                     }
+//                 }
+//             })
+
+//             const likeId = await service.likePost(user1Id, postId)
+
+//             expect(likeId).toBeDefined()
+
+//             const res = await service.unlikePost(user1Id, postId)
+
+//             expect(res).toBe(true)
+
+//             const res1 = await service.getMongoClient_DANGEROUS().likeTable.findUnique({
+//                 where: {
+//                     id: likeId
+//                 }
+//             })
+
+//             expect(res1).toBeNull()
+
+//             await service.resetDatabse_DANGEROUS(true)
+
+
+
+//         })
+
+//     })
+
+
+//     describe(&quot;add reply&quot;, () =&gt; {
+
+
+//         let user1Id: string;
+//         let user2Id: string;
+//         let postId: string;
+
+
+//         beforeAll(async () =&gt; {
+//             user1Id = await service.createUser({
+//                 email: &quot;1&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             user2Id = await service.createUser({
+//                 email: &quot;2&quot;,
+//                 password: &quot;123&quot;,
+//                 role: &quot;COMMON&quot;
+//             })
+
+//             postId = await service.addPost({
+//                 title: &quot;123&quot;,
+//                 content: &quot;12223&quot;,
+//                 author: {
+//                     connect: {
+//                         id: user1Id
+//                     }
+//                 }
+//             })
+
+//         })
+
+
+//         afterAll(async () =&gt; {
+//             await service.resetDatabse_DANGEROUS(true)
+//         })
+
+//         it(&quot;should add reply and return id&quot;, async () =&gt; {
+//             const replyId = await service.addReply({
+//                 text: &quot;good post&quot;,
+//                 post: {
+//                     connect: {
+//                         id: postId
+//                     }
+//                 },
+//                 from: {
+//                     connect: {
+//                         id: user2Id
+//                     }
+
+//                 },
+//                 to: {
+//                     connect: {
+//                         id: user1Id
+//                     }
+//                 }
+//             })
+
+//             expect(replyId).toBeDefined()
+//             const reply = await service.getMongoClient_DANGEROUS().reply.findUnique({
+//                 where: {
+//                     id: replyId
+//                 }
+        
+//             })
+
+//             expect(reply).toBeDefined()
+//             expect(reply.text).toBe(&quot;good post&quot;)
+//         })
+
+//         it(&quot;should delete reply and return true&quot;, async () =&gt; {
+//             const replyId = await service.addReply({
+//                 text: &quot;very post&quot;,
+//                 post: {
+//                     connect: {
+//                         id: postId
+//                     }
+//                 },
+//                 from: {
+//                     connect: {
+//                         id: user2Id
+//                     }
+
+//                 },
+//                 to: {
+//                     connect: {
+//                         id: user1Id
+//                     }
+//                 }
+//             })
+
+//             expect(replyId).toBeDefined()
+
+            
+
+//             const res = await service.removeReply(replyId)
+
+//             expect(res).toBe(true)
+
+//             const reply = await service.getMongoClient_DANGEROUS().reply.findUnique({
+//                 where: {
+//                     id: replyId
+//                 }
+//             })
+
+          
+
+            
+
+
+
+
+
+//             expect(reply).toBeNull()
+
+            
+//         })
+
+//     })
+
+// });
+</textarea><pre id="annotations" style="display:none">[]</pre></div>
+    <p class="footer-text">TypeScript Coverage Report generated by <a href="https://github.com/plantain-00/type-coverage">type-coverage</a> and <a href="https://github.com/alexcanessa/typescript-coverage-report">typescript-coverage-report</a> at Thu, 04 Apr 2024 16:26:48 GMT</p>
+    </body>
+  </html>
+  

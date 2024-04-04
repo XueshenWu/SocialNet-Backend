@@ -1,0 +1,215 @@
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>db_user.service.ts</title>
+      <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" type="text/css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css" type="text/css" rel="stylesheet">
+<script src="..\..\..\..\..\assets\source-file.js" type="text/javascript" charset="utf-8"></script>
+<link href="..\..\..\..\..\assets\source-file.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="margin-top:3em" class="ui container"><h1 class="ui header"><a href="..\..\..\..\..\index.html">TypeScript coverage report</a></h1><table style="margin-top:2em" class="ui celled table"><thead class=""><tr class=""><th class="">Filename</th><th class="">Percent</th><th class="">Threshold</th><th class="">Total</th><th class="">Covered</th><th class="">Uncovered</th></tr></thead><tbody class=""><tr class="positive"><td class="">src\xueshen\db\user\db_user.service.ts</td><td class="">86.06%</td><td class="">80%</td><td class="">251</td><td class="">216</td><td class="">35</td></tr></tbody></table><textarea id="editor" readonly="" style="margin-top:3em">import { Injectable } from &quot;@nestjs/common&quot;;
+import { ConnectionService } from &quot;../connection/connection.service&quot;;
+import UpdateProfileDto from &quot;../../dto/updateProfileDto&quot;;
+import { User, Profile } from &quot;@prisma/pg&quot;;
+import { CreateUserDto } from &quot;src/xueshen/dto/createUserDto&quot;;
+
+@Injectable()
+export class DbUserService {
+    constructor(private readonly connectionService: ConnectionService) { }
+
+    async updateProfile(updateProfileDto: UpdateProfileDto) {
+        const res = await this.connectionService.pgClient.profile.update({
+            where: {
+                userId: updateProfileDto.userId
+            },
+            data: {
+                ...updateProfileDto.getNoneEmptyData()
+            }
+        })
+
+        return !res === null
+
+    }
+
+
+
+    async follow(id_from: string, id_to: string): Promise&lt;boolean&gt; {
+        if (await this.userExists(id_from) &amp;&amp; await this.userExists(id_to)) {
+            await this.connectionService.pgClient.follow.create({
+                data: {
+                    id_from: id_from,
+                    id_to: id_to
+                }
+            })
+            return true
+        }
+        return false
+    }
+
+    async unfollow(id_from:string, id_to:string):Promise&lt;boolean&gt;{
+        this.connectionService.pgClient.follow.delete({
+            where:{
+                id_from_id_to:{
+                    id_from:id_from,
+                    id_to:id_to
+                }
+            }
+        })
+        return true;
+    }
+
+    async userExists(userId: string) {
+        const res = await this.connectionService.pgClient.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        return res !== null
+    }
+
+    async isFollowing(userId: string, followingId: string) {
+        const res = await this.connectionService.pgClient.follow.findUnique({
+            where: {
+                id_from_id_to: {
+                    id_from: userId,
+                    id_to: followingId
+                }
+            }
+        })
+        return res !== null
+    }
+
+
+    async query_user_by_id(id: string): Promise&lt;User | null&gt; {
+        return await this.connectionService.pgClient.user.findUnique({
+            where: {
+                id: id
+            }
+        })
+    }
+
+    async query_user_by_email(email: string): Promise&lt;User | null&gt; {
+        return await this.connectionService.pgClient.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+    }
+
+    async query_user_by_username(username: string): Promise&lt;User | null&gt; {
+        const profile: Profile | null = await this.query_profile_by_username(username);
+        if (profile === null) {
+            return null;
+        }
+        return await this.query_user_by_id(profile.userId);
+    }
+
+
+
+    async query_follower_by_id(id:string):Promise&lt;String[]&gt;{
+        const res = await this.connectionService.pgClient.friend.findMany({
+            where:{
+                user1:{
+                    id:id
+                }
+            }
+        })
+        if(!res){
+            return []
+        }else{
+            return res.map(record=&gt;record.id_to)
+        }
+        
+    }
+
+    async query_follower_by_username(username:string){
+        const profile:Profile|null = await this.query_profile_by_username(username);
+        if(!profile){
+            return null
+        }
+        const id = profile.userId;
+        
+    }
+
+    async query_following_by_id(id:string):Promise&lt;string[]&gt;{
+        const res = await this.connectionService.pgClient.friend.findMany({
+            where:{
+                user2:{
+                    id:id
+                }
+            }
+        })
+        if(!res){
+            return []
+        }else{
+            return res.map(record=&gt;record.id_from)
+        }
+    }
+
+    async query_following_by_name(name:string):Promise&lt;string[]&gt;{
+        const id = (await this.query_user_by_username(name))?.id??null;
+        if(!id){
+            return []
+        }else{
+            return await this.query_following_by_id(id)
+        }
+    }
+
+
+    async query_profile_by_user_id(id: string): Promise&lt;Profile | null&gt; {
+        return await this.connectionService.pgClient.profile.findUnique({
+            where: {
+                userId: id
+            }
+        })
+    }
+
+    async query_profile_by_username(username: string): Promise&lt;Profile | null&gt; {
+        return await this.connectionService.pgClient.profile.findUnique({
+            where: {
+                username: username
+            }
+        })
+    }
+
+    async createUser(createUserDto: CreateUserDto): Promise&lt;Profile | null&gt; {
+        const res = await this.connectionService.pgClient.$transaction(async (tx) =&gt; {
+            try {
+
+
+                const user = await tx.user.create({
+                    data: {
+                        email: createUserDto.email,
+                        password: createUserDto.password,
+                        role: &quot;COMMON&quot;
+                    }
+                })
+                const profile = await tx.profile.create({
+                    data: {
+                        userId: user.id,
+                        username: user.id
+                    }
+                })
+                return profile;
+            } catch (e) {
+                return null
+            }
+        })
+
+        return res;
+    }
+
+
+
+
+
+
+}</textarea><pre id="annotations" style="display:none">[{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:90,&quot;character&quot;:14,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:91,&quot;character&quot;:12,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:94,&quot;character&quot;:43,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:94,&quot;character&quot;:51,&quot;text&quot;:&quot;userId&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:110,&quot;character&quot;:27,&quot;text&quot;:&quot;record&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:110,&quot;character&quot;:35,&quot;text&quot;:&quot;record&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:110,&quot;character&quot;:42,&quot;text&quot;:&quot;id_to&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:116,&quot;character&quot;:14,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:117,&quot;character&quot;:12,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:120,&quot;character&quot;:14,&quot;text&quot;:&quot;id&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:120,&quot;character&quot;:19,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:120,&quot;character&quot;:27,&quot;text&quot;:&quot;userId&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:135,&quot;character&quot;:27,&quot;text&quot;:&quot;record&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:135,&quot;character&quot;:35,&quot;text&quot;:&quot;record&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:135,&quot;character&quot;:42,&quot;text&quot;:&quot;id_from&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:140,&quot;character&quot;:14,&quot;text&quot;:&quot;id&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:140,&quot;character&quot;:62,&quot;text&quot;:&quot;id&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:141,&quot;character&quot;:12,&quot;text&quot;:&quot;id&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:166,&quot;character&quot;:78,&quot;text&quot;:&quot;tx&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:170,&quot;character&quot;:22,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:170,&quot;character&quot;:35,&quot;text&quot;:&quot;tx&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:170,&quot;character&quot;:38,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:170,&quot;character&quot;:43,&quot;text&quot;:&quot;create&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:177,&quot;character&quot;:22,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:177,&quot;character&quot;:38,&quot;text&quot;:&quot;tx&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:177,&quot;character&quot;:41,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:177,&quot;character&quot;:49,&quot;text&quot;:&quot;create&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:179,&quot;character&quot;:24,&quot;text&quot;:&quot;userId&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:179,&quot;character&quot;:32,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:179,&quot;character&quot;:37,&quot;text&quot;:&quot;id&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:180,&quot;character&quot;:24,&quot;text&quot;:&quot;username&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:180,&quot;character&quot;:34,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:180,&quot;character&quot;:39,&quot;text&quot;:&quot;id&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:183,&quot;character&quot;:23,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\user\\db_user.service.ts&quot;,&quot;line&quot;:184,&quot;character&quot;:21,&quot;text&quot;:&quot;e&quot;,&quot;kind&quot;:1}]</pre></div>
+    <p class="footer-text">TypeScript Coverage Report generated by <a href="https://github.com/plantain-00/type-coverage">type-coverage</a> and <a href="https://github.com/alexcanessa/typescript-coverage-report">typescript-coverage-report</a> at Thu, 04 Apr 2024 16:26:48 GMT</p>
+    </body>
+  </html>
+  

@@ -1,0 +1,106 @@
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>dbscript.ts</title>
+      <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" type="text/css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css" type="text/css" rel="stylesheet">
+<script src="..\..\..\..\assets\source-file.js" type="text/javascript" charset="utf-8"></script>
+<link href="..\..\..\..\assets\source-file.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="margin-top:3em" class="ui container"><h1 class="ui header"><a href="..\..\..\..\index.html">TypeScript coverage report</a></h1><table style="margin-top:2em" class="ui celled table"><thead class=""><tr class=""><th class="">Filename</th><th class="">Percent</th><th class="">Threshold</th><th class="">Total</th><th class="">Covered</th><th class="">Uncovered</th></tr></thead><tbody class=""><tr class="positive"><td class="">src\xueshen\db\dbscript.ts</td><td class="">93.53%</td><td class="">80%</td><td class="">139</td><td class="">130</td><td class="">9</td></tr></tbody></table><textarea id="editor" readonly="" style="margin-top:3em">import { PrismaClient as PgClient, Prisma as PgPrisma, User } from &#x27;@prisma/pg&#x27;
+import { PrismaClient as MongoClient, Prisma as MongoPrisma, Post } from &#x27;@prisma/mongo&#x27;;
+import mockdata from &#x27;../../../mockdata&#x27;;
+
+
+
+const addRandomPost = async (userId: string, content: string, title: string, pg: PgClient, mongo: MongoClient) =&gt; {
+
+    const postId = await pg.$transaction(async (tx) =&gt; {
+        const user = await tx.user.findUnique({ where: { id: userId } })
+        if (!user) {
+            tx.user.create({
+                data: {
+                    id: userId,
+                    email: `${userId}@a.com`,
+                    role: &quot;COMMON&quot;,
+                    password: &quot;password&quot;
+                }
+            })
+            mongo.user.create({
+                data: {
+                    id: userId,
+                }
+            })
+        }
+
+        const post = await mongo.post.create({
+            data: {
+                title: title,
+                content: content,
+                status: &quot;UNDER_REVIEW&quot;,
+                authorId: userId,
+                
+            }
+        })
+
+        return post.id;
+
+
+    })
+
+    return postId;
+}
+
+
+const addRandomParent = async (postIds:string[], mongoClient:MongoClient)=&gt;{
+
+
+
+    for(let i = 0; i&lt;postIds.length; i++){
+
+        const parentId = Math.floor(Math.random() * postIds.length);
+        const op = Math.random() &gt; 0.5;
+        mongoClient.post.update({
+            where:{
+                id:postIds[i]
+            },
+            data:{
+                replyParentId:op?postIds[parentId]:undefined,
+                repostParentId:!op?postIds[parentId]:undefined
+            }
+        })
+        console.log(`add post parent: ${i+1}/${postIds.length}`)
+    }
+}
+
+
+
+
+const main = async () =&gt; {
+    const pgClient = new PgClient();
+    const mongoClient = new MongoClient();
+
+    const postIds:string[] = []
+
+    for (let i = 0; i &lt; mockdata.length; i++) {
+        const post = mockdata[i];
+        const postId = await addRandomPost(&quot;&quot;+i, post.content, post.title, pgClient, mongoClient)
+        postIds.push(postId);
+        console.log(`generate post: ${i+1}/${mockdata.length}`)
+    }
+    
+    await addRandomParent(postIds, mongoClient);
+
+
+}
+
+
+main()</textarea><pre id="annotations" style="display:none">[{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:8,&quot;character&quot;:48,&quot;text&quot;:&quot;tx&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:9,&quot;character&quot;:14,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:9,&quot;character&quot;:27,&quot;text&quot;:&quot;tx&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:9,&quot;character&quot;:30,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:9,&quot;character&quot;:35,&quot;text&quot;:&quot;findUnique&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:10,&quot;character&quot;:13,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:11,&quot;character&quot;:12,&quot;text&quot;:&quot;tx&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:11,&quot;character&quot;:15,&quot;text&quot;:&quot;user&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\xueshen\\db\\dbscript.ts&quot;,&quot;line&quot;:11,&quot;character&quot;:20,&quot;text&quot;:&quot;create&quot;,&quot;kind&quot;:1}]</pre></div>
+    <p class="footer-text">TypeScript Coverage Report generated by <a href="https://github.com/plantain-00/type-coverage">type-coverage</a> and <a href="https://github.com/alexcanessa/typescript-coverage-report">typescript-coverage-report</a> at Thu, 04 Apr 2024 16:26:48 GMT</p>
+    </body>
+  </html>
+  

@@ -1,0 +1,151 @@
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>posts.controller.ts</title>
+      <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" type="text/css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css" type="text/css" rel="stylesheet">
+<script src="..\..\..\..\assets\source-file.js" type="text/javascript" charset="utf-8"></script>
+<link href="..\..\..\..\assets\source-file.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="margin-top:3em" class="ui container"><h1 class="ui header"><a href="..\..\..\..\index.html">TypeScript coverage report</a></h1><table style="margin-top:2em" class="ui celled table"><thead class=""><tr class=""><th class="">Filename</th><th class="">Percent</th><th class="">Threshold</th><th class="">Total</th><th class="">Covered</th><th class="">Uncovered</th></tr></thead><tbody class=""><tr class="positive"><td class="">src\xueshen\posts\posts.controller.ts</td><td class="">100.00%</td><td class="">80%</td><td class="">86</td><td class="">86</td><td class="">0</td></tr></tbody></table><textarea id="editor" readonly="" style="margin-top:3em">import { Controller, Post } from &#x27;@nestjs/common&#x27;;
+import { PostsService } from &#x27;./posts.service&#x27;;
+import CreatePostDto from &#x27;../dto/createPostDto&#x27;;
+import { Post as Post_t} from &#x27;@prisma/mongo&#x27;;
+
+import BasicQueryDto from &#x27;../dto/basicQueryDto&#x27;;
+import CreateReplyDto from &#x27;../dto/createReplyDto&#x27;;
+
+
+@Controller(&#x27;posts&#x27;)
+export class PostsController {
+    constructor(private readonly postService:PostsService) {}
+
+
+
+    @Post(&#x27;addPost&#x27;)
+    async addPost(createPostDto:CreatePostDto):Promise&lt;String|undefined&gt;{
+        return await this.postService.addPost(createPostDto);
+    }
+
+    @Post(&#x27;getOriginPostsByUserId&#x27;)
+    async getOriginPostsByUserId(basicQueryDto:BasicQueryDto):Promise&lt;Post_t[]&gt;{
+        return await this.postService.getOriginPostsByUserId(basicQueryDto.identity);
+    }
+
+    @Post(&#x27;getRepostedPostsByUserId&#x27;)
+    async getRepostedPostsByUserId(basicQueryDto:BasicQueryDto):Promise&lt;Post_t[]&gt;{
+        return await this.postService.getRepostedPostsByUserId(basicQueryDto.identity);
+    }
+
+    @Post(&#x27;getLikedPostsByUserId&#x27;)
+    async getLikedPostsByUserId(basicQueryDto:BasicQueryDto):Promise&lt;String[]&gt;{
+        return await this.postService.getLikedPostsByUserId(basicQueryDto.identity);
+    }
+
+    @Post(&#x27;getPostByPostId&#x27;)
+    async getPostByPostId(basicQueryDto:BasicQueryDto):Promise&lt;Post_t&gt;{
+        return await this.postService.getPostByPostId(basicQueryDto.identity);
+    }
+
+    // @Post(&#x27;getPostsByUserId&#x27;)
+    // async getPostsByUserId(basicQueryDto:BasicQueryDto):Promise&lt;Post_t[]&gt;{
+    //     return await this.postService.getPostsByUserId(basicQueryDto.identity);
+    // }
+
+    // @Post(&#x27;getRepliesByPostId&#x27;)
+    // async getRepliesByPostId(basicQueryDto:BasicQueryDto):Promise&lt;Post_t[]&gt;{
+    //     return await this.postService.getRepliesByPostId(basicQueryDto.identity);
+    // }
+
+    @Post(&#x27;addReply&#x27;)
+    async addReply(createReplyDto:CreateReplyDto):Promise&lt;String|undefined&gt;{
+        return await this.postService.addReply(createReplyDto);
+    }
+
+    @Post(&#x27;hidePost&#x27;)
+    async hidePost(basicQueryDto:BasicQueryDto):Promise&lt;boolean&gt;{
+        return await this.postService.hidePost(basicQueryDto.identity);
+    }
+
+}
+
+
+
+
+/**
+ * 
+ * 
+ * import { Injectable } from &#x27;@nestjs/common&#x27;;
+import { DbService } from &#x27;../db/db.service&#x27;;
+import CreatePostDto from &#x27;../dto/createPostDto&#x27;;
+import { Post } from &#x27;@prisma/mongo&#x27;;
+import CreateRepostDto from &#x27;../dto/createRepostDto&#x27;;
+
+@Injectable()
+export class PostsService {
+
+    constructor(private readonly dbService:DbService){}
+
+    async addPost(createPostDto:CreatePostDto):Promise&lt;String|undefined&gt;{
+        return await this.dbService.addPost(createPostDto);
+    }
+
+
+
+    async getOriginPostsByUserId(id:string):Promise&lt;Post[]&gt;{
+        return await this.dbService.query_origin_posts_by_user_id(id);
+    }
+    async getRepostedPostsByUserId(id:string):Promise&lt;Post[]&gt;{
+        return await this.dbService.query_reposted_posts_by_user_id(id);
+    }
+
+    async getLikedPostsByUserId(id:string):Promise&lt;String[]&gt;{
+        return await this.dbService.query_liked_posts_by_user_id(id);
+    }
+
+    async getPostByPostId(id:string):Promise&lt;Post&gt;{
+        return await this.dbService.query_post_by_id(id);
+    }
+
+    async getPostsByUserId(id:string):Promise&lt;Post[]&gt;{
+        return await this.dbService.query_posts_by_user_id(id);
+    }
+
+    async getRepliesByPostId(id:string):Promise&lt;Post[]&gt;{
+        return await this.dbService.query_replies_by_post_id(id);
+    }
+
+    async addReply(createReplyDto):Promise&lt;String|undefined&gt;{
+        return await this.dbService.addReply(createReplyDto);
+    }
+
+    async hidePost(id:string):Promise&lt;boolean&gt;{
+        return await this.dbService.hidePost(id);
+    }
+
+    async publishPost(id:string):Promise&lt;boolean&gt;{
+        return await this.dbService.updatePostStatus(id,&quot;PUBLISHED&quot;);
+    }
+
+    async likePost(user_id:string, post_id):Promise&lt;string|undefined&gt;{
+        return await this.dbService.likePost(user_id, post_id);
+    }
+
+    async unlikePost(user_id:string, post_id):Promise&lt;boolean&gt;{
+        return await this.dbService.unlikePost(user_id, post_id);
+    }
+
+    async repost(createRepostDto:CreateRepostDto):Promise&lt;string|undefined&gt;{
+        return await this.dbService.repost(createRepostDto);
+    }
+}
+
+ */</textarea><pre id="annotations" style="display:none">[]</pre></div>
+    <p class="footer-text">TypeScript Coverage Report generated by <a href="https://github.com/plantain-00/type-coverage">type-coverage</a> and <a href="https://github.com/alexcanessa/typescript-coverage-report">typescript-coverage-report</a> at Thu, 04 Apr 2024 16:26:48 GMT</p>
+    </body>
+  </html>
+  

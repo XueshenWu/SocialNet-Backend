@@ -1,0 +1,386 @@
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>profile.controller.spec.ts</title>
+      <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" type="text/css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css" type="text/css" rel="stylesheet">
+<script src="..\..\..\..\assets\source-file.js" type="text/javascript" charset="utf-8"></script>
+<link href="..\..\..\..\assets\source-file.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="margin-top:3em" class="ui container"><h1 class="ui header"><a href="..\..\..\..\index.html">TypeScript coverage report</a></h1><table style="margin-top:2em" class="ui celled table"><thead class=""><tr class=""><th class="">Filename</th><th class="">Percent</th><th class="">Threshold</th><th class="">Total</th><th class="">Covered</th><th class="">Uncovered</th></tr></thead><tbody class=""><tr class="positive"><td class="">src\byan\profile\profile.controller.spec.ts</td><td class="">96.67%</td><td class="">80%</td><td class="">390</td><td class="">377</td><td class="">13</td></tr></tbody></table><textarea id="editor" readonly="" style="margin-top:3em">import { Test, TestingModule } from &#x27;@nestjs/testing&#x27;;
+import { ProfileController } from &#x27;./profile.controller&#x27;;
+import { ProfileService } from &#x27;./profile.service&#x27;;
+import { DbUserService } from &#x27;../../xueshen/db/user/db_user.service&#x27;;
+import { Profile, User } from &quot;@prisma/pg&quot;;
+import UpdateProfileDto from &#x27;src/xueshen/dto/updateProfileDto&#x27;;
+import { NotFoundException } from &#x27;@nestjs/common&#x27;;
+
+describe(&#x27;ProfileController&#x27;, () =&gt; {
+  let controller: ProfileController;
+  let fakeProfileService: Partial&lt;ProfileService&gt;;
+  let fakeDbUserService: Partial&lt;DbUserService&gt;;
+
+  beforeEach(async () =&gt; {
+    const userProfiles: Profile[] = [];
+    const users: User[] = [];
+
+    const profile1 = {
+      userId : &quot;1a&quot;,
+      username: &quot;Amy&quot;,
+      fullname: &#x27;Amy Green&#x27;,
+      avatar: &#x27;1.jpg&#x27;,
+      bio: &#x27;power girl&#x27;
+    } as Profile;
+
+    const profile2 = {
+      userId : &quot;2b&quot;,
+      username: &quot;Bobby&quot;,
+      fullname: &#x27;Bobby White&#x27;,
+      avatar: &#x27;2.jpg&#x27;,
+      bio: &#x27;super man&#x27;
+    } as Profile;
+
+    const profile3 = {
+      userId : &quot;3c&quot;,
+      username: &quot;Cindy&quot;,
+      fullname: &#x27;Cindy Black&#x27;,
+      avatar: &#x27;3.jpg&#x27;,
+      bio: &#x27;shero&#x27;
+    } as Profile;
+
+    userProfiles.push(profile1);
+    userProfiles.push(profile2);
+    userProfiles.push(profile3);
+
+    const user1 = {
+      id : &quot;1a&quot;,
+      email: &quot;u1@gmail.com&quot;,
+      password: &quot;u1u1&quot;
+    } as User;
+
+    const user2 = {
+      id : &quot;2b&quot;,
+      email: &quot;u2@gmail.com&quot;,
+      password: &quot;u2u2&quot;
+    } as User;
+
+    const user3 = {
+      id : &quot;3c&quot;,
+      email: &quot;u3@gmail.com&quot;,
+      password: &quot;u3u3&quot;
+    } as User;
+
+    users.push(user1);
+    users.push(user2);
+    users.push(user3);
+
+
+    // Create a fake copy of the fakeProfileService
+    fakeProfileService = {
+      getProfileByUserId: (userId: string) =&gt; {
+        const filteredUserProfile = userProfiles.filter((profile) =&gt; profile.userId === userId);
+        if (!filteredUserProfile) {
+          return Promise.resolve(null);
+        } else {
+          return Promise.resolve(filteredUserProfile[0]);
+        }
+      },
+
+      updateProfile: (updateProfileDto: UpdateProfileDto) =&gt;  {
+        return Promise.resolve(false);
+      },
+
+      getUserByEmail: (email: string) =&gt; {
+        const filteredUser = users.filter((user) =&gt; user.email === email);
+        if (!filteredUser) {
+          return Promise.resolve(null);
+        } else {
+          return Promise.resolve(filteredUser[0]);
+        }
+      },
+
+    }
+
+    // Create a fake copy of the DbUserService
+    fakeDbUserService = {
+      query_profile_by_user_id: (userId: string) =&gt;  {
+        const filteredUserProfile = userProfiles.filter((profile) =&gt; profile.userId === userId);
+        if (!filteredUserProfile) {
+          return Promise.resolve(null);
+        } else {
+          return Promise.resolve(filteredUserProfile[0]);
+        }
+      },
+      updateProfile: (updateProfileDto: UpdateProfileDto) =&gt;  {
+        return Promise.resolve(false);
+      },
+      query_user_by_email: (email: string): Promise&lt;User | null&gt; =&gt; {
+        const filteredUser = users.filter((user) =&gt; user.email === email);
+        if (!filteredUser) {
+          return Promise.resolve(null);
+        } else {
+          return Promise.resolve(filteredUser[0]);
+        }
+      }
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ProfileController],
+      providers: [
+        {
+          provide: ProfileService,
+          useValue: fakeProfileService,
+        },
+        {
+          provide: DbUserService,
+          useValue: fakeDbUserService,
+        }
+      ],
+    }).compile();
+
+    controller = module.get&lt;ProfileController&gt;(ProfileController);
+  });
+
+  it(&#x27;should be defined&#x27;, () =&gt; {
+    expect(controller).toBeDefined();
+  });
+
+  it(&#x27;return corresponding profile if an existing userId given&#x27;, async () =&gt; {
+    // const result = await controller.getProfileByUserId({
+    //   userId: &#x27;1a&#x27;,
+    //   fullname: &#x27;Amy Green&#x27;,
+    //   avatar: &#x27;1.jpg&#x27;,
+    //   bio: &#x27;power girl&#x27;,
+    //   interests: [],
+    //   tags: [],
+    //   gender: &#x27;&#x27;,
+    //   getNoneEmptyData: () =&gt; {
+    //     throw new Error(&#x27;Function not implemented.&#x27;);
+    //   }} as UpdateProfileDto);
+
+    const result = await controller.getProfileByUserId(&#x27;1a&#x27;);
+
+    expect(result.data.profile.userId).toEqual(&#x27;1a&#x27;);
+  });
+  
+
+  it(&#x27;return corresponding err message if an non-existing userId given&#x27;, async () =&gt; {
+    // await expect(
+    //   controller.getProfileByUserId({
+    //     userId: &#x27;ww&#x27;,
+    //     fullname: &#x27;ww Orange&#x27;,
+    //     avatar: &#x27;8.jpg&#x27;,
+    //     bio: &#x27;nonsense&#x27;,
+    //     interests: [],
+    //     tags: [],
+    //     gender: &#x27;&#x27;,
+    //     getNoneEmptyData: () =&gt; {
+    //       throw new Error(&#x27;Function not implemented.&#x27;);
+    //     }} as UpdateProfileDto),
+    // ).rejects.toThrow(NotFoundException);
+
+    // const result = await controller.getProfileByUserId({
+    //   userId: &#x27;ww&#x27;,
+    //   fullname: &#x27;ww Orange&#x27;,
+    //   avatar: &#x27;8.jpg&#x27;,
+    //   bio: &#x27;nonsense&#x27;,
+    //   interests: [],
+    //   tags: [],
+    //   gender: &#x27;&#x27;,
+    //   getNoneEmptyData: () =&gt; {
+    //     throw new Error(&#x27;Function not implemented.&#x27;);
+    //   }} as UpdateProfileDto);
+
+    const result = await controller.getProfileByUserId(&#x27;ww&#x27;);
+    
+    expect(result).toEqual({
+      data:{},
+      error: {
+        message: &quot;user not found&quot;
+      }
+    });
+  });
+
+  it(&#x27;return err message when getProfileByUserId but catching err&#x27;, async () =&gt; {
+    const err = new Error(&#x27;Database error&#x27;);
+
+    jest.spyOn(fakeProfileService, &#x27;getProfileByUserId&#x27;).mockRejectedValue(new Error(&quot;Database error&quot;));
+
+    // const err1Result = await controller.getProfileByUserId({
+    //   userId: &#x27;err1&#x27;,
+    //   fullname: &#x27;err1&#x27;,
+    //   avatar: &#x27;err1.jpg&#x27;,
+    //   bio: &#x27;err1&#x27;,
+    //   interests: [],
+    //   tags: [],
+    //   gender: &#x27;&#x27;,
+    //   getNoneEmptyData: () =&gt; {
+    //     throw new Error(&#x27;Function not implemented.&#x27;);
+    //   }} as UpdateProfileDto);
+
+    const err1Result = await controller.getProfileByUserId(&quot;err1&quot;);
+
+    expect(err1Result.error.message).toEqual(&quot;Database error&quot;);
+  });
+
+  // it(&#x27;throw NotFoundException if an non-existing userId given_case 2&#x27;, async () =&gt; {
+  //   await expect(
+  //     controller.getProfileByUserId({
+  //       userId: &#x27;m2m&#x27;,
+  //       fullname: &#x27;m2m Black&#x27;,
+  //       avatar: &#x27;8updated.jpg&#x27;,
+  //       bio: &#x27;nonsense&#x27;,
+  //       interests: [],
+  //       tags: [],
+  //       gender: &#x27;&#x27;,
+  //       getNoneEmptyData: () =&gt; {
+  //         throw new Error(&#x27;Function not implemented.&#x27;);
+  //       }} as UpdateProfileDto),
+  //   ).rejects.toThrow(NotFoundException);
+  // });
+
+  it(&#x27;update the profile for the given user&#x27;, async () =&gt; {
+    const userProfilesNew: Profile[] = [];
+
+    const profile1New = {
+      userId : &quot;1a&quot;,
+      username: &quot;Amy&quot;,
+      fullname: &#x27;Amy Green&#x27;,
+      avatar: &#x27;1.jpg&#x27;,
+      bio: &#x27;power girl&#x27;
+    } as Profile;
+
+    const profile2New = {
+      userId : &quot;2b&quot;,
+      username: &quot;Bobby&quot;,
+      fullname: &#x27;Bobby White&#x27;,
+      avatar: &#x27;2.jpg&#x27;,
+      bio: &#x27;super man&#x27;
+    } as Profile;
+
+    const profile3New = {
+      userId : &quot;3c&quot;,
+      username: &quot;Cindy&quot;,
+      fullname: &#x27;Cindy Black&#x27;,
+      avatar: &#x27;3.jpg&#x27;,
+      bio: &#x27;shero&#x27;
+    } as Profile;
+
+    userProfilesNew.push(profile1New);
+    userProfilesNew.push(profile2New);
+    userProfilesNew.push(profile3New);
+
+    fakeProfileService.updateProfile = (updateProfileDto: UpdateProfileDto) =&gt;  {
+        userProfilesNew[2].avatar = &#x27;3updated.jpg&#x27;;
+        userProfilesNew[2].bio = &#x27;shero Updated&#x27;;
+        return Promise.resolve(false)
+      };
+
+    const userProfileUpdated = await controller.updateProfile({
+      userId: &#x27;3c&#x27;,
+      fullname: &#x27;Cindy Black&#x27;,
+      avatar: &#x27;3updated.jpg&#x27;,
+      bio: &#x27;shero Updated&#x27;,
+      interests: [],
+      tags: [],
+      gender: &#x27;&#x27;,
+      getNoneEmptyData: () =&gt; {
+        throw new Error(&#x27;Function not implemented.&#x27;);
+      }} as UpdateProfileDto);
+    expect(userProfilesNew[2].avatar).toEqual(&#x27;3updated.jpg&#x27;);
+    expect(userProfilesNew[2].bio).toEqual(&#x27;shero Updated&#x27;);
+    expect(userProfileUpdated.error).toEqual({});
+  });
+
+  it(&#x27;update the profile but catching error&#x27;, async () =&gt; {
+    const userProfilesNew: Profile[] = [];
+
+    const profile1New = {
+      userId : &quot;1a&quot;,
+      username: &quot;Amy&quot;,
+      fullname: &#x27;Amy Green&#x27;,
+      avatar: &#x27;1.jpg&#x27;,
+      bio: &#x27;power girl&#x27;
+    } as Profile;
+
+    const profile2New = {
+      userId : &quot;2b&quot;,
+      username: &quot;Bobby&quot;,
+      fullname: &#x27;Bobby White&#x27;,
+      avatar: &#x27;2.jpg&#x27;,
+      bio: &#x27;super man&#x27;
+    } as Profile;
+
+    const profile3New = {
+      userId : &quot;3c&quot;,
+      username: &quot;Cindy&quot;,
+      fullname: &#x27;Cindy Black&#x27;,
+      avatar: &#x27;3.jpg&#x27;,
+      bio: &#x27;shero&#x27;
+    } as Profile;
+
+    userProfilesNew.push(profile1New);
+    userProfilesNew.push(profile2New);
+    userProfilesNew.push(profile3New);
+
+    fakeProfileService.updateProfile = (updateProfileDto: UpdateProfileDto) =&gt;  {
+        userProfilesNew[2].avatar = &#x27;3updated.jpg&#x27;;
+        userProfilesNew[2].bio = &#x27;shero Updated&#x27;;
+        return Promise.resolve(false)
+      };
+
+    jest.spyOn(fakeProfileService, &#x27;updateProfile&#x27;).mockRejectedValue(new Error(&quot;Database error&quot;));
+
+    const userProfileUpdated = await controller.updateProfile({
+      userId: &#x27;3c&#x27;,
+      fullname: &#x27;Cindy Black&#x27;,
+      avatar: &#x27;3updated.jpg&#x27;,
+      bio: &#x27;shero Updated&#x27;,
+      interests: [],
+      tags: [],
+      gender: &#x27;&#x27;,
+      getNoneEmptyData: () =&gt; {
+        throw new Error(&#x27;Function not implemented.&#x27;);
+      }} as UpdateProfileDto);
+    expect(userProfilesNew[2].avatar).toEqual(&#x27;3.jpg&#x27;);
+    expect(userProfilesNew[2].bio).toEqual(&#x27;shero&#x27;);
+    expect(userProfileUpdated.error.message).toEqual(&quot;Database error&quot;);
+  });
+
+  it(&#x27;return corresponding profile if an existing email given&#x27;, async () =&gt; {
+
+    const result = await controller.getProfileByEmail(&#x27;u1@gmail.com&#x27;);
+
+    expect(result.data.profile.userId).toEqual(&#x27;1a&#x27;);
+  });
+
+  it(&#x27;return corresponding err message if an non-existing email given&#x27;, async () =&gt; {
+    const result = await controller.getProfileByEmail(&#x27;ww@gmail.com&#x27;);
+    
+    expect(result).toEqual({
+      data:{},
+      error: {
+        message: &quot;user not found&quot;
+      }
+    });
+  });
+
+  it(&#x27;return err message when getProfileByEmail but catching err&#x27;, async () =&gt; {
+    const err = new Error(&#x27;Database error&#x27;);
+
+    jest.spyOn(fakeProfileService, &#x27;getUserByEmail&#x27;).mockRejectedValue(new Error(&quot;Database error&quot;));
+
+    const err1Result = await controller.getProfileByEmail(&quot;err1&quot;);
+
+    expect(err1Result.error.message).toEqual(&quot;Database error&quot;);
+  });
+});
+</textarea><pre id="annotations" style="display:none">[{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:153,&quot;character&quot;:18,&quot;text&quot;:&quot;data&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:153,&quot;character&quot;:23,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:153,&quot;character&quot;:31,&quot;text&quot;:&quot;userId&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:213,&quot;character&quot;:22,&quot;text&quot;:&quot;error&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:213,&quot;character&quot;:28,&quot;text&quot;:&quot;message&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:282,&quot;character&quot;:30,&quot;text&quot;:&quot;error&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:337,&quot;character&quot;:30,&quot;text&quot;:&quot;error&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:337,&quot;character&quot;:36,&quot;text&quot;:&quot;message&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:344,&quot;character&quot;:18,&quot;text&quot;:&quot;data&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:344,&quot;character&quot;:23,&quot;text&quot;:&quot;profile&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:344,&quot;character&quot;:31,&quot;text&quot;:&quot;userId&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:365,&quot;character&quot;:22,&quot;text&quot;:&quot;error&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;src\\byan\\profile\\profile.controller.spec.ts&quot;,&quot;line&quot;:365,&quot;character&quot;:28,&quot;text&quot;:&quot;message&quot;,&quot;kind&quot;:1}]</pre></div>
+    <p class="footer-text">TypeScript Coverage Report generated by <a href="https://github.com/plantain-00/type-coverage">type-coverage</a> and <a href="https://github.com/alexcanessa/typescript-coverage-report">typescript-coverage-report</a> at Thu, 04 Apr 2024 16:26:48 GMT</p>
+    </body>
+  </html>
+  
