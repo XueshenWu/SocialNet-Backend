@@ -4,8 +4,8 @@ import NullableDto from './nullableDto';
 
 export class CreateUserDto extends NullableDto{
 
-    @IsString()
-    name?: string;
+ 
+    name?: undefined
 
     @IsString()
     @IsNotEmpty()
@@ -20,12 +20,12 @@ export class CreateUserDto extends NullableDto{
     role: User["role"];
 
 
-    @IsString()
+  
     gender?:string
 
     constructor(name: string, password: string, email: string, role="COMMON" as User["role"]) {
         super();
-        this.name = name;
+       
         this.password = password;
         this.email = email;
         this.role = role;

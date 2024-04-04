@@ -14,6 +14,11 @@ export class PostsService {
         return await this.dbPostService.addPost(createPostDto);
     }
 
+
+    async getLikes(postId:string){
+        return await this.dbPostService.query_likes(postId);
+    }
+
    
 
     async getOriginPostsByUserId(id:string):Promise<Post[]>{
