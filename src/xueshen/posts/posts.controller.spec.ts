@@ -45,7 +45,7 @@ describe('PostsController', () => {
     });
 
     it('should return a recommended post id', async () => {
-        const postid = await controller.getFeed({userid:'123', feedtype:'FORYOU'})
+        const postid = await controller.getFeed({viewerId:'123', feedtype:'FORYOU'})
         expect(postid).toBeTruthy()
     })
 

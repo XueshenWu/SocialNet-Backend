@@ -6,15 +6,19 @@ import { Post as Post_t } from '@prisma/mongo';
 import BasicQueryDto from '../dto/basicQueryDto';
 import CreateReplyDto from '../dto/createReplyDto';
 import { RedisService } from '../redis/redis.service';
+import { DbUserService } from '../db/user/db_user.service';
 
 
 @Controller('posts')
 export class PostsController {
-    constructor(private readonly postService: PostsService, private redisService: RedisService) { }
+    constructor(private readonly postService: PostsService, private redisService: RedisService, private dbUserService:DbUserService) { }
 
     @Post('getFeed')
-    async getFeed(@Body() getfeedDto: { userid: string, feedtype: "FORYOU" | "FOLLOWING" }) {
-        return { data: this.redisService.getFromTimeline() }
+    async getFeed(@Body() getfeedDto: { viewerId: string, feedtype: "FORYOU" | "FOLLOWING" }) {
+        let post = await this.postService.getPostByPostId(await this.redisService.getFromTimeline())
+        // const profile = await this.dbUserService.query_profile_by_user_id(post.authorId)
+        return {data:post}
+        
     }
 
     @Post('searchPost')
