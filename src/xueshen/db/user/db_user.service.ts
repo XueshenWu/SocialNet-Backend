@@ -79,10 +79,35 @@ export class DbUserService {
         })
     }
 
+    async search_user_by_name(name:string):Promise<User[]>{
+        const userids = (await this.connectionService.pgClient.profile.findMany({
+            where:{
+                username: {
+                    contains:name
+                }
+            },
+            select:{
+                userId:true
+            }
+        })).map(record=>record.userId)
+
+        if(userids.length<1){
+            return []
+        }else{
+            return await this.connectionService.pgClient.user.findMany({
+                where:{
+                    id:{
+                        in:userids
+                    }
+                }
+            })
+        }
+    }
+
     async query_user_by_email(email: string): Promise<User | null> {
-        return await this.connectionService.pgClient.user.findUnique({
+        return await this.connectionService.pgClient.user.findFirst({
             where: {
-                email: email
+               email:email
             }
         })
     }
@@ -97,7 +122,7 @@ export class DbUserService {
 
 
 
-    async query_follower_by_id(id:string):Promise<String[]>{
+    async query_follower_by_id(id:string):Promise<string[]>{
         const res = await this.connectionService.pgClient.friend.findMany({
             where:{
                 user1:{
@@ -175,14 +200,24 @@ export class DbUserService {
                         role: "COMMON"
                     }
                 })
+
+
+                const email = createUserDto.email
                 const profile = await tx.profile.create({
                     data: {
                         userId: user.id,
-                        username: user.id
+                        username: email.substring(0,email.indexOf('@'))
                     }
                 })
+                await this.connectionService.mongoClient.user.create({
+                    data:{
+                        id:user.id
+                    }
+                })
+                
                 return profile;
             } catch (e) {
+                console.log(e)
                 return null
             }
         })

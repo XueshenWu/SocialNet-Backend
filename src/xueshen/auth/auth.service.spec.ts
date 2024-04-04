@@ -1,60 +1,64 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import createUserDto from '../dto/createUserDto';
+
 import * as jwt from 'jsonwebtoken'
-import { DbService } from '../db/db.service';
+import { DbUserService } from '../db/user/db_user.service';
+import { CreateUserDto } from '../dto/createUserDto';
+import LoginDto from '../dto/loginDto';
+import { ConnectionService } from '../db/connection/connection.service';
+import { v4 } from 'uuid';
+
 const PSWD_SALT = "$2b$24$h/zcUE26srKAcEPqa4pFd."
 describe('AuthService', () => {
     let service: AuthService;
-    let dbService: DbService;
+    let dbUserService:DbUserService;
+
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [AuthService, DbService],
+            providers: [AuthService, DbUserService, ConnectionService],
 
         }).compile();
 
         service = module.get<AuthService>(AuthService);
-        dbService = module.get<DbService>(DbService);
-        dbService.resetDatabse_DANGEROUS();
-
-
+        dbUserService = module.get<DbUserService>(DbUserService)
     });
 
-    afterAll(async () => {
-        await dbService.resetDatabse_DANGEROUS();
-    })
 
-    it('should be defined', () => {
-        expect(service).toBeDefined();
-    });
-
-    it("should return a valid token", async () => {
-
-
-        const createUserDto: createUserDto = {
-            name: "testauth",
-            password: "test",
-            email: "testauth@campass.com",
-            role: "COMMON"
-        }
-        const res = await service.register(createUserDto);
-   
-        expect(res).toBe(true);
-        const login_res: boolean = await service.login(createUserDto);
-
-        expect(login_res).toBe(true);
+    it('should create a user', async ()=>{
+        const rn = v4().substring(0,8)
+      
+        await service.register(new CreateUserDto('test1','123123',`${rn}@test.com`))
+        const user = await dbUserService.query_user_by_email(`${rn}@test.com`)
+        expect(user).toBeTruthy()
+        
 
     })
 
-    it("should return undefined", async () => {
-        const createUserDto: createUserDto = {
-            name: "testauth_notexist",
-            password: "test",
-            email: "abc",
-            role: "COMMON"
-        }
+    it("should return true if given correct password and userid", async ()=>{
+        const rn = v4().substring(0,8)
+       
+        await service.register(new CreateUserDto('test1','123123',`${rn}@test.com`))
+        const user = await dbUserService.query_user_by_email(`${rn}@test.com`)
+        expect(user).toBeTruthy()
+        
 
+        const retval = await service.login({
+            identity:`${rn}@test.com`,
+            password:'123123',
+            identityType:"email"
+        })
+       expect(retval.id).toBeDefined()
+       
 
+        const retval2 = await service.login({
+            identity:"awdwa@ad.com",
+            password:"123123123",
+            identityType:"email"
+        })
+        expect(retval2).toBeNull()
     })
+
+  
+    
 });

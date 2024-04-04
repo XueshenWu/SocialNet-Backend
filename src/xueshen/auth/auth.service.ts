@@ -24,6 +24,7 @@ export class AuthService {
         let user: User |null= null;
         switch (loginDto.identityType) {
             case "email":
+             
                 user = await this.dbUserService.query_user_by_email(loginDto.identity);
                 
                 break;
@@ -31,7 +32,7 @@ export class AuthService {
                 user = await this.dbUserService.query_user_by_username(loginDto.identity);
                 break;
             default:
-                break;
+                throw "Not Possible"
         }
   
         if(!user){
@@ -63,8 +64,7 @@ export class AuthService {
         } else {
             this.logger.verbose(`creating user: ${createUserDto.email}`);
 
-            // TODO: hash password
-            // createUserDto.password = await new Promise((resolve)=>bcrypt.hash(createUserDto.password, "$2b$24$h/zcUE26srKAcEPqa4pFd.", (err, hash)=>resolve(hash)))
+           
 
             const res = await this.dbUserService.createUser(createUserDto);
             this.logger.log(`user created: ${createUserDto.email}`);
