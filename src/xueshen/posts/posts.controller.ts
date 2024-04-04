@@ -11,19 +11,59 @@ import { DbUserService } from '../db/user/db_user.service';
 
 @Controller('posts')
 export class PostsController {
-    constructor(private readonly postService: PostsService, private redisService: RedisService, private dbUserService:DbUserService) { }
+    constructor(private readonly postService: PostsService, private redisService: RedisService, private dbUserService: DbUserService) { }
 
     @Post('getFeed')
     async getFeed(@Body() getfeedDto: { viewerId: string, feedtype: "FORYOU" | "FOLLOWING" }) {
         let post = await this.postService.getPostByPostId(await this.redisService.getFromTimeline())
         // const profile = await this.dbUserService.query_profile_by_user_id(post.authorId)
-        return {data:post}
-        
+        return { data: post }
+
+    }
+
+
+
+    @Post('getFeeds')
+    async getFeeds(@Body() getfeedDto: { viewerId: string, feedtype: "FORYOU" | "FOLLOWING" }) {
+
+        let posts = [];
+        for (let i = 0; i < 20; i++) {
+            try {
+                let post = await this.postService.getPostByPostId(await this.redisService.getFromTimeline())
+                posts.push(post)
+            } catch (e) {
+                console.log(e)
+                continue;
+            }
+
+        }
+
+        // const profile = await this.dbUserService.query_profile_by_user_id(post.authorId)
+        return { data: posts }
+
+    }
+
+
+    @Post('getPostStats')
+    async getPostStats(@Body() { postId, viewerId }: { postId: string, viewerId?: string }) {
+        // likeCount
+        // replyCount
+        // isLiked
+
+        const likes = await this.postService.getLikes(postId);
+
+        const likeCount = likes.length;
+        const post = await this.postService.getPostByPostId(postId);
+        const replyCount = post.replies.length;
+        const isLiked: boolean = viewerId ? likes.find((value) => value === viewerId) ? true : false : false
+        return {likeCount, replyCount, isLiked}
+
+
     }
 
     @Post('searchPost')
-    async searchPost(title: string) {
-        return {data:await this.postService.searchPost(title)}
+    async searchPost(@Body() title: string) {
+        return { data: await this.postService.searchPost(title) }
     }
 
     @Post('createPost')
@@ -48,7 +88,7 @@ export class PostsController {
 
     @Post('getPostByPostId')
     async getPostByPostId(basicQueryDto: BasicQueryDto) {
-        return {data: await this.postService.getPostByPostId(basicQueryDto.identity)}
+        return { data: await this.postService.getPostByPostId(basicQueryDto.identity) }
     }
 
     @Post('getPostsByUserId')
@@ -63,13 +103,13 @@ export class PostsController {
 
     @Post('addReply')
     async addReply(createReplyDto: CreateReplyDto) {
-        return {data:await this.postService.addReply(createReplyDto)}
+        return { data: await this.postService.addReply(createReplyDto) }
     }
 
 
     @Post('likePost')
     async likePost(likePostDto: { userid: string, postId: string }) {
-        return {data: await this.postService.likePost(likePostDto.userid, likePostDto.postId)}
+        return { data: await this.postService.likePost(likePostDto.userid, likePostDto.postId) }
     }
 
 

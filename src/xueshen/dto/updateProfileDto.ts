@@ -22,18 +22,20 @@ import NullableDto from './nullableDto';
 
 export default class UpdateProfileDto extends NullableDto{
 
-    @IsString()
-    @IsNotEmpty()
     userId: Profile['userId'];
 
-    @IsString()
+
     readonly fullname: Profile['fullname'];
 
 
-    @IsString()
+    
     readonly avatar: Profile['avatar'];
 
-    @IsString()
+
+    readonly external_link: Profile['external_link']
+
+    readonly location:Profile['location']
+ 
     readonly bio: Profile['bio'];
 
     @IsEnum(Interest, {each: true})
@@ -43,16 +45,18 @@ export default class UpdateProfileDto extends NullableDto{
     
     tags: string[]|null;
 
-    @IsString()
+
     readonly gender: Profile["gender"]
 
-    constructor(userId: string, fullname: string, avatar: string, bio: string, interests:Interest[]){
+    constructor(userId: string, fullname?: string, avatar?: string, bio?: string, interests?:Interest[], externalLink?:string, location?:string){
         super();
         this.userId = userId;
         this.fullname = fullname;
         this.avatar = avatar;
         this.bio = bio;
         this.interests = interests;
+        this.external_link = externalLink;
+        this.location = location;
     }
 
 

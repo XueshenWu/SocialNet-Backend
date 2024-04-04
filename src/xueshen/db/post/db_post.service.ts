@@ -20,6 +20,19 @@ export class DbPostService {
 
     }
 
+
+    async query_likes(postId:string){
+        const likes:string[] = (await this.connectionService.mongoClient.likeTable.findMany({
+            where:{
+                postId:postId
+            },
+            select:{
+                userId:true
+            }
+        })).map(record=>record.userId)
+        return likes;
+    }
+
     async getRepliesByPostId(postId: string): Promise<Post[]> {
         try {
             const post = await this.connectionService.mongoClient.post.findUnique({
