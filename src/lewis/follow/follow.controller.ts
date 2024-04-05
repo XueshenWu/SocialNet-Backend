@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { DbUserService } from '../../xueshen/db/user/db_user.service';
 
-@Controller('friends')
+@Controller()
 export class FollowController {
   logger = new Logger('FollowController');
   constructor(private readonly followService : FollowService, private readonly dbUserService: DbUserService) {}
@@ -26,7 +26,7 @@ export class FollowController {
       }
     } catch (error) {
       this.logger.verbose('Error while following user:', error);
-      return { status: "FAILED", }
+      return { status: 401, }
     }
   }
 
@@ -72,13 +72,13 @@ export class FollowController {
             } else {
                 this.logger.log("Follower List is empty")
                 return {
-                    status: "FAILED",
+                    status: 401,
                 }
             }
         }
         catch (error) {
             this.logger.verbose('Error while getting followers:', error);
-            return { status: "FAILED", }
+            return { status: 401, }
         }
     }
 

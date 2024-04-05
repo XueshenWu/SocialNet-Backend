@@ -29,40 +29,40 @@ describe('FollowController', () => {
   // 1. Follow Testing
   describe('followUser', () => {
     it('should follow a user successfully', async () => {
-      const mockData = { id_from: 'user1', id_to: 'user2' };
+      const mockData = { userId: 'user1', followerId: 'user2' };
       jest.spyOn(followService, 'followUser').mockResolvedValue(true);
       const result = await controller.followUser(mockData);
       expect(result).toEqual({ status: 'SUCCESS' });
     });
 
     it('should handle failure to follow a user', async () => {
-      const mockData = { id_from: 'user1', id_to: 'user2' };
+      const mockData = { userId: 'user1', followerId: 'user2' };
       jest.spyOn(followService, 'followUser').mockResolvedValue(false);
       const result = await controller.followUser(mockData);
-      expect(result).toEqual({ status: 'FAILED' });
+      expect(result).toEqual({ status: 401 });
     });
 
     it('should handle invalid id when following a user', async () => {
-      const mockData = { id_from: '', id_to: 'user2' };
+      const mockData = { userId: '', followerId: 'user2' };
       const result = await controller.followUser(mockData);
-      expect(result).toEqual({ status: 'FAILED' });
+      expect(result).toEqual({ status: 401 });
     });
   });
 
   // 2. Unfollow Testing
   describe('unfollowUser', () => {
     it('should unfollow a user successfully', async () => {
-      const mockData = { id_from: 'user1', id_to: 'user2' };
+      const mockData = { userId: 'user1', followerId: 'user2' };
       jest.spyOn(followService, 'unfollowUser').mockResolvedValue(true);
       const result = await controller.unfollowUser(mockData);
       expect(result).toEqual({ status: 'SUCCESS' });
     });
 
     it('should handle failure to unfollow a user', async () => {
-      const mockData = { id_from: 'user1', id_to: 'user2' };
+      const mockData = { userId: 'user1', followerId: 'user2' };
       jest.spyOn(followService, 'unfollowUser').mockResolvedValue(false);
       const result = await controller.unfollowUser(mockData);
-      expect(result).toEqual({ status: 'FAILED' });
+      expect(result).toEqual({ status: 401 });
     });
   });
 
@@ -105,7 +105,7 @@ describe('FollowController', () => {
         it('should handle invalid id when fetching followers', async () => {
             const mockData = { userId: '' };
             const result = await controller.getFollowers(mockData);
-            expect(result).toEqual({ status: 'FAILED' });
+            expect(result).toEqual({ status: 401 });
         });
     });
 
@@ -146,7 +146,7 @@ describe('FollowController', () => {
         it('should handle invalid id when fetching following', async () => {
             const mockData = { userId: '' };
             const result = await controller.getFollowing(mockData);
-            expect(result).toEqual({ status: 'FAILED' });
+            expect(result).toEqual({ status: 401 });
         });
     });
 });

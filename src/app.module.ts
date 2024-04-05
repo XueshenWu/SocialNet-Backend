@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 
 import { XueshenModule } from './xueshen/xueshen.module';
 import { ByanModule } from './byan/byan.module';
+import { LewisModule } from './lewis/lewis.module';
 
 @Module({
-  imports: [XueshenModule, ByanModule],
+  imports: [XueshenModule, ByanModule, LewisModule ],
   controllers: [AppController],
   providers: [AppService,
   // {
