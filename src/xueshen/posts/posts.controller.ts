@@ -43,6 +43,13 @@ export class PostsController {
 
     }
 
+    @Post('getLikes')
+    async getLikes(@Body() {userId}:{userId:string}){
+        console.log(userId)
+   
+        return {data:await this.postService.getLikedPosts(userId)}
+    }
+
     @Post("getReplies")
     async getRepliesByUserId(@Body() {userId}:{userId:string}){
         return {data:await this.postService.getRepliesByUserId(userId)}
@@ -66,8 +73,8 @@ export class PostsController {
         const likeCount = likes.length;
         const post = await this.postService.getPostByPostId(postId);
         const replyCount = post.replies.length;
-        // const isLiked: boolean = viewerId ? likes.find((value) => value === viewerId) ? true : false : false
-        return { data: { likeCount, replyCount, isLiked: false } }
+        const isLiked: boolean = viewerId ? likes.find((value) => value === viewerId) ? true : false : false
+        return { data: { likeCount, replyCount, isLiked: isLiked } }
 
 
     }
@@ -78,8 +85,8 @@ export class PostsController {
     }
 
     @Post('createPost')
-    async create(@Body() createPostDto: CreatePostDto): Promise<{ data: string } | undefined> {
-        return { data: await this.postService.addPost(createPostDto) };
+    async create(@Body() {authorId, content, createTime, media}:{authorId:string, content:string, createTime:string, media:string[]}): Promise<{ data: string } | undefined> {
+        return { data: await this.postService.addPost(new CreatePostDto('', authorId, media, content, "PUBLISHED")) };
     }
 
     @Post('getOriginPostsByUserId')
@@ -120,11 +127,16 @@ export class PostsController {
 
 
     @Post('likePost')
-    async likePost(@Body() likePostDto: { userid: string, postId: string }) {
-        return { data: await this.postService.likePost(likePostDto.userid, likePostDto.postId) }
+    async likePost(@Body() likePostDto: { userId: string, postId: string }) {
+        return { data: await this.postService.likePost(likePostDto.userId, likePostDto.postId) }
     }
 
 
+
+    @Post('unlikePost')
+    async unlikePost(@Body() likePostDto: { userId: string, postId: string }) {
+        return { data: await this.postService.unlikePost(likePostDto.userId, likePostDto.postId) }
+    }
 
 
 

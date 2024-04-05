@@ -23,7 +23,9 @@ export class PostsService {
         return await this.dbPostService.query_likes(postId);
     }
 
-   
+    async getLikedPosts(userId:string){
+        return await this.dbPostService.query_liked_posts_detail_by_user_id(userId);
+    }
 
     async getOriginPostsByUserId(id:string):Promise<Post[]>{
         return await this.dbPostService.query_origin_posts_by_user_id(id);

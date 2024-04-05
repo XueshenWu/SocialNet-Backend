@@ -21,6 +21,39 @@ export class DbPostService {
     }
 
 
+    async query_liked_posts_detail_by_user_id(userId:string):Promise<Post_Author[]>{
+        const post_ids = (await this.connectionService.mongoClient.likeTable.findMany({
+            where:{
+                userId:userId
+            }
+        })).map(record=>record.postId)
+
+        const posts:Post[] = await this.connectionService.mongoClient.post.findMany({
+            where:{
+                id:{
+                    in:post_ids
+                }
+            }
+        })
+
+        const result = new Array<Post_Author>();
+        for( const post of posts){
+            const profile = await this.connectionService.pgClient.profile.findUnique({
+                where:{
+                    userId:post.authorId
+                }
+            })
+            result.push({...post, author:profile})
+        }
+
+        // const profile:Profile = await this.connectionService.pgClient.profile.findUnique({
+        //     where:{
+        //         userId:userId
+        //     }
+        // })
+        return result;
+    }
+
     async query_likes(postId: string) {
         const likes: string[] = (await this.connectionService.mongoClient.likeTable.findMany({
             where: {
