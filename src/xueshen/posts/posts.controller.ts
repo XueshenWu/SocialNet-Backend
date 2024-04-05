@@ -23,6 +23,7 @@ export class PostsController {
 
 
 
+
     @Post('getFeeds')
     async getFeeds(@Body() getfeedDto: { viewerId: string, feedtype: "FORYOU" | "FOLLOWING" }) {
 
@@ -43,6 +44,24 @@ export class PostsController {
 
     }
 
+    @Post('getLikes')
+    async getLikes(@Body() {userId}:{userId:string}){
+        console.log(userId)
+   
+        return {data:await this.postService.getLikedPosts(userId)}
+    }
+
+    @Post("getReplies")
+    async getRepliesByUserId(@Body() {userId}:{userId:string}){
+        return {data:await this.postService.getRepliesByUserId(userId)}
+        // return {data:123}
+    }
+
+
+    @Post('getRepliesByPost')
+    async getReplies(@Body() { postId }: { postId: string }) {
+        return { data: await this.postService.getRepliesByPostId(postId) }
+    }
 
     @Post('getPostStats')
     async getPostStats(@Body() { postId, viewerId }: { postId: string, viewerId?: string }) {
@@ -56,19 +75,24 @@ export class PostsController {
         const post = await this.postService.getPostByPostId(postId);
         const replyCount = post.replies.length;
         const isLiked: boolean = viewerId ? likes.find((value) => value === viewerId) ? true : false : false
-        return {likeCount, replyCount, isLiked}
+        return { data: { likeCount, replyCount, isLiked: isLiked } }
 
 
     }
 
     @Post('searchPost')
-    async searchPost(@Body() title: string) {
-        return { data: await this.postService.searchPost(title) }
+    async searchPost(@Body() {content}: {content:string}) {
+        return { data: await this.postService.searchPost(content) }
+    }
+
+    @Post('searchUser')
+    async searchUser(@Body() {username}:{username:string}){
+        return {data: await this.dbUserService.search_user_by_name(username)}
     }
 
     @Post('createPost')
-    async create(createPostDto: CreatePostDto): Promise<{ data: string } | undefined> {
-        return { data: await this.postService.addPost(createPostDto) };
+    async create(@Body() {authorId, content, createTime, media}:{authorId:string, content:string, createTime:string, media:string[]}): Promise<{ data: string } | undefined> {
+        return { data: await this.postService.addPost(new CreatePostDto('', authorId, media, content, "PUBLISHED")) };
     }
 
     @Post('getOriginPostsByUserId')
@@ -77,42 +101,48 @@ export class PostsController {
     }
 
     @Post('getRepostedPostsByUserId')
-    async getRepostedPostsByUserId(basicQueryDto: BasicQueryDto) {
-        return { data: await this.postService.getRepostedPostsByUserId(basicQueryDto.identity) }
+    async getRepostedPostsByUserId(@Body() {userId}:{userId:string}) {
+        return { data: await this.postService.getRepostedPostsByUserId(userId) }
     }
 
     @Post('getLikedPostsByUserId')
-    async getLikedPostsByUserId(basicQueryDto: BasicQueryDto) {
+    async getLikedPostsByUserId( @Body() basicQueryDto: BasicQueryDto) {
         return { data: await this.postService.getLikedPostsByUserId(basicQueryDto.identity) }
     }
 
-    @Post('getPostByPostId')
-    async getPostByPostId(basicQueryDto: BasicQueryDto) {
-        return { data: await this.postService.getPostByPostId(basicQueryDto.identity) }
+    @Post('getPost')
+    async getPostByPostId(@Body() { postId }: { postId: string }) {
+
+        return { data: await this.postService.getPostByPostId(postId) }
     }
 
-    @Post('getPostsByUserId')
-    async getPostsByUserId(basicQueryDto: BasicQueryDto) {
-        return { data: await this.postService.getPostsByUserId(basicQueryDto.identity) }
+    @Post('getPosts')
+    async getPostsByUserId(@Body() {userId}:{userId:string}) {
+        return { data: await this.postService.getPostsByUserId(userId) }
     }
 
-    // @Post('getRepliesByPostId')
-    // async getRepliesByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
-    //     return await this.postService.getRepliesByPostId(basicQueryDto.identity);
-    // }
+   
 
     @Post('addReply')
-    async addReply(createReplyDto: CreateReplyDto) {
+    async addReply(@Body() {authorId, content, createTime, media, replyParentId}:{authorId:string, content:string, createTime:string, media:string[], replyParentId:string}) {
+        
+        const createReplyDto = new CreateReplyDto("", authorId, replyParentId, media, content)
+
         return { data: await this.postService.addReply(createReplyDto) }
     }
 
 
     @Post('likePost')
-    async likePost(likePostDto: { userid: string, postId: string }) {
-        return { data: await this.postService.likePost(likePostDto.userid, likePostDto.postId) }
+    async likePost(@Body() likePostDto: { userId: string, postId: string }) {
+        return { data: await this.postService.likePost(likePostDto.userId, likePostDto.postId) }
     }
 
 
+
+    @Post('unlikePost')
+    async unlikePost(@Body() likePostDto: { userId: string, postId: string }) {
+        return { data: await this.postService.unlikePost(likePostDto.userId, likePostDto.postId) }
+    }
 
 
 

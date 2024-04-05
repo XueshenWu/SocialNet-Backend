@@ -4,10 +4,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { XueshenModule } from './xueshen/xueshen.module';
+import { DemoModule } from './demo/demo.module';
 import { ByanModule } from './byan/byan.module';
+import { LewisModule } from './lewis/lewis.module';
+
 
 @Module({
-  imports: [XueshenModule, ByanModule],
+  imports: [XueshenModule, ByanModule,DemoModule,LewisModule],
+
   controllers: [AppController],
   providers: [AppService,
   // {

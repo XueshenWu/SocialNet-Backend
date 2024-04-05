@@ -47,7 +47,7 @@ export class ProfileController {
   // }
 
   @Post('/getProfile')
-  async getProfileByUserId(@Body() userId: string): Promise<Record<string, any>> {
+  async getProfileByUserId(@Body() {userId}: {userId: string}): Promise<Record<string, any>> {
     try {
       const userProfile = await this.profileService.getProfileByUserId(userId);
 
@@ -101,10 +101,10 @@ export class ProfileController {
   }
 
   @Post('/getProfileByEmail')
-  async getProfileByEmail(@Body() email: string): Promise<Record<string, any>> {
+  async getProfileByEmail(@Body() {email}: {email: string}): Promise<Record<string, any>> {
     try {
       const user = await this.profileService.getUserByEmail(email);
-      
+      console.log(user);
       if (!user) {
         return {
           data:{},

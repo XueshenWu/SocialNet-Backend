@@ -25,6 +25,7 @@ export class DbUserService {
 
 
     async follow(id_from: string, id_to: string): Promise<boolean> {
+        
         if (await this.userExists(id_from) && await this.userExists(id_to)) {
             await this.connectionService.pgClient.follow.create({
                 data: {
@@ -38,7 +39,8 @@ export class DbUserService {
     }
 
     async unfollow(id_from:string, id_to:string):Promise<boolean>{
-        this.connectionService.pgClient.follow.delete({
+        console.log("at data base", `${id_from} wants to unollow ${id_to}`)
+        await this.connectionService.pgClient.follow.delete({
             where:{
                 id_from_id_to:{
                     id_from:id_from,
@@ -58,12 +60,14 @@ export class DbUserService {
         return res !== null
     }
 
-    async isFollowing(userId: string, followingId: string) {
+    async isFollowing(userId: string, viewerId: string) {
+
+        console.log(`check if ${viewerId} is following ${userId} at dbuser`)
         const res = await this.connectionService.pgClient.follow.findUnique({
             where: {
                 id_from_id_to: {
-                    id_from: userId,
-                    id_to: followingId
+                    id_from: viewerId,
+                    id_to: userId
                 }
             }
         })
@@ -79,28 +83,20 @@ export class DbUserService {
         })
     }
 
-    async search_user_by_name(name:string):Promise<User[]>{
-        const userids = (await this.connectionService.pgClient.profile.findMany({
+    async search_user_by_name(name:string):Promise<Profile[]>{
+        const profiles = (await this.connectionService.pgClient.profile.findMany({
             where:{
                 username: {
                     contains:name
                 }
-            },
-            select:{
-                userId:true
             }
-        })).map(record=>record.userId)
+           
+        }))
 
-        if(userids.length<1){
+        if(profiles.length<1){
             return []
         }else{
-            return await this.connectionService.pgClient.user.findMany({
-                where:{
-                    id:{
-                        in:userids
-                    }
-                }
-            })
+            return profiles
         }
     }
 
@@ -123,17 +119,16 @@ export class DbUserService {
 
 
     async query_follower_by_id(id:string):Promise<string[]>{
-        const res = await this.connectionService.pgClient.friend.findMany({
+        const res = await this.connectionService.pgClient.follow.findMany({
             where:{
-                user1:{
-                    id:id
-                }
+                id_to:id
             }
         })
+  
         if(!res){
             return []
         }else{
-            return res.map(record=>record.id_to)
+            return res.map(record=>record.id_from)
         }
         
     }
@@ -148,17 +143,15 @@ export class DbUserService {
     }
 
     async query_following_by_id(id:string):Promise<string[]>{
-        const res = await this.connectionService.pgClient.friend.findMany({
+        const res = await this.connectionService.pgClient.follow.findMany({
             where:{
-                user2:{
-                    id:id
-                }
+               id_from:id
             }
         })
         if(!res){
             return []
         }else{
-            return res.map(record=>record.id_from)
+            return res.map(record=>record.id_to)
         }
     }
 

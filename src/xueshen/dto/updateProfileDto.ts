@@ -38,8 +38,7 @@ export default class UpdateProfileDto extends NullableDto{
  
     readonly bio: Profile['bio'];
 
-    @IsEnum(Interest, {each: true})
-    readonly interests: Profile['interests'];
+  
 
 
     
@@ -48,13 +47,13 @@ export default class UpdateProfileDto extends NullableDto{
 
     readonly gender: Profile["gender"]
 
-    constructor(userId: string, fullname?: string, avatar?: string, bio?: string, interests?:Interest[], externalLink?:string, location?:string){
+    constructor(userId: string, fullname?: string, avatar?: string, bio?: string, externalLink?:string, location?:string){
         super();
         this.userId = userId;
         this.fullname = fullname;
         this.avatar = avatar;
         this.bio = bio;
-        this.interests = interests;
+        // this.interests = interests;
         this.external_link = externalLink;
         this.location = location;
     }

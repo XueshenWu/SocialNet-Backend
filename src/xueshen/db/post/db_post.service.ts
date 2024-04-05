@@ -21,15 +21,48 @@ export class DbPostService {
     }
 
 
-    async query_likes(postId:string){
-        const likes:string[] = (await this.connectionService.mongoClient.likeTable.findMany({
+    async query_liked_posts_detail_by_user_id(userId:string):Promise<Post_Author[]>{
+        const post_ids = (await this.connectionService.mongoClient.likeTable.findMany({
             where:{
-                postId:postId
-            },
-            select:{
-                userId:true
+                userId:userId
             }
-        })).map(record=>record.userId)
+        })).map(record=>record.postId)
+
+        const posts:Post[] = await this.connectionService.mongoClient.post.findMany({
+            where:{
+                id:{
+                    in:post_ids
+                }
+            }
+        })
+
+        const result = new Array<Post_Author>();
+        for( const post of posts){
+            const profile = await this.connectionService.pgClient.profile.findUnique({
+                where:{
+                    userId:post.authorId
+                }
+            })
+            result.push({...post, author:profile})
+        }
+
+        // const profile:Profile = await this.connectionService.pgClient.profile.findUnique({
+        //     where:{
+        //         userId:userId
+        //     }
+        // })
+        return result;
+    }
+
+    async query_likes(postId: string) {
+        const likes: string[] = (await this.connectionService.mongoClient.likeTable.findMany({
+            where: {
+                postId: postId
+            },
+            select: {
+                userId: true
+            }
+        })).map(record => record.userId)
         return likes;
     }
 
@@ -63,13 +96,68 @@ export class DbPostService {
     }
 
 
-    async query_posts_by_user_id(id:string):Promise<Post[]>{
-        return await this.connectionService.mongoClient.post.findMany({
-            where:{
-                authorId:id
+    async query_replies_by_post_id(postid: string) {
+        const post = (await this.connectionService.mongoClient.post.findFirst({
+            where: {
+                id: postid
+            }
+        }));
+        const replies_id = post.replies
+
+        const posts = new Array<Post_Author>()
+        for(const replie_id of replies_id){
+            const reply = await this.query_post_by_post_id(replie_id);
+            const profile = await this.connectionService.pgClient.profile.findUnique({
+                where:{
+                    userId:reply.authorId
+                }
+            })
+            posts.push({
+                ...reply, author: profile
+            })
+        }
+        // const posts = replies_id.map(async reply_id => await this.query_post_by_post_id(reply_id))
+        return posts
+    }
+
+    async query_posts_by_user_id(id: string): Promise<Post_Author[]> {
+        const posts = await this.connectionService.mongoClient.post.findMany({
+            where: {
+                authorId: id
             }
         })
+        const profile = await this.connectionService.pgClient.profile.findUnique({
+            where: {
+                userId: id
+            }
+        })
+        return posts.map(post => ({ ...post, author: profile }))
     }
+
+
+    async query_replies_by_user_id(userId: string): Promise<Post_Author[]> {
+        const replies = await this.connectionService.mongoClient.post.findMany({
+            where: {
+                authorId: userId,
+                replyParentId: {
+                    not: null,
+
+                }
+            }
+        })
+
+        console.log(replies)
+
+        const profile = await this.connectionService.pgClient.profile.findUnique({
+            where: {
+                userId: userId
+            }
+        })
+
+        return replies.map((reply) => ({ ...reply, author: profile }))
+
+    }
+
 
     async query_origin_posts_by_user_id(id: string): Promise<Post[]> {
         try {
@@ -86,7 +174,7 @@ export class DbPostService {
         }
     }
 
-    async query_reposted_posts_by_user_id(id: string): Promise<Post[]> {
+    async query_reposted_posts_by_user_id(id: string): Promise<Post_Author[]> {
         try {
             const posts = await this.connectionService.mongoClient.post.findMany({
                 where: {
@@ -96,7 +184,12 @@ export class DbPostService {
                     }
                 }
             })
-            return posts;
+            const profile = await this.connectionService.pgClient.profile.findUnique({
+                where: {
+                    userId: id
+                }
+            })
+            return posts.map(post => ({ ...post, author: profile }))
         } catch (e) {
             this.logger.verbose(e);
             return [];
@@ -105,7 +198,7 @@ export class DbPostService {
 
 
     //tested
-    async addPost(post: CreatePostDto): Promise<string | undefined> {
+    async addPost(post: CreatePostDto, replyParentId?: string, repostParentId?: string): Promise<string | undefined> {
         try {
 
 
@@ -114,16 +207,20 @@ export class DbPostService {
                     id: post.authorId
                 }
             })
-            
+
             if (user === null) {
                 return undefined;
             }
+            const data = {
+                ...post.getNoneEmptyData(),
+                replyParentId: replyParentId,
+                repostParentId: repostParentId
+            }
 
             const postRecord = await this.connectionService.mongoClient.post.create({
-                data: {
-                    ...post.getNoneEmptyData()
-                }
+                data
             })
+
             await this.connectionService.mongoClient.user.update({
                 data: {
                     posts: {
@@ -246,7 +343,7 @@ export class DbPostService {
                     return undefined;
                 }
 
-                const id = await this.addPost(new CreatePostDto(reply.content, reply.authorId, reply.media, reply.content, "DRAFT"))
+                const id = await this.addPost(new CreatePostDto(reply.content, reply.authorId, reply.media, reply.content, "PUBLISHED"), reply.replyParentId, undefined)
                 if (id === undefined) {
                     return undefined;
                 }
@@ -256,14 +353,14 @@ export class DbPostService {
                     },
                     data: {
                         replies: {
-                            push: reply.replyParentId
+                            push: id
                         }
                     }
                 })
                 return id;
             })
 
-            console.log("id:", id)
+
             return id;
         } catch (e) {
             console.log(e)
@@ -292,14 +389,35 @@ export class DbPostService {
     }
 
 
-    async search_post_by_title(title:string):Promise<Post[]>{
+    async search_post_by_title(title: string): Promise<Post[]> {
         return this.connectionService.mongoClient.post.findMany({
-            where:{
-                title:{
-                    contains:title
+            where: {
+                title: {
+                    contains: title
                 }
             }
         })
+    }
+
+    async search_post_by_content(content: string): Promise<Post_Author[]> {
+        const posts =  await this.connectionService.mongoClient.post.findMany({
+            where: {
+                content: {
+                    contains: content
+                }
+            }
+        })
+        const res = new Array<Post_Author>()
+        for(const post of posts){
+            const profile = await this.connectionService.pgClient.profile.findUnique({
+                where:{
+                    userId:post.authorId
+                }
+            })
+            res.push({...post, author:profile})
+        }   
+        return res
+
     }
 
     async repost(createRepostDto: CreateRepostDto): Promise<string | undefined> {
@@ -360,7 +478,8 @@ export class DbPostService {
 
 
 
-    async query_post_by_post_id(postId: string): Promise<Post_Author| null> {
+    async query_post_by_post_id(postId: string): Promise<Post_Author | null> {
+
         const post = await this.connectionService.mongoClient.post.findUnique({
             where: {
                 id: postId
@@ -372,7 +491,8 @@ export class DbPostService {
         }
         const user = await this.connectionService.pgClient.profile.findUnique({
             where: {
-                userId: post.authorId
+                userId: post.authorId,
+
             }
         })
 
@@ -380,12 +500,13 @@ export class DbPostService {
         return res;
     }
 
-    async getPostIds():Promise<string[]>{
+    async getPostIds(): Promise<string[]> {
         return (await this.connectionService.mongoClient.post.findMany({
-            select:{
-                id:true
+            select: {
+                id: true
             }
-        })).map(record=>record.id)
+
+        })).map(record => record.id)
     }
 
 
