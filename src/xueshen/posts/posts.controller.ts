@@ -43,6 +43,17 @@ export class PostsController {
 
     }
 
+    @Post("getReplies")
+    async getRepliesByUserId(@Body() {userId}:{userId:string}){
+        return {data:await this.postService.getRepliesByUserId(userId)}
+        // return {data:123}
+    }
+
+
+    @Post('getRepliesByPost')
+    async getReplies(@Body() { postId }: { postId: string }) {
+        return { data: await this.postService.getRepliesByPostId(postId) }
+    }
 
     @Post('getPostStats')
     async getPostStats(@Body() { postId, viewerId }: { postId: string, viewerId?: string }) {
@@ -55,8 +66,8 @@ export class PostsController {
         const likeCount = likes.length;
         const post = await this.postService.getPostByPostId(postId);
         const replyCount = post.replies.length;
-        const isLiked: boolean = viewerId ? likes.find((value) => value === viewerId) ? true : false : false
-        return {likeCount, replyCount, isLiked}
+        // const isLiked: boolean = viewerId ? likes.find((value) => value === viewerId) ? true : false : false
+        return { data: { likeCount, replyCount, isLiked: false } }
 
 
     }
@@ -86,20 +97,18 @@ export class PostsController {
         return { data: await this.postService.getLikedPostsByUserId(basicQueryDto.identity) }
     }
 
-    @Post('getPostByPostId')
-    async getPostByPostId(basicQueryDto: BasicQueryDto) {
-        return { data: await this.postService.getPostByPostId(basicQueryDto.identity) }
+    @Post('getPost')
+    async getPostByPostId(@Body() { postId }: { postId: string }) {
+        console.log(postId)
+        return { data: await this.postService.getPostByPostId(postId) }
     }
 
-    @Post('getPostsByUserId')
-    async getPostsByUserId(basicQueryDto: BasicQueryDto) {
-        return { data: await this.postService.getPostsByUserId(basicQueryDto.identity) }
+    @Post('getPosts')
+    async getPostsByUserId(@Body() {userId}:{userId:string}) {
+        return { data: await this.postService.getPostsByUserId(userId) }
     }
 
-    // @Post('getRepliesByPostId')
-    // async getRepliesByPostId(basicQueryDto:BasicQueryDto):Promise<Post_t[]>{
-    //     return await this.postService.getRepliesByPostId(basicQueryDto.identity);
-    // }
+   
 
     @Post('addReply')
     async addReply(createReplyDto: CreateReplyDto) {
