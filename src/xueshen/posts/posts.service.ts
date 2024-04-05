@@ -28,7 +28,7 @@ export class PostsService {
     async getOriginPostsByUserId(id:string):Promise<Post[]>{
         return await this.dbPostService.query_origin_posts_by_user_id(id);
     }
-    async getRepostedPostsByUserId(id:string):Promise<Post[]>{
+    async getRepostedPostsByUserId(id:string):Promise<Post_Author[]>{
         return await this.dbPostService.query_reposted_posts_by_user_id(id);
     }
 

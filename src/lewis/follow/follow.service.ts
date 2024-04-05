@@ -57,7 +57,7 @@ export class FollowService {
             }
 
             // Check if user is already following
-            const isFollowing = await this.dbUserService.isFollowing(id_from, id_to);
+            const isFollowing = await this.dbUserService.isFollowing(id_to, id_from);
             if (!isFollowing) {
                 this.logger.log('User is not following')
                 return false;

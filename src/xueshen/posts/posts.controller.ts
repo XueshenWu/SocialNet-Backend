@@ -78,7 +78,7 @@ export class PostsController {
     }
 
     @Post('createPost')
-    async create(createPostDto: CreatePostDto): Promise<{ data: string } | undefined> {
+    async create(@Body() createPostDto: CreatePostDto): Promise<{ data: string } | undefined> {
         return { data: await this.postService.addPost(createPostDto) };
     }
 
@@ -88,18 +88,18 @@ export class PostsController {
     }
 
     @Post('getRepostedPostsByUserId')
-    async getRepostedPostsByUserId(basicQueryDto: BasicQueryDto) {
-        return { data: await this.postService.getRepostedPostsByUserId(basicQueryDto.identity) }
+    async getRepostedPostsByUserId(@Body() {userId}:{userId:string}) {
+        return { data: await this.postService.getRepostedPostsByUserId(userId) }
     }
 
     @Post('getLikedPostsByUserId')
-    async getLikedPostsByUserId(basicQueryDto: BasicQueryDto) {
+    async getLikedPostsByUserId( @Body() basicQueryDto: BasicQueryDto) {
         return { data: await this.postService.getLikedPostsByUserId(basicQueryDto.identity) }
     }
 
     @Post('getPost')
     async getPostByPostId(@Body() { postId }: { postId: string }) {
-        console.log(postId)
+
         return { data: await this.postService.getPostByPostId(postId) }
     }
 
@@ -111,13 +111,16 @@ export class PostsController {
    
 
     @Post('addReply')
-    async addReply(createReplyDto: CreateReplyDto) {
+    async addReply(@Body() {authorId, content, createTime, media, replyParentId}:{authorId:string, content:string, createTime:string, media:string[], replyParentId:string}) {
+        
+        const createReplyDto = new CreateReplyDto("", authorId, replyParentId, media, content)
+
         return { data: await this.postService.addReply(createReplyDto) }
     }
 
 
     @Post('likePost')
-    async likePost(likePostDto: { userid: string, postId: string }) {
+    async likePost(@Body() likePostDto: { userid: string, postId: string }) {
         return { data: await this.postService.likePost(likePostDto.userid, likePostDto.postId) }
     }
 

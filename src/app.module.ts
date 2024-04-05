@@ -10,11 +10,8 @@ import { LewisModule } from './lewis/lewis.module';
 
 
 @Module({
-<<<<<<< HEAD
-  imports: [XueshenModule, ByanModule,DemoModule],
-=======
-  imports: [XueshenModule, ByanModule, LewisModule ],
->>>>>>> origin/lewis_Dev
+  imports: [XueshenModule, ByanModule,DemoModule,LewisModule],
+
   controllers: [AppController],
   providers: [AppService,
   // {
