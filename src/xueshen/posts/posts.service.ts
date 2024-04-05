@@ -55,8 +55,8 @@ export class PostsService {
     }
 
 
-    async searchPost(title:string){
-        return await this.dbPostService.search_post_by_title(title)
+    async searchPost(content:string){
+        return await this.dbPostService.search_post_by_content(content)
     }
 
     async hidePost(id:string):Promise<boolean>{

@@ -83,28 +83,20 @@ export class DbUserService {
         })
     }
 
-    async search_user_by_name(name:string):Promise<User[]>{
-        const userids = (await this.connectionService.pgClient.profile.findMany({
+    async search_user_by_name(name:string):Promise<Profile[]>{
+        const profiles = (await this.connectionService.pgClient.profile.findMany({
             where:{
                 username: {
                     contains:name
                 }
-            },
-            select:{
-                userId:true
             }
-        })).map(record=>record.userId)
+           
+        }))
 
-        if(userids.length<1){
+        if(profiles.length<1){
             return []
         }else{
-            return await this.connectionService.pgClient.user.findMany({
-                where:{
-                    id:{
-                        in:userids
-                    }
-                }
-            })
+            return profiles
         }
     }
 

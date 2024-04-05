@@ -399,6 +399,27 @@ export class DbPostService {
         })
     }
 
+    async search_post_by_content(content: string): Promise<Post_Author[]> {
+        const posts =  await this.connectionService.mongoClient.post.findMany({
+            where: {
+                content: {
+                    contains: content
+                }
+            }
+        })
+        const res = new Array<Post_Author>()
+        for(const post of posts){
+            const profile = await this.connectionService.pgClient.profile.findUnique({
+                where:{
+                    userId:post.authorId
+                }
+            })
+            res.push({...post, author:profile})
+        }   
+        return res
+
+    }
+
     async repost(createRepostDto: CreateRepostDto): Promise<string | undefined> {
         try {
             const id = await this.connectionService.mongoClient.$transaction(async (tx) => {

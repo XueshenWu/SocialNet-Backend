@@ -23,6 +23,7 @@ export class PostsController {
 
 
 
+
     @Post('getFeeds')
     async getFeeds(@Body() getfeedDto: { viewerId: string, feedtype: "FORYOU" | "FOLLOWING" }) {
 
@@ -80,8 +81,13 @@ export class PostsController {
     }
 
     @Post('searchPost')
-    async searchPost(@Body() title: string) {
-        return { data: await this.postService.searchPost(title) }
+    async searchPost(@Body() {content}: {content:string}) {
+        return { data: await this.postService.searchPost(content) }
+    }
+
+    @Post('searchUser')
+    async searchUser(@Body() {username}:{username:string}){
+        return {data: await this.dbUserService.search_user_by_name(username)}
     }
 
     @Post('createPost')
